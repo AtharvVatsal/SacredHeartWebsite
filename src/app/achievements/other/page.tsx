@@ -376,7 +376,7 @@ export default function OtherAchievementsPage() {
                       transition={{ duration: 0.5, delay: 0.2 }}
                     >
                       <p className="text-gray-700 leading-relaxed mb-4">
-                        A proud alumnus of <span className="font-semibold text-primary-900">Sacred Heart Senior Secondary School, Sidhpur</span>, Batch of 2004, who reached for the stars and became part of India's historic Chandrayaan-3 mission.
+                        A proud alumnus of <span className="font-semibold text-primary-900">Sacred Heart Senior Secondary School, Sidhpur</span>, Batch of 2004, who reached for the stars and became part of India&apos;s historic Chandrayaan-3 mission.
                       </p>
                       <p className="text-gray-600 leading-relaxed">
                         With great pride and enthusiasm, he was welcomed back to his alma mater. In an inspiring address to the students, he shared his incredible journey and motivated young minds to dream big.
@@ -392,7 +392,7 @@ export default function OtherAchievementsPage() {
                     >
                       <Quote className="w-8 h-8 text-secondary-400 mb-3" />
                       <p className="text-primary-900 italic font-medium mb-2">
-                        "Dreams have no boundaries when you have the courage to pursue them."
+                        &apos;Dreams have no boundaries when you have the courage to pursue them.&apos;
                       </p>
                       <p className="text-secondary-600 text-sm">— Rajat Awasthi</p>
                     </m.div>
