@@ -64,7 +64,7 @@ export const navigation: NavigationItem[] = [
       { text: 'Syllabus & Homework', href: '/academics/syllabus-homework' },
       { text: 'Leave & Absence', href: '/academics/leave-absence' },
       { text: 'Academic Calendar', href: '/academics/calendar' },
-      { text: 'CICSE (Rules for Documents)', href: 'https://shsdharamshala.com/wp-content/uploads/2025/05/CISE-DOC.pdf', external: true },
+      { text: 'CISCE (Rules for Documents)', href: 'https://shsdharamshala.com/wp-content/uploads/2025/05/CISE-DOC.pdf', external: true },
     ]
   },
   {
@@ -130,11 +130,9 @@ export const statistics: Stat[] = [
 
 // Quick Links
 export const quickLinks: QuickLink[] = [
-  { title: 'Online Registration', href: '/admission/register', icon: 'FileText' },
-  { title: 'Fee Payment', href: '/admission/fee-structure', icon: 'CreditCard' },
+  { title: 'Register Interest', href: '/admission/register', icon: 'FileText' },
+  { title: 'Fee Structure', href: '/admission/fee-structure', icon: 'CreditCard' },
   { title: 'Academic Calendar', href: '/academics/calendar', icon: 'Calendar' },
-  { title: 'School App Android', href: '#', icon: 'Smartphone' },
-  { title: 'School App IOS', href: '#', icon: 'Smartphone' },
 ]
 
 // Staff Directory
@@ -249,7 +247,7 @@ export const studentLeaders: StudentLeader[] = [
     role: 'Head Girl',
     initials: 'HG',
     year: '2025-26',
-    message: 'Sacred Heart is a place where my heart grew roots, my spirit too flight.',
+    message: 'Sacred Heart is a place where my heart grew roots, my spirit took flight.',
   },
 ]
 
@@ -362,30 +360,6 @@ export const achievements: Achievement[] = [
   },
 ]
 
-// Class 10 Toppers
-export const class10Toppers: Topper[] = [
-  { id: '1', name: 'KASHISH', boardExam: 'Class 10', year: 2024, percentage: 96 },
-  { id: '2', name: 'PRIYANSHI', boardExam: 'Class 10', year: 2024, percentage: 98 },
-  { id: '3', name: 'SHARAJ SHARMA', boardExam: 'Class 10', year: 2024, percentage: 95 },
-  { id: '4', name: 'SHIVANG KHANKA', boardExam: 'Class 10', year: 2024, percentage: 95 },
-  { id: '5', name: 'ANANYA GAKHAR', boardExam: 'Class 10', year: 2024, percentage: 94 },
-  { id: '6', name: 'ADITI AWASTHI', boardExam: 'Class 10', year: 2024, percentage: 94.5 },
-  { id: '7', name: 'ABHAY KATOCH', boardExam: 'Class 10', year: 2024, percentage: 93.25 },
-  { id: '8', name: 'PRATYUSH KASHYAP', boardExam: 'Class 10', year: 2024, percentage: 93.25 },
-]
-
-// Class 12 Toppers
-export const class12Toppers: Topper[] = [
-  { id: '1', name: 'PARUL ROHIT', boardExam: 'Class 12', year: 2024, percentage: 92 },
-  { id: '2', name: 'RAHUL VERMA', boardExam: 'Class 12', year: 2024, percentage: 92 },
-  { id: '3', name: 'ANIMESH', boardExam: 'Class 12', year: 2024, percentage: 90.5 },
-  { id: '4', name: 'SHIVAM', boardExam: 'Class 12', year: 2024, percentage: 90.5 },
-  { id: '5', name: 'SWASTIK SUKTA', boardExam: 'Class 12', year: 2024, percentage: 90.75 },
-  { id: '6', name: 'DEVANSHI', boardExam: 'Class 12', year: 2024, percentage: 92.5 },
-  { id: '7', name: 'SHANTAM VARDHAN', boardExam: 'Class 12', year: 2024, percentage: 92 },
-  { id: '8', name: 'SWAPI', boardExam: 'Class 12', year: 2024, percentage: 90.5 },
-]
-
 // Gallery Images
 export const galleryImages: GalleryImage[] = [
   // Events and activities from scraped images
@@ -393,14 +367,14 @@ export const galleryImages: GalleryImage[] = [
 
 // Facilities
 export const facilities: Facility[] = [
-  { id: '1', name: 'Smart Classrooms', description: 'Interactive digital learning with modern technology' },
-  { id: '2', name: 'Computer Lab', description: 'Well-equipped computer lab with internet access' },
-  { id: '3', name: 'Science Lab', description: 'Modern science laboratories for practical learning' },
-  { id: '4', name: 'Library', description: 'Well-stocked library with digital resources' },
-  { id: '5', name: 'Sports Ground', description: 'Spacious playground for various sports activities' },
-  { id: '6', name: 'Meditation Hall', description: 'Dedicated space for spiritual development' },
-  { id: '7', name: 'Transport Facility', description: 'Safe transportation for students' },
-  { id: '8', name: 'Medical Facility', description: 'On-campus medical assistance available' },
+  { id: '1', name: 'Smart Classrooms', icon: 'Monitor', description: 'Interactive digital learning with modern technology' },
+  { id: '2', name: 'Computer Lab', icon: 'Laptop', description: 'Well-equipped computer lab with internet access' },
+  { id: '3', name: 'Science Lab', icon: 'FlaskConical', description: 'Modern science laboratories for practical learning' },
+  { id: '4', name: 'Library', icon: 'Library', description: 'Well-stocked library with digital resources' },
+  { id: '5', name: 'Sports Ground', icon: 'Trophy', description: 'Spacious playground for various sports activities' },
+  { id: '6', name: 'Meditation Hall', icon: 'Flower2', description: 'Dedicated space for spiritual development' },
+  { id: '7', name: 'Transport Facility', icon: 'Bus', description: 'Safe transportation for students' },
+  { id: '8', name: 'Medical Facility', icon: 'Stethoscope', description: 'On-campus medical assistance available' },
 ]
 
 // Notifications
@@ -425,13 +399,6 @@ export const notifications: Notification[] = [
     description: 'Information Regarding XI Class Admission.',
     date: '2025-04',
     important: true,
-  },
-  {
-    id: '4',
-    title: 'Coming Soon',
-    description: 'Update Icon - Coming Soon',
-    date: '2025-03',
-    important: false,
   },
 ]
 

@@ -5,6 +5,8 @@ import { ArrowRight, ArrowLeft, Trophy, Award, BookOpen, GraduationCap } from 'l
 import { m } from 'framer-motion'
 import { FadeIn } from '@/components/animations'
 import Section from '@/components/ui/Section'
+import { schoolInfo } from '@/data/school'
+import { class10Sessions, class12Sessions } from '@/data/toppers'
 
 export default function ToppersPage() {
   return (
@@ -149,15 +151,16 @@ export default function ToppersPage() {
           <FadeIn delay={0.3} blur>
             <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
               {[
-                { icon: Trophy, value: '100%', label: 'Pass Rate' },
-                { icon: Award, value: '35+', label: 'Sessions Covered' },
-                { icon: BookOpen, value: '200+', label: 'Toppers Listed' },
-                { icon: GraduationCap, value: '15+', label: 'Years of Excellence' },
+                // Counted from the topper lists, so the numbers always match what is shown
+                { icon: Trophy, value: String(class10Sessions.length + class12Sessions.length), label: 'Sessions Listed' },
+                { icon: Award, value: String(class10Sessions.reduce((n, s) => n + s.toppers.length, 0)), label: 'Class 10 Toppers' },
+                { icon: BookOpen, value: String(class12Sessions.reduce((n, s) => n + s.toppers.length, 0)), label: 'Class 12 Toppers' },
+                { icon: GraduationCap, value: String(schoolInfo.established), label: 'Established' },
               ].map((stat, index) => (
                 <div key={index} className="text-center p-6 bg-white rounded-2xl shadow-md border border-gray-100">
-                  <stat.icon className="w-8 h-8 text-primary-600 mx-auto mb-3" />
+                  <stat.icon aria-hidden className="w-8 h-8 text-primary-700 mx-auto mb-3" />
                   <div className="text-3xl font-display font-bold text-primary-900">{stat.value}</div>
-                  <div className="text-gray-500 text-sm">{stat.label}</div>
+                  <div className="text-gray-600 text-sm">{stat.label}</div>
                 </div>
               ))}
             </div>

@@ -3,8 +3,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, Award, GraduationCap, Sparkles, Quote, BookOpen, Users, Heart, Star, Mail } from 'lucide-react'
-import { principalMessage } from '@/data/school'
-import { schoolInfo } from '@/data/school'
+import { principalMessage, schoolInfo, statistics } from '@/data/school'
+import { formatStat } from '@/lib/stats'
 import { m } from 'framer-motion'
 
 const messageParagraphs = [
@@ -22,11 +22,13 @@ const messageParagraphs = [
   },
 ]
 
+// Figures come from the shared statistics so every page shows the same numbers
+const statFor = (label: string) => statistics.find(s => s.label === label)
 const highlights = [
-  { icon: GraduationCap, label: 'CISCE Affiliated', value: 'Since 1969' },
-  { icon: Users, label: 'Student Strength', value: '2,600+' },
-  { icon: Award, label: 'Staff Members', value: '112+' },
-  { icon: Star, label: 'Years Legacy', value: '56+' },
+  { icon: GraduationCap, label: 'CISCE Affiliated', value: `Since ${schoolInfo.established}` },
+  { icon: Users, label: 'Students Strength', value: formatStat(statFor('Students Strength')!) },
+  { icon: Award, label: 'Teacher Strength', value: formatStat(statFor('Teacher Strength')!) },
+  { icon: Star, label: 'Glorious Years', value: formatStat(statFor('Glorious Years')!) },
 ]
 
 export default function PrincipalPage() {
@@ -341,7 +343,7 @@ export default function PrincipalPage() {
                 <m.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 bg-primary-600 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2"
+                  className="px-8 py-4 bg-primary-700 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2"
                 >
                   Back to About <ArrowRight className="w-5 h-5" />
                 </m.button>

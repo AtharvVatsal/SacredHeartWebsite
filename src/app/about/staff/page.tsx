@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { staffMembers as defaultStaffMembers } from '@/data/school'
+import { staffMembers as defaultStaffMembers, statistics } from '@/data/school'
+import { formatStat } from '@/lib/stats'
 import { Search, Users, BookOpen, Monitor, Clipboard, ArrowLeft, Sparkles, Award, Heart, GraduationCap, Mail, User } from 'lucide-react'
 import { m } from 'framer-motion'
 import type { StaffMember } from '@/types'
@@ -25,17 +26,20 @@ const departmentIcons: Record<string, React.ElementType> = {
   'Cultural': Users,
 }
 
-const departments = [
-  { name: 'All', icon: Users, color: 'from-gray-400 to-gray-500' },
-  { name: 'Administration', icon: Award, color: 'from-amber-400 to-orange-500' },
-  { name: 'Office Staff', icon: Clipboard, color: 'from-blue-400 to-indigo-500' },
-  { name: 'English', icon: BookOpen, color: 'from-pink-400 to-rose-500' },
-  { name: 'Mathematics', icon: BookOpen, color: 'from-purple-400 to-violet-500' },
-  { name: 'Science', icon: BookOpen, color: 'from-emerald-400 to-green-500' },
-  { name: 'Commerce', icon: BookOpen, color: 'from-cyan-400 to-teal-500' },
-  { name: 'Hindi', icon: BookOpen, color: 'from-red-400 to-orange-500' },
-  { name: 'Computer Science', icon: Monitor, color: 'from-blue-400 to-cyan-500' },
-]
+const OFFICE_ROLES = ['nurse', 'clerk', 'receptionist', 'it staff', 'librarian']
+
+function inDepartment(member: StaffMember, dept: string) {
+  if (dept === 'All' || member.department === dept) return true
+  const role = (member.role || '').toLowerCase()
+  return dept === 'Office Staff' && (role.includes('staff') || OFFICE_ROLES.includes(role))
+}
+
+// Filter chips come from the departments that actually have staff, largest first
+const departmentNames = Array.from(new Set(defaultStaffMembers.map(m => m.department).filter(Boolean)))
+const departmentCounts = Object.fromEntries(
+  departmentNames.map(d => [d, defaultStaffMembers.filter(m => inDepartment(m, d)).length])
+) as Record<string, number>
+const departments = ['All', ...departmentNames.sort((x, y) => departmentCounts[y] - departmentCounts[x] || x.localeCompare(y))]
 
 function getStaffImage(name: string, qualifications: string = ''): string {
   if (name === 'AARTI SHARMA') {
@@ -55,6 +59,7 @@ function getStaffImage(name: string, qualifications: string = ''): string {
   }
   
   const nameMap: Record<string, string> = {
+    'SR. ARCHANA': '/images/principal.webp',
     'POOJA SONI': '/images/Staff/Pooja Soni.webp',
     'ANSHU SHAROTRI': '/images/Staff/Anshu Sharotari.webp',
     'RANJAN DIXIT': '/images/Staff/Rajan Dixit.webp',
@@ -189,13 +194,13 @@ function StaffCard({ staff, index }: { staff: StaffMember, index: number }) {
           )}
         </div>
         
-        <div className="p-5">
-          <h3 className="font-bold text-primary-900 text-lg mb-1 truncate group-hover:text-primary-700 transition-colors">
+        <div className="p-4 sm:p-5">
+          <h3 className="font-bold text-primary-900 text-base sm:text-lg mb-1 break-words hyphens-auto group-hover:text-primary-700 transition-colors">
             {staff.name}
           </h3>
-          <p className="text-secondary-600 font-medium text-sm mb-2">{staff.role}</p>
+          <p className="text-secondary-800 font-medium text-sm mb-2">{staff.role}</p>
           {staff.qualifications && (
-            <p className="text-gray-500 text-xs line-clamp-2 pt-2 border-t border-gray-100">
+            <p className="text-gray-600 text-xs break-words pt-2 border-t border-gray-100">
               {staff.qualifications}
             </p>
           )}
@@ -209,34 +214,26 @@ export default function StaffPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedDept, setSelectedDept] = useState('All')
   const [searchVisible, setSearchVisible] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
-  
+  const lastScrollY = useRef(0)
+
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY
-      if (currentScrollY < 200) {
-        setSearchVisible(true)
-      } else if (currentScrollY > lastScrollY) {
-        setSearchVisible(false)
-      } else {
-        setSearchVisible(true)
-      }
-      setLastScrollY(currentScrollY)
+      setSearchVisible(currentScrollY < 200 || currentScrollY <= lastScrollY.current)
+      lastScrollY.current = currentScrollY
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastScrollY])
+  }, [])
   
   const staff = defaultStaffMembers
 
   const filteredStaff = staff.filter((staffMember: StaffMember) => {
-    const searchLower = searchTerm.toLowerCase()
-    const roleLower = (staffMember.role || '').toLowerCase()
+    const searchLower = searchTerm.trim().toLowerCase()
     const qualLower = (staffMember.qualifications || '').toLowerCase()
     const matchesSearch = staffMember.name.toLowerCase().includes(searchLower) || qualLower.includes(searchLower)
-    const matchesDept = selectedDept === 'All' || staffMember.department === selectedDept || 
-                       (selectedDept === 'Office Staff' && (roleLower.includes('staff') || roleLower === 'nurse' || roleLower === 'clerk' || roleLower === 'receptionist' || roleLower === 'it staff' || roleLower === 'librarian'))
+    const matchesDept = inDepartment(staffMember, selectedDept)
     return matchesSearch && matchesDept
   })
 
@@ -366,7 +363,7 @@ export default function StaffPage() {
                       {[
                         { value: '15+', label: 'Years Experience' },
                         { value: '5000+', label: 'Students Guided' },
-                        { value: '112+', label: 'Team Members' },
+                        { value: String(staff.length), label: 'Staff Listed Below' },
                       ].map((stat, i) => (
                         <m.div
                           key={i}
@@ -403,10 +400,11 @@ export default function StaffPage() {
           <div className="flex flex-col md:flex-row items-center gap-3">
             {/* Search Bar */}
             <div className="relative flex-1 w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <Search aria-hidden className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
               <input
-                type="text"
-                placeholder="Search staff..."
+                type="search"
+                aria-label="Search staff by name or qualification"
+                placeholder="Search by name or qualification..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-gray-50 text-sm"
@@ -414,28 +412,29 @@ export default function StaffPage() {
             </div>
             
             {/* Department Pills */}
-            <div className="flex flex-wrap gap-1.5 justify-center">
-              {departments.slice(0, 5).map((dept) => {
-                const Icon = dept.icon
-                const isActive = selectedDept === dept.name
+            <div className="flex gap-1.5 w-full md:w-auto overflow-x-auto md:flex-wrap md:justify-center pb-1 md:pb-0" role="group" aria-label="Filter by department">
+              {departments.map((dept) => {
+                const Icon = dept === 'All' ? Users : departmentIcons[dept] || BookOpen
+                const isActive = selectedDept === dept
                 return (
                   <button
-                    key={dept.name}
-                    onClick={() => setSelectedDept(dept.name)}
-                    className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full font-medium text-xs transition-all ${
-                      isActive 
-                        ? `bg-gradient-to-r ${dept.color} text-white shadow` 
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    type="button"
+                    key={dept}
+                    aria-pressed={isActive}
+                    onClick={() => setSelectedDept(dept)}
+                    className={`shrink-0 inline-flex items-center gap-1 px-3 py-1.5 min-h-[32px] rounded-full font-medium text-xs whitespace-nowrap transition-all ${
+                      isActive ? 'bg-primary-700 text-white shadow' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
-                    <Icon className="w-3 h-3" />
-                    {dept.name}
+                    <Icon aria-hidden className="w-3 h-3" />
+                    {dept}
+                    {dept !== 'All' && <span className={isActive ? 'text-white/90' : 'text-gray-600'}>({departmentCounts[dept]})</span>}
                   </button>
                 )
               })}
             </div>
-            
-            <p className="text-xs text-gray-500 text-center mt-2 md:hidden">
+
+            <p className="text-xs text-gray-600 text-center md:whitespace-nowrap" aria-live="polite">
               {filteredStaff.length} staff members
             </p>
           </div>
@@ -463,7 +462,7 @@ export default function StaffPage() {
                   <Users className="w-12 h-12 text-gray-400" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-700 mb-2">No Staff Found</h3>
-                <p className="text-gray-500">Try adjusting your search or filter criteria</p>
+                <p className="text-gray-600">Try adjusting your search or filter criteria</p>
               </m.div>
             )}
           </div>
@@ -488,9 +487,10 @@ export default function StaffPage() {
             viewport={{ once: true }}
           >
             {[
-              { icon: GraduationCap, value: '112+', label: 'Teaching Staff' },
-              { icon: Users, value: '90+', label: 'Qualified Teachers' },
-              { icon: Award, value: '56+', label: 'Years Legacy' },
+              // Shared figures + the count of the list above, so nothing contradicts another page
+              { icon: GraduationCap, value: formatStat(statistics.find(s => s.label === 'Teacher Strength')!), label: 'Teacher Strength' },
+              { icon: Users, value: String(staff.length), label: 'Staff Listed' },
+              { icon: Award, value: formatStat(statistics.find(s => s.label === 'Glorious Years')!), label: 'Glorious Years' },
               { icon: Heart, value: '100%', label: 'Dedication' },
             ].map((stat, index) => (
               <m.div
@@ -534,7 +534,7 @@ export default function StaffPage() {
                 <m.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 bg-primary-600 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2"
+                  className="px-8 py-4 bg-primary-700 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2"
                 >
                   Back to About <ArrowLeft className="w-5 h-5" />
                 </m.button>

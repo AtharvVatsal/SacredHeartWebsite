@@ -2,13 +2,17 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { MapPin, Phone, Mail, Facebook, Twitter, Linkedin, Instagram, ArrowRight } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { MapPin, Phone, Mail, ArrowRight, ExternalLink } from 'lucide-react'
 import { m } from 'framer-motion'
 import { schoolInfo, navigation, quickLinks } from '@/data/school'
 import { ParallaxSection } from '@/components/animations'
+import { schoolEmail, telHref } from '@/lib/contact'
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear()
+  // Set after mount: the page is pre-rendered at build time, so a year baked into the HTML would go stale (and mismatch on hydration)
+  const [currentYear, setCurrentYear] = useState<number | null>(null)
+  useEffect(() => setCurrentYear(new Date().getFullYear()), [])
 
   return (
     <footer className="bg-gradient-to-b from-primary-900 via-primary-950 to-[#031c0d] text-white relative overflow-hidden">
@@ -50,32 +54,13 @@ export default function Footer() {
                 />
               </div>
               <div>
-                <h3 className="font-display text-lg font-semibold">{schoolInfo.name}</h3>
+                <h2 className="font-display text-lg font-semibold">{schoolInfo.name}</h2>
                 <p className="text-xs text-gray-400">Since {schoolInfo.established}</p>
               </div>
             </div>
-            <p className="text-gray-300 text-sm mb-5 leading-relaxed">
+            <p className="text-gray-300 text-sm leading-relaxed">
               {schoolInfo.tagline}. {schoolInfo.affiliation} affiliated school run by {schoolInfo.management}.
             </p>
-            <div className="flex gap-3">
-              {[
-                { icon: Facebook, href: '#', color: 'hover:text-blue-500 hover:shadow-[0_0_15px_rgba(59,130,246,0.5)]' },
-                { icon: Twitter, href: '#', color: 'hover:text-sky-400 hover:shadow-[0_0_15px_rgba(56,189,248,0.5)]' },
-                { icon: Linkedin, href: '#', color: 'hover:text-blue-600 hover:shadow-[0_0_15px_rgba(37,99,235,0.5)]' },
-                { icon: Instagram, href: '#', color: 'hover:text-pink-500 hover:shadow-[0_0_15px_rgba(236,72,153,0.5)]' },
-              ].map((social, index) => (
-                <m.a
-                  key={index}
-                  href={social.href}
-                  aria-label={social.icon.displayName || 'social-link'}
-                  className={`w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-gray-300 ${social.color} transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] backdrop-blur-sm border border-white/10`}
-                  whileHover={{ scale: 1.12, rotate: -6, backgroundColor: 'rgba(255,255,255,0.2)', y: -2 }}
-                  whileTap={{ scale: 0.92 }}
-                >
-                  <social.icon size={18} />
-                </m.a>
-              ))}
-            </div>
           </m.div>
 
           {/* Quick Links */}
@@ -85,10 +70,10 @@ export default function Footer() {
             transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             viewport={{ once: true, margin: '-50px' }}
           >
-            <h3 className="font-display text-lg font-semibold mb-5 flex items-center gap-2">
+            <h2 className="font-display text-lg font-semibold mb-5 flex items-center gap-2">
               <span className="w-1 h-5 bg-secondary-400 rounded-full"></span>
               Quick Links
-            </h3>
+            </h2>
             <ul className="space-y-3">
               {quickLinks.map((link, index) => {
                 const key = link.href === '#' ? `ql-${index}` : link.href
@@ -114,10 +99,10 @@ export default function Footer() {
             transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             viewport={{ once: true, margin: '-50px' }}
           >
-            <h3 className="font-display text-lg font-semibold mb-5 flex items-center gap-2">
+            <h2 className="font-display text-lg font-semibold mb-5 flex items-center gap-2">
               <span className="w-1 h-5 bg-secondary-400 rounded-full"></span>
               Navigate
-            </h3>
+            </h2>
             <ul className="space-y-3">
               {navigation.map((item) => (
                 <li key={item.href}>
@@ -132,13 +117,26 @@ export default function Footer() {
                     <ul className="ml-4 mt-2 space-y-2">
                       {item.children.map((child) => (
                         <li key={child.href}>
-                          <Link 
-                            href={child.href} 
-                            className="text-gray-400 hover:text-gray-300 text-sm transition-colors block py-0.5 relative overflow-hidden group/link"
-                          >
-                            <span className="relative z-10">{child.text}</span>
-                            <span className="absolute bottom-0 left-0 w-full h-[1px] bg-primary-500 transform scale-x-0 origin-left transition-transform duration-300 group-hover/link:scale-x-100" />
-                          </Link>
+                          {child.external ? (
+                            <a
+                              href={child.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-gray-400 hover:text-gray-300 text-sm transition-colors inline-flex items-center gap-1.5 py-0.5"
+                            >
+                              {child.text}
+                              <ExternalLink aria-hidden size={12} />
+                              <span className="sr-only">(opens in a new tab)</span>
+                            </a>
+                          ) : (
+                            <Link
+                              href={child.href}
+                              className="text-gray-400 hover:text-gray-300 text-sm transition-colors block py-0.5 relative overflow-hidden group/link"
+                            >
+                              <span className="relative z-10">{child.text}</span>
+                              <span className="absolute bottom-0 left-0 w-full h-[1px] bg-primary-500 transform scale-x-0 origin-left transition-transform duration-300 group-hover/link:scale-x-100" />
+                            </Link>
+                          )}
                         </li>
                       ))}
                     </ul>
@@ -155,10 +153,10 @@ export default function Footer() {
             transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
             viewport={{ once: true, margin: '-50px' }}
           >
-            <h3 className="font-display text-lg font-semibold mb-5 flex items-center gap-2">
+            <h2 className="font-display text-lg font-semibold mb-5 flex items-center gap-2">
               <span className="w-1 h-5 bg-secondary-400 rounded-full"></span>
               Contact Us
-            </h3>
+            </h2>
             <ul className="space-y-4">
               <li className="flex items-start gap-3 group">
                 <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-primary-700 transition-colors">
@@ -175,8 +173,8 @@ export default function Footer() {
                   <Phone size={18} className="text-secondary-400 group-hover:text-white transition-colors" />
                 </div>
                 <div className="text-gray-300 text-sm group-hover:text-white transition-colors">
-                  {schoolInfo.contact.phones.map((phone, i) => (
-                    <div key={i}>{phone}</div>
+                  {schoolInfo.contact.phones.map(phone => (
+                    <a key={phone} href={telHref(phone)} className="block py-0.5 hover:underline">{phone}</a>
                   ))}
                 </div>
               </li>
@@ -184,7 +182,7 @@ export default function Footer() {
                 <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-primary-700 transition-colors">
                   <Mail size={18} className="text-secondary-400 group-hover:text-white transition-colors" />
                 </div>
-                <span className="text-gray-300 text-sm group-hover:text-white transition-colors">{schoolInfo.contact.emails[0]}</span>
+                <a href={`mailto:${schoolEmail}`} className="text-gray-300 text-sm group-hover:text-white transition-colors hover:underline break-all">{schoolEmail}</a>
               </li>
             </ul>
           </m.div>
@@ -196,7 +194,7 @@ export default function Footer() {
         <div className="container mx-auto px-4 py-5">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-400 text-sm">
-              Copyright © {currentYear} <span className="text-white font-medium">{schoolInfo.name}</span> - All Rights Reserved
+              Copyright ©{currentYear ? ` ${currentYear}` : ''} <span className="text-white font-medium">{schoolInfo.name}</span> - All Rights Reserved
             </p>
             <div className="flex gap-6">
               <Link href="/privacy" className="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</Link>

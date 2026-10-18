@@ -3,6 +3,7 @@
 import { FileText, AlertCircle, Calendar, CheckCircle, Clock, Shield, Phone, ArrowLeft } from 'lucide-react'
 import { m } from 'framer-motion'
 import Link from 'next/link'
+import { schoolPhones, telHref } from '@/lib/contact'
 
 export default function LeaveAbsencePage() {
   const rules = [
@@ -237,10 +238,13 @@ export default function LeaveAbsencePage() {
             <p className="text-primary-200 text-lg mb-8">
               For any clarification regarding leave policies, please contact the school office.
             </p>
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full border border-white/20">
-              <Phone className="w-5 h-5 text-secondary-400" />
-              <span>01892-222428</span>
-            </div>
+            <a
+              href={telHref(schoolPhones[0])}
+              className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full border border-white/20 hover:bg-white/20 transition-colors"
+            >
+              <Phone aria-hidden className="w-5 h-5 text-secondary-400" />
+              <span>Call {schoolPhones[0]}</span>
+            </a>
           </m.div>
         </div>
       </section>

@@ -1,6 +1,8 @@
 'use client'
 
+import { useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Home, ArrowLeft, Search } from 'lucide-react'
 import { m } from 'framer-motion'
 import { FadeIn } from '@/components/animations'
@@ -8,6 +10,20 @@ import { FadeIn } from '@/components/animations'
 const EASE = [0.16, 1, 0.3, 1] as const
 
 export default function NotFound() {
+  const router = useRouter()
+
+  // not-found can't export metadata from a client component, so set the tab title here
+  useEffect(() => {
+    document.title = 'Page not found | Sacred Heart Sr. Sec. School'
+  }, [])
+
+  // history.back() would leave the site when the visitor arrived straight from an outside link
+  const goBack = () => {
+    const cameFromThisSite = document.referrer.startsWith(window.location.origin)
+    if (cameFromThisSite && window.history.length > 1) router.back()
+    else router.push('/')
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex items-center justify-center relative overflow-hidden py-20">
       {/* Animated background blobs */}
@@ -85,7 +101,7 @@ export default function NotFound() {
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               transition={{ delay: 0.45, duration: 0.7, ease: EASE }}
             >
-              <p className="text-sm text-gray-500 mb-3 font-medium">You might be looking for:</p>
+              <p className="text-sm text-gray-600 mb-3 font-medium">You might be looking for:</p>
               <div className="flex flex-wrap justify-center gap-2">
                 {[
                   { label: 'About Us', href: '/about' },
@@ -113,8 +129,8 @@ export default function NotFound() {
 
             {/* Back button */}
             <m.button
-              onClick={() => window.history.back()}
-              className="mt-8 inline-flex items-center gap-2 text-gray-500 hover:text-primary-700 transition-colors text-sm group"
+              onClick={goBack}
+              className="mt-8 inline-flex items-center gap-2 py-2 px-3 text-gray-600 hover:text-primary-700 transition-colors text-sm group"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}

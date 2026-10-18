@@ -25,15 +25,16 @@ export default function OfficeBearersPage() {
 
   const currentData = officeBearers.find(o => o.year === selectedYear) || officeBearers[0]
 
-  const houseColors: Record<string, { bg: string; text: string; border: string }> = {
-    'Eagles': { bg: 'bg-red-500', text: 'text-red-500', border: 'border-red-200' },
-    'Pelicans': { bg: 'bg-yellow-400', text: 'text-yellow-500', border: 'border-yellow-200' },
-    'Pioneers': { bg: 'bg-green-500', text: 'text-green-500', border: 'border-green-200' },
-    'Trekkers': { bg: 'bg-blue-500', text: 'text-blue-500', border: 'border-blue-200' },
-    'Lotus': { bg: 'bg-pink-500', text: 'text-pink-500', border: 'border-pink-200' },
-    'Pansy': { bg: 'bg-purple-500', text: 'text-purple-500', border: 'border-purple-200' },
-    'Rose': { bg: 'bg-red-400', text: 'text-red-500', border: 'border-red-200' },
-    'Shamrock': { bg: 'bg-emerald-500', text: 'text-emerald-500', border: 'border-emerald-200' },
+  // House colours, dark enough for readable text on top (fg)
+  const houseColors: Record<string, { bg: string; fg: string; text: string; border: string }> = {
+    'Eagles': { bg: 'bg-red-700', fg: 'text-white', text: 'text-red-700', border: 'border-red-200' },
+    'Pelicans': { bg: 'bg-yellow-400', fg: 'text-gray-900', text: 'text-yellow-700', border: 'border-yellow-200' },
+    'Pioneers': { bg: 'bg-green-700', fg: 'text-white', text: 'text-green-700', border: 'border-green-200' },
+    'Trekkers': { bg: 'bg-blue-700', fg: 'text-white', text: 'text-blue-700', border: 'border-blue-200' },
+    'Lotus': { bg: 'bg-pink-700', fg: 'text-white', text: 'text-pink-700', border: 'border-pink-200' },
+    'Pansy': { bg: 'bg-purple-700', fg: 'text-white', text: 'text-purple-700', border: 'border-purple-200' },
+    'Rose': { bg: 'bg-red-700', fg: 'text-white', text: 'text-red-700', border: 'border-red-200' },
+    'Shamrock': { bg: 'bg-emerald-700', fg: 'text-white', text: 'text-emerald-700', border: 'border-emerald-200' },
   }
 
   const sortedHouses = [...currentData.houseCaptains].sort((a, b) => {
@@ -116,6 +117,8 @@ export default function OfficeBearersPage() {
             {officeBearers.map((ob) => (
               <m.button
                 key={ob.year}
+                type="button"
+                aria-pressed={selectedYear === ob.year}
                 onClick={() => setSelectedYear(ob.year)}
                 className={`px-6 py-2 rounded-full font-medium transition-all ${
                   selectedYear === ob.year
@@ -310,12 +313,12 @@ export default function OfficeBearersPage() {
                 viewport={{ once: true }}
               >
                 {sortedHouses.map((house) => {
-                  const colors = houseColors[house.house] || { bg: 'bg-primary-600', text: 'text-primary-600', border: 'border-primary-200' }
+                  const colors = houseColors[house.house] || { bg: 'bg-primary-700', fg: 'text-white', text: 'text-primary-700', border: 'border-primary-200' }
                   return (
                     <m.div
                       key={house.house}
                       variants={itemVariants}
-                      className={`rounded-xl p-5 text-white ${colors.bg} relative overflow-hidden`}
+                      className={`rounded-xl p-5 ${colors.fg} ${colors.bg} relative overflow-hidden`}
                       whileHover={{ y: -5 }}
                     >
                       <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10" />
@@ -326,11 +329,11 @@ export default function OfficeBearersPage() {
                         </div>
                         <div className="space-y-2 text-sm">
                           <div className="flex justify-between">
-                            <span className="opacity-75">Captain</span>
+                            <span>Captain</span>
                             <span className="font-medium truncate ml-2">{house.captain}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="opacity-75">Vice</span>
+                            <span>Vice</span>
                             <span className="font-medium truncate ml-2">{house.viceCaptain}</span>
                           </div>
                         </div>
@@ -391,12 +394,12 @@ export default function OfficeBearersPage() {
                   viewport={{ once: true }}
                 >
                   {currentData.juniorCaptains.map((junior) => {
-                    const colors = houseColors[junior.house] || { bg: 'bg-primary-600', text: 'text-primary-600', border: 'border-primary-200' }
+                    const colors = houseColors[junior.house] || { bg: 'bg-primary-700', fg: 'text-white', text: 'text-primary-700', border: 'border-primary-200' }
                     return (
                       <m.div
                         key={junior.house}
                         variants={itemVariants}
-                        className={`rounded-xl p-5 text-white ${colors.bg}`}
+                        className={`rounded-xl p-5 ${colors.fg} ${colors.bg}`}
                         whileHover={{ y: -5 }}
                       >
                         <div className="flex items-center gap-2 mb-3">
@@ -405,11 +408,11 @@ export default function OfficeBearersPage() {
                         </div>
                         <div className="space-y-2 text-sm">
                           <div className="flex justify-between">
-                            <span className="opacity-75">Captain</span>
+                            <span>Captain</span>
                             <span className="font-medium truncate ml-2">{junior.captain}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="opacity-75">Vice</span>
+                            <span>Vice</span>
                             <span className="font-medium truncate ml-2">{junior.viceCaptain}</span>
                           </div>
                         </div>

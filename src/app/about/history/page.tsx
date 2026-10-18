@@ -18,7 +18,7 @@ const milestones = [
     year: '1901',
     title: 'Arrival in India',
     subtitle: 'Beginning the Indian Journey',
-    content: 'The congregation established its presence in India, starting in Dalhousie, and Amritsar became well-established hubs for educational work.',
+    content: 'The congregation established its presence in India, starting in Dalhousie; Dalhousie and Amritsar became well-established hubs for its educational work.',
     icon: '🇮🇳',
   },
   {
@@ -83,7 +83,9 @@ function MilestoneCard({ milestone, index, isActive, onClick }: { milestone: typ
       className="relative"
     >
       <m.button
+        type="button"
         onClick={onClick}
+        aria-expanded={isActive}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         className={`w-full text-left p-6 rounded-2xl border-2 transition-all duration-300 ${
@@ -305,9 +307,6 @@ export default function HistoryPage() {
       <section className="py-24 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 relative overflow-hidden">
         <div className="absolute inset-0">
           <m.div 
-            className="absolute top-0 left-0 w-full h-full bg-[url('/noise.png')] opacity-5 mix-blend-overlay"
-          />
-          <m.div 
             className="absolute top-20 left-20 w-72 h-72 bg-secondary-500/10 rounded-full blur-[100px]"
             animate={{ x: [0, 50, 0], y: [0, 30, 0] }}
             transition={{ duration: 8, repeat: Infinity }}
@@ -517,7 +516,7 @@ export default function HistoryPage() {
                 <m.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 bg-primary-600 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all"
+                  className="px-8 py-4 bg-primary-700 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all"
                 >
                   Back to About
                 </m.button>

@@ -19,7 +19,6 @@ export default function RulesPage() {
             animate={{ scale: [1.2, 1, 1.2], opacity: [0.3, 0.2, 0.3] }}
             transition={{ duration: 5, repeat: Infinity }}
           />
-          <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5 mix-blend-overlay pointer-events-none" />
         </div>
 
         <div className="container mx-auto px-4 relative z-10">

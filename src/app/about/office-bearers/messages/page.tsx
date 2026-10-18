@@ -158,7 +158,6 @@ export default function MessagesPage() {
                   animate={{ scale: [1, 1.1, 1] }}
                   transition={{ duration: 4, repeat: Infinity }}
                 />
-                <div className="absolute top-0 left-0 w-full h-full bg-[url('/noise.png')] opacity-5 mix-blend-overlay" />
                 
                 <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
                   {/* Photo */}
@@ -235,7 +234,6 @@ export default function MessagesPage() {
                   animate={{ scale: [1, 1.1, 1] }}
                   transition={{ duration: 4, repeat: Infinity }}
                 />
-                <div className="absolute top-0 left-0 w-full h-full bg-[url('/noise.png')] opacity-5 mix-blend-overlay" />
                 
                 <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
                   {/* Photo */}

@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { ArrowLeft, Scale, FileText, AlertTriangle, Users, Globe, BookOpen, Mail } from 'lucide-react'
 import { m } from 'framer-motion'
+import { schoolInfo } from '@/data/school'
 
 const sections = [
   {
@@ -81,8 +82,8 @@ Sacred Heart Senior Secondary School
 Sidhpur, Dharamshala
 Himachal Pradesh - 176057
 
-Email: info@sacredheartsidhhpur.edu.in
-Phone: [School Contact Number]
+Email: ${schoolInfo.contact.emails.join(', ')}
+Phone: ${schoolInfo.contact.phones.join(', ')}
 
 We will respond to your inquiries as soon as reasonably possible.`
   },
@@ -172,7 +173,7 @@ export default function TermsPage() {
                 </div>
               </div>
               <p className="text-gray-700 leading-relaxed text-lg">
-                Welcome to the website of Sacred Heart Senior Secondary School. These Terms of Use (&quot;Terms&quot;) govern your access to and use of our website located at [website URL]. By using this website, you agree to comply with and be bound by these Terms. Please read them carefully before using our site.
+                Welcome to the website of Sacred Heart Senior Secondary School. These Terms of Use (&quot;Terms&quot;) govern your access to and use of this website. By using this website, you agree to comply with and be bound by these Terms. Please read them carefully before using our site.
               </p>
             </div>
           </m.div>

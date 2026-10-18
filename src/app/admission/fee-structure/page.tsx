@@ -210,7 +210,7 @@ export default function FeeStructurePage() {
             </p>
             <Link 
               href="/contact"
-              className="inline-flex items-center gap-2 bg-primary-600 text-white px-8 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:bg-primary-700 transition-all"
+              className="inline-flex items-center gap-2 bg-primary-700 text-white px-8 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:bg-primary-800 transition-all"
             >
               <Building className="w-5 h-5" />
               Contact School

@@ -328,7 +328,7 @@ export default function SyllabusHomeworkPage() {
             </p>
             <Link 
               href="/admission"
-              className="inline-flex items-center gap-2 bg-primary-600 text-white px-8 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:bg-primary-700 transition-all"
+              className="inline-flex items-center gap-2 bg-primary-700 text-white px-8 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:bg-primary-800 transition-all"
             >
               Apply for Admission
             </Link>

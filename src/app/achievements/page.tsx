@@ -2,20 +2,14 @@
 
 import Link from 'next/link'
 import { ArrowRight, Trophy, Star, Medal, Sparkles, Award } from 'lucide-react'
-import { achievements as defaultAchievements, class10Toppers as defaultClass10Toppers, class12Toppers as defaultClass12Toppers } from '@/data/school'
-import { useAchievements, useClass10Toppers, useClass12Toppers } from '@/lib/useCMS'
-import type { Achievement, Topper } from '@/types'
+import { achievements } from '@/data/school'
+import { class10Sessions, class12Sessions, rankToppers, type TopperSession } from '@/data/toppers'
+import type { Achievement } from '@/types'
 import { m } from 'framer-motion'
 import { FadeIn } from '@/components/animations'
 
 export default function AchievementsPage() {
-  const { data: achievements } = useAchievements()
-  const { data: class10 } = useClass10Toppers()
-  const { data: class12 } = useClass12Toppers()
-
-  const achvs: Achievement[] = achievements || defaultAchievements
-  const top10: Topper[] = class10 || defaultClass10Toppers
-  const top12: Topper[] = class12 || defaultClass12Toppers
+  const achvs: Achievement[] = achievements
 
   return (
     <>
@@ -32,7 +26,6 @@ export default function AchievementsPage() {
             animate={{ scale: [1.2, 1, 1.2], opacity: [0.3, 0.2, 0.3] }}
             transition={{ duration: 5, repeat: Infinity }}
           />
-          <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5 mix-blend-overlay pointer-events-none" />
         </div>
 
         {/* Floating elements */}
@@ -109,9 +102,9 @@ export default function AchievementsPage() {
               {achvs.map((achievement: Achievement) => (
                 <div key={achievement.id} className="bg-white p-6 rounded-xl shadow-sm border">
                   <div className="flex items-center gap-2 mb-3">
-                    <Trophy className="w-5 h-5 text-secondary-500" />
-                    <span className="text-sm font-medium text-secondary-600">{achievement.year}</span>
-                    <span className="text-xs px-2 py-1 bg-gray-100 rounded-full capitalize">{achievement.category}</span>
+                    <Trophy aria-hidden className="w-5 h-5 text-secondary-600" />
+                    <span className="text-sm font-semibold text-secondary-800">{achievement.year}</span>
+                    <span className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded-full capitalize">{achievement.category}</span>
                   </div>
                   <h3 className="font-display font-bold text-lg text-primary-900 mb-2">
                     {achievement.title}
@@ -133,57 +126,44 @@ export default function AchievementsPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="grid md:grid-cols-2 gap-8">
-              <div>
-                <h2 className="text-2xl font-display font-bold text-primary-900 mb-6">
-                  Class 10 Toppers 2024
-                </h2>
-                <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                  {top10.slice(0, 5).map((topper: Topper, index: number) => (
-                    <div key={topper.id} className="flex items-center justify-between p-4 border-b last:border-0">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
-                          index === 0 ? 'bg-secondary-400 text-primary-900' : 'bg-gray-100 text-gray-600'
-                        }`}>
-                          {index + 1}
-                        </div>
-                        <span className="font-medium">{topper.name}</span>
-                      </div>
-                      <span className="font-display font-bold text-primary-900">{topper.percentage}%</span>
-                    </div>
-                  ))}
-                </div>
-                <Link href="/achievements/toppers" className="inline-flex items-center gap-2 mt-4 text-primary-900 font-semibold">
-                  View All <ArrowRight size={16} />
-                </Link>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-display font-bold text-primary-900 mb-6">
-                  Class 12 Toppers 2024
-                </h2>
-                <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                  {top12.slice(0, 5).map((topper: Topper, index: number) => (
-                    <div key={topper.id} className="flex items-center justify-between p-4 border-b last:border-0">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
-                          index === 0 ? 'bg-secondary-400 text-primary-900' : 'bg-gray-100 text-gray-600'
-                        }`}>
-                          {index + 1}
-                        </div>
-                        <span className="font-medium">{topper.name}</span>
-                      </div>
-                      <span className="font-display font-bold text-primary-900">{topper.percentage}%</span>
-                    </div>
-                  ))}
-                </div>
-                <Link href="/achievements/toppers" className="inline-flex items-center gap-2 mt-4 text-primary-900 font-semibold">
-                  View All <ArrowRight size={16} />
-                </Link>
-              </div>
+              <TopFive classLabel="Class 10" session={class10Sessions[0]} href="/achievements/toppers/10th" />
+              <TopFive classLabel="Class 12" session={class12Sessions[0]} href="/achievements/toppers/12th" />
             </div>
           </div>
         </div>
       </section>
     </>
+  )
+}
+
+function TopFive({ classLabel, session, href }: { classLabel: string; session: TopperSession; href: string }) {
+  const top = rankToppers(session.toppers).slice(0, 5)
+  return (
+    <div>
+      <h2 className="text-2xl font-display font-bold text-primary-900 mb-6">
+        {classLabel} Toppers {session.year}
+      </h2>
+      <ol className="bg-white rounded-xl shadow-sm overflow-hidden">
+        {top.map(topper => (
+          <li key={topper.id} className="flex items-center justify-between gap-3 p-4 border-b last:border-0">
+            <div className="flex items-center gap-3 min-w-0">
+              <span
+                className={`w-8 h-8 shrink-0 rounded-full flex items-center justify-center font-bold ${
+                  topper.rank === 1 ? 'bg-secondary-400 text-primary-900' : 'bg-gray-100 text-gray-700'
+                }`}
+                aria-label={`Rank ${topper.rank}`}
+              >
+                {topper.rank}
+              </span>
+              <span className="font-medium break-words">{topper.name}</span>
+            </div>
+            <span className="font-display font-bold text-primary-900 shrink-0">{topper.percentage}%</span>
+          </li>
+        ))}
+      </ol>
+      <Link href={href} className="inline-flex items-center gap-2 mt-4 text-primary-800 font-semibold hover:underline">
+        View all {classLabel} toppers <ArrowRight aria-hidden size={16} />
+      </Link>
+    </div>
   )
 }

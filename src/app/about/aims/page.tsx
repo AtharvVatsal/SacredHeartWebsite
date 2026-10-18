@@ -202,7 +202,9 @@ export default function AimsPage() {
               <div className="space-y-3">
                 {scjmVision.map((item, index) => (
                   <m.button
+                    type="button"
                     key={index}
+                    aria-pressed={activeVisionIndex === index}
                     onClick={() => setActiveVisionIndex(index)}
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -388,7 +390,7 @@ export default function AimsPage() {
                 <m.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 bg-primary-600 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2"
+                  className="px-8 py-4 bg-primary-700 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2"
                 >
                   Learn More About Us <ArrowRight className="w-5 h-5" />
                 </m.button>

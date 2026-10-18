@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight, Camera, Award, BookOpen, Trophy, Palette, Heart, Calendar, Sparkles, Star, GraduationCap, Users, HeartHandshake, X, ZoomIn, ZoomOut, Filter, Image as ImageIcon } from 'lucide-react'
 import { m } from 'framer-motion'
 import { FadeIn, StaggerContainer, FadeInItem, ParallaxSection } from '@/components/animations'
+import { useDialog } from '@/lib/useDialog'
 
 const events = [
   { id: 'annual-function', name: 'Annual Function', file: 'AnuualFunction.webp', icon: Star, description: 'Annual day celebration with cultural performances', category: 'cultural' },
@@ -51,8 +52,8 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } },
 }
 
-function Lightbox({ event, onClose, allEvents, currentIndex, onNavigate }: { 
-  event: typeof events[0]; 
+function Lightbox({ event, onClose, allEvents, currentIndex, onNavigate }: {
+  event: typeof events[0];
   onClose: () => void;
   allEvents: typeof events;
   currentIndex: number;
@@ -62,12 +63,15 @@ function Lightbox({ event, onClose, allEvents, currentIndex, onNavigate }: {
   const [isLoading, setIsLoading] = useState(true)
   const [hasError, setHasError] = useState(false)
   const [zoom, setZoom] = useState(1)
+  const dialogRef = useRef<HTMLDivElement>(null)
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setIsOpen(false)
     setZoom(1)
-    setTimeout(onClose, 300)
-  }
+    setTimeout(onClose, 200)
+  }, [onClose])
+
+  useDialog({ open: isOpen, onClose: handleClose, containerRef: dialogRef })
 
   const handlePrev = useCallback(() => {
     if (currentIndex > 0) {
@@ -90,11 +94,11 @@ function Lightbox({ event, onClose, allEvents, currentIndex, onNavigate }: {
   const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.25, 3))
   const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.25, 0.5))
 
+  // Escape and Tab are handled by useDialog
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') handlePrev()
       else if (e.key === 'ArrowRight') handleNext()
-      else if (e.key === 'Escape') handleClose()
       else if (e.key === '+' || e.key === '=') handleZoomIn()
       else if (e.key === '-') handleZoomOut()
     }
@@ -104,124 +108,83 @@ function Lightbox({ event, onClose, allEvents, currentIndex, onNavigate }: {
 
   if (!isOpen) return null
 
+  const iconButton = 'w-12 h-12 shrink-0 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors border border-white/20 disabled:opacity-40 disabled:cursor-not-allowed'
+
   return (
-    <m.div 
-      className="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm flex items-center justify-center"
+    <m.div
+      ref={dialogRef}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="lightbox-title"
+      tabIndex={-1}
+      data-backdrop
+      className="fixed inset-0 z-[60] bg-black/95 flex flex-col outline-none"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      onClick={handleClose}
+      // A click on the dark area (not on the photo or a control) closes the viewer
+      onClick={(e) => { if ((e.target as HTMLElement).dataset.backdrop !== undefined) handleClose() }}
     >
-      {/* Close button */}
-      <m.button 
-        className="absolute top-4 right-4 w-14 h-14 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all z-50 border border-white/20"
-        onClick={handleClose}
-        whileHover={{ scale: 1.1, rotate: 90 }}
-        whileTap={{ scale: 0.9 }}
-      >
-        <X size={24} />
-      </m.button>
-
-      {/* Previous button */}
-      {currentIndex > 0 && (
-        <m.button 
-          className="absolute left-4 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all z-50 border border-white/20"
-          onClick={(e) => { e.stopPropagation(); handlePrev() }}
-          whileHover={{ scale: 1.1, x: -5 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <ArrowLeft size={24} />
-        </m.button>
-      )}
-
-      {/* Next button */}
-      {currentIndex < allEvents.length - 1 && (
-        <m.button 
-          className="absolute right-4 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all z-50 border border-white/20"
-          onClick={(e) => { e.stopPropagation(); handleNext() }}
-          whileHover={{ scale: 1.1, x: 5 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <ArrowRight size={24} />
-        </m.button>
-      )}
-
-      {/* Zoom controls */}
-      <div className="absolute top-4 left-4 flex gap-2 z-50">
-        <m.button 
-          className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all border border-white/20"
-          onClick={(e) => { e.stopPropagation(); handleZoomOut() }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          disabled={zoom <= 0.5}
-        >
-          <ZoomOut size={20} />
-        </m.button>
-        <m.button 
-          className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all border border-white/20"
-          onClick={(e) => { e.stopPropagation(); handleZoomIn() }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          disabled={zoom >= 3}
-        >
-          <ZoomIn size={20} />
-        </m.button>
-        <span className="text-white/70 text-sm flex items-center px-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
-          {Math.round(zoom * 100)}%
-        </span>
-      </div>
-
-      {/* Image counter */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 z-50">
-        <div className="px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
-          <span className="text-white font-medium">{currentIndex + 1} of {allEvents.length}</span>
+      {/* Top bar */}
+      <div data-backdrop className="flex items-center justify-between gap-2 p-3 sm:p-4">
+        <div className="flex items-center gap-2">
+          <button type="button" className={iconButton} onClick={handleZoomOut} disabled={zoom <= 0.5} aria-label="Zoom out">
+            <ZoomOut aria-hidden size={20} />
+          </button>
+          <button type="button" className={iconButton} onClick={handleZoomIn} disabled={zoom >= 3} aria-label="Zoom in">
+            <ZoomIn aria-hidden size={20} />
+          </button>
+          <span className="text-white/90 text-sm px-3 py-2 bg-white/10 rounded-full border border-white/20" aria-live="polite">
+            {Math.round(zoom * 100)}%
+          </span>
         </div>
+        <button type="button" className={iconButton} onClick={handleClose} aria-label="Close photo viewer">
+          <X aria-hidden size={24} />
+        </button>
       </div>
 
-      <div 
-        className="w-full h-full p-8 flex items-center justify-center"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <m.div 
-          className="relative flex items-center justify-center"
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          key={currentIndex}
-        >
-          {isLoading && !hasError && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin" />
-            </div>
-          )}
-
-          {hasError ? (
-            <div className="flex items-center justify-center">
-              <div className="text-center">
-                <Camera className="w-24 h-24 text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-400">Image not available</p>
-              </div>
-            </div>
-          ) : (
-            <m.img
-              src={`/images/Events/${event.file}`}
-              alt={event.name}
-              className="max-w-[90vw] max-h-[80vh] w-auto h-auto object-contain rounded-2xl shadow-2xl"
-              style={{ transform: `scale(${zoom})` }}
-              onLoad={() => setIsLoading(false)}
-              onError={() => {
-                setIsLoading(false)
-                setHasError(true)
-              }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            />
-          )}
-          
-          <div className="absolute -bottom-20 left-0 right-0 text-center">
-            <h3 className="text-white font-display font-bold text-2xl mb-2">{event.name}</h3>
-            <p className="text-white/70">{event.description}</p>
+      {/* Photo */}
+      <div data-backdrop className="relative flex-1 min-h-0 flex items-center justify-center px-3 sm:px-16 overflow-hidden">
+        {isLoading && !hasError && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden>
+            <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin" />
           </div>
-        </m.div>
+        )}
+        {hasError ? (
+          <div className="text-center">
+            <Camera aria-hidden className="w-24 h-24 text-gray-500 mx-auto mb-4" />
+            <p className="text-gray-300">Image not available</p>
+          </div>
+        ) : (
+          <m.img
+            key={currentIndex}
+            src={`/images/Events/${event.file}`}
+            alt={event.name}
+            className="max-w-full max-h-full w-auto h-auto object-contain rounded-xl shadow-2xl"
+            style={{ transform: `scale(${zoom})` }}
+            onLoad={() => setIsLoading(false)}
+            onError={() => {
+              setIsLoading(false)
+              setHasError(true)
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          />
+        )}
+      </div>
+
+      {/* Caption, counter and navigation */}
+      <div data-backdrop className="flex items-center justify-between gap-3 p-3 sm:p-4">
+        <button type="button" className={iconButton} onClick={handlePrev} disabled={currentIndex === 0} aria-label="Previous photo">
+          <ArrowLeft aria-hidden size={24} />
+        </button>
+        <div data-backdrop className="min-w-0 flex-1 text-center">
+          <h2 id="lightbox-title" className="text-white font-display font-bold text-lg sm:text-2xl leading-tight">{event.name}</h2>
+          <p className="text-white/80 text-sm sm:text-base [@media(max-height:500px)]:hidden">{event.description}</p>
+          <p className="text-white/80 text-sm mt-1">{currentIndex + 1} of {allEvents.length}</p>
+        </div>
+        <button type="button" className={iconButton} onClick={handleNext} disabled={currentIndex === allEvents.length - 1} aria-label="Next photo">
+          <ArrowRight aria-hidden size={24} />
+        </button>
       </div>
     </m.div>
   )
@@ -243,8 +206,9 @@ function EventCard({ event, onClick }: { event: typeof events[0]; onClick: () =>
         >
           <Image
             src={`/images/Events/${event.file}`}
-            alt={event.name}
+            alt=""
             fill
+            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
             className="object-cover group-hover:scale-110 transition-transform duration-700"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
@@ -255,18 +219,18 @@ function EventCard({ event, onClick }: { event: typeof events[0]; onClick: () =>
             whileHover={{ scale: 1.1 }}
           >
             <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/50">
-              <Camera className="w-10 h-10 text-white" />
+              <Camera aria-hidden className="w-10 h-10 text-white" />
             </div>
           </m.div>
 
-          <div className="absolute bottom-0 left-0 right-0 p-5">
-            <div className="flex items-center gap-2 mb-2">
+          <div className="absolute bottom-0 left-0 right-0 p-3 min-[440px]:p-5">
+            <div className="hidden min-[440px]:flex items-center gap-2 mb-2">
               <div className="w-8 h-8 bg-secondary-400/90 backdrop-blur-sm rounded-lg flex items-center justify-center">
-                <Icon className="w-4 h-4 text-primary-900" />
+                <Icon aria-hidden className="w-4 h-4 text-primary-900" />
               </div>
             </div>
-            <h3 className="text-white font-display font-bold text-lg leading-tight">{event.name}</h3>
-            <p className="text-white/70 text-sm mt-1 line-clamp-2">{event.description}</p>
+            <h3 className="text-white font-display font-bold text-sm min-[440px]:text-lg leading-tight break-words">{event.name}</h3>
+            <p className="hidden min-[440px]:block text-white/80 text-sm mt-1 line-clamp-2">{event.description}</p>
           </div>
         </m.div>
       </button>
@@ -303,7 +267,6 @@ export default function GalleryPage() {
             animate={{ scale: [1.2, 1, 1.2], opacity: [0.3, 0.2, 0.3] }}
             transition={{ duration: 5, repeat: Infinity }}
           />
-          <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5 mix-blend-overlay pointer-events-none" />
         </div>
 
         {/* Floating elements */}
@@ -377,7 +340,7 @@ export default function GalleryPage() {
         <div className="container mx-auto px-4 relative z-10">
           <FadeIn blur>
             <div className="text-center mb-12">
-              <h2 className="text-sm font-semibold text-secondary-500 tracking-wider uppercase mb-3">Explore</h2>
+              <h2 className="text-sm font-semibold text-secondary-800 tracking-wider uppercase mb-3">Explore</h2>
               <h3 className="text-3xl md:text-5xl font-display font-bold text-primary-900 mb-4">
                 Our Events Gallery
               </h3>
@@ -395,16 +358,18 @@ export default function GalleryPage() {
             {categories.map((cat) => (
               <FadeInItem key={cat.id}>
                 <m.button
+                  type="button"
+                  aria-pressed={activeCategory === cat.id}
                   onClick={() => setActiveCategory(cat.id)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-300 border ${
                     activeCategory === cat.id
-                      ? 'bg-primary-600 text-white border-primary-600 shadow-lg shadow-primary-500/30'
+                      ? 'bg-primary-700 text-white border-primary-700 shadow-lg shadow-primary-500/30'
                       : 'bg-white text-gray-700 border-gray-200 hover:border-primary-300 hover:bg-primary-50'
                   }`}
                 >
-                  <cat.icon className="w-4 h-4" />
+                  <cat.icon aria-hidden className="w-4 h-4" />
                   {cat.name}
                 </m.button>
               </FadeInItem>
@@ -413,13 +378,13 @@ export default function GalleryPage() {
 
           {/* Results count */}
           <div className="text-center mb-8">
-            <p className="text-gray-500">
-              Showing <span className="font-semibold text-primary-600">{filteredEvents.length}</span> of {events.length} photos
+            <p className="text-gray-600" aria-live="polite">
+              Showing <span className="font-semibold text-primary-800">{filteredEvents.length}</span> of {events.length} photos
             </p>
           </div>
 
           <m.div 
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 min-[440px]:gap-6"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"

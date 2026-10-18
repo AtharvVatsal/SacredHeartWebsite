@@ -1,9 +1,33 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import { MapPin, Phone, Mail, Send, CheckCircle, MessageCircle, Clock, User, Calendar, Building, Heart, Star, ArrowRight } from 'lucide-react'
-import { schoolInfo } from '@/data/school'
+import { useState, useRef, useEffect } from 'react'
+import { MapPin, Phone, Mail, Send, CheckCircle, MessageCircle, Clock, User, Calendar, Building, Heart, Star, ArrowRight, BookOpen, GraduationCap, Users, Loader2 } from 'lucide-react'
+import { schoolInfo, statistics } from '@/data/school'
 import { m, AnimatePresence, useInView } from 'framer-motion'
+import Field, { fieldA11y } from '@/components/forms/Field'
+import SubmissionNotice from '@/components/forms/SubmissionNotice'
+import { mailtoHref, schoolEmail, schoolPhones, telHref } from '@/lib/contact'
+import { type FieldErrors, checkEmail, checkName, checkPhone, checkRequired, deliverForm, firstErrorId, formatForEmail } from '@/lib/forms'
+import { formatStat } from '@/lib/stats'
+
+// Set this to a service that accepts a JSON POST. Until then the form prepares an email instead.
+const ENDPOINT = process.env.NEXT_PUBLIC_CONTACT_FORM_ENDPOINT
+
+const emptyForm = { name: '', email: '', phone: '', subject: '', message: '' }
+type ContactForm = typeof emptyForm
+const fieldOrder = Object.keys(emptyForm) as (keyof ContactForm)[]
+
+const statIcons = [Star, Users, GraduationCap, BookOpen]
+
+function validate(form: ContactForm): FieldErrors<ContactForm> {
+  return {
+    name: checkName(form.name),
+    email: checkEmail(form.email),
+    phone: checkPhone(form.phone, false),
+    subject: checkRequired(form.subject),
+    message: checkRequired(form.message),
+  }
+}
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -31,31 +55,64 @@ const cardHoverVariants = {
   }
 }
 
-const inputFocusVariants = {
-  focus: { scale: 1.01, boxShadow: "0 10px 30px -5px rgba(37, 99, 235, 0.15)" }
-}
+const labelClass = "text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2"
+
+const inputClass = (error?: string, extra = "") =>
+  `w-full px-4 py-3.5 border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white ${error ? "border-red-400" : "border-gray-200"} ${extra}`
 
 export default function ContactPage() {
-  const [submitted, setSubmitted] = useState(false)
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: ''
-  })
-  const [focusedField, setFocusedField] = useState<string | null>(null)
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'sent' | 'failed' | 'email'>('idle')
+  const [formData, setFormData] = useState(emptyForm)
+  const [errors, setErrors] = useState<FieldErrors<ContactForm>>({})
+  const noticeRef = useRef<HTMLDivElement>(null)
+  const successRef = useRef<HTMLHeadingElement>(null)
 
   const statsRef = useRef(null)
   const statsInView = useInView(statsRef, { once: true, margin: "-100px" })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const mailto = mailtoHref(
+    formData.subject || 'Enquiry from the school website',
+    formatForEmail([
+      ['Name', formData.name],
+      ['Email', formData.email],
+      ['Phone', formData.phone],
+      ['Message', formData.message],
+    ])
+  )
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSubmitted(true)
+    const found = validate(formData)
+    setErrors(found)
+    const firstId = firstErrorId(found, fieldOrder, 'contact')
+    if (firstId) {
+      document.getElementById(firstId)?.focus()
+      return
+    }
+
+    if (!ENDPOINT) {
+      setStatus('email')
+      window.location.href = mailto
+      return
+    }
+
+    setStatus('submitting')
+    const result = await deliverForm(ENDPOINT, { form: 'contact', ...formData })
+    setStatus(result.status)
   }
 
+  useEffect(() => {
+    if (status === 'sent') successRef.current?.focus()
+    else if (status === 'email' || status === 'failed') {
+      noticeRef.current?.scrollIntoView({ block: 'center' })
+      noticeRef.current?.focus({ preventScroll: true })
+    }
+  }, [status])
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+    if (errors[name as keyof ContactForm]) setErrors(prev => ({ ...prev, [name]: undefined }))
   }
 
   const contactInfo = [
@@ -68,13 +125,13 @@ export default function ContactPage() {
     {
       icon: Phone,
       title: 'Phone Numbers',
-      content: schoolInfo.contact.phones.join('\n'),
+      links: schoolPhones.map(phone => ({ label: phone, href: telHref(phone) })),
       color: 'from-secondary-500 to-secondary-700'
     },
     {
       icon: Mail,
       title: 'Email Us',
-      content: schoolInfo.contact.emails.join('\n'),
+      links: schoolInfo.contact.emails.map(email => ({ label: email, href: `mailto:${email}` })),
       color: 'from-blue-500 to-blue-700'
     },
     {
@@ -188,22 +245,17 @@ export default function ContactPage() {
               className="flex flex-wrap gap-4"
               variants={itemVariants}
             >
-              <m.div
-                className="glass px-5 py-3 rounded-xl border border-white/20 flex items-center gap-3"
-                whileHover={{ scale: 1.05, borderColor: "rgba(255,255,255,0.4)" }}
+              <a
+                href={telHref(schoolPhones[0])}
+                className="bg-white/10 backdrop-blur-sm px-5 py-3 rounded-xl border border-white/25 flex items-center gap-3 hover:bg-white/20 transition-colors"
               >
-                <m.div animate={{ rotate: [0, 360] }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }}>
-                  <Mail className="w-5 h-5 text-secondary-400" />
-                </m.div>
-                <span className="text-white/90 text-sm">Quick Response</span>
-              </m.div>
-              <m.div
-                className="glass px-5 py-3 rounded-xl border border-white/20 flex items-center gap-3"
-                whileHover={{ scale: 1.05, borderColor: "rgb(41, 32, 32)" }}
-              >
-                <Clock className="w-5 h-5 text-secondary-400" />
-                <span className="text-white/90 text-sm">Mon-Sat: 8AM-4PM</span>
-              </m.div>
+                <Phone aria-hidden className="w-5 h-5 text-secondary-400" />
+                <span className="text-white text-sm font-medium">Call {schoolPhones[0]}</span>
+              </a>
+              <div className="bg-white/10 backdrop-blur-sm px-5 py-3 rounded-xl border border-white/25 flex items-center gap-3">
+                <Clock aria-hidden className="w-5 h-5 text-secondary-400" />
+                <span className="text-white text-sm font-medium">Mon-Sat: 8AM-4PM</span>
+              </div>
             </m.div>
           </m.div>
         </div>
@@ -224,23 +276,21 @@ export default function ContactPage() {
               initial="hidden"
               animate={statsInView ? "visible" : "hidden"}
             >
-              {[
-                { value: '50+', label: 'Years of Excellence', icon: Star, color: 'text-secondary-500' },
-                { value: '1000+', label: 'Alumni Network', icon: User, color: 'text-primary-500' },
-                { value: '500+', label: 'Students Enrolled', icon: Building, color: 'text-blue-500' },
-                { value: '100%', label: 'Dedication', icon: Heart, color: 'text-red-500' },
-              ].map((stat, i) => (
-                <m.div
-                  key={i}
-                  className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100"
-                  variants={itemVariants}
-                  whileHover={{ y: -5, boxShadow: "0 10px 30px -10px rgba(0,0,0,0.1)" }}
-                >
-                  <stat.icon className={`w-6 h-6 ${stat.color} mx-auto mb-2`} />
-                  <p className="text-2xl font-bold text-primary-900">{stat.value}</p>
-                  <p className="text-xs text-gray-500">{stat.label}</p>
-                </m.div>
-              ))}
+              {statistics.map((stat, i) => {
+                const Icon = statIcons[i % statIcons.length]
+                return (
+                  <m.div
+                    key={stat.label}
+                    className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100"
+                    variants={itemVariants}
+                    whileHover={{ y: -5, boxShadow: "0 10px 30px -10px rgba(0,0,0,0.1)" }}
+                  >
+                    <Icon aria-hidden className="w-6 h-6 text-primary-700 mx-auto mb-2" />
+                    <p className="text-2xl font-bold text-primary-900">{formatStat(stat)}</p>
+                    <p className="text-xs text-gray-600">{stat.label}</p>
+                  </m.div>
+                )
+              })}
             </m.div>
           </div>
         </div>
@@ -264,7 +314,7 @@ export default function ContactPage() {
                     Contact Information
                   </m.h2>
                   <m.p className="text-gray-600 mb-8" variants={itemVariants}>
-                    Fill up the form and our team will get back to you within 24 hours.
+                    Call or email the school office, or visit during office hours.
                   </m.p>
 
                   <div className="space-y-4">
@@ -272,7 +322,7 @@ export default function ContactPage() {
                       <m.div
                         key={index}
                         variants={itemVariants}
-                        className="group bg-gray-50 rounded-xl p-5 hover:bg-gradient-to-br hover:shadow-lg transition-all duration-300 cursor-pointer"
+                        className="group bg-gray-50 rounded-xl p-5 hover:shadow-lg transition-all duration-300"
                         whileHover={{ x: 5 }}
                         custom={index}
                       >
@@ -286,7 +336,19 @@ export default function ContactPage() {
                           </m.div>
                           <div className="flex-1">
                             <h3 className="font-semibold text-primary-900 mb-1">{info.title}</h3>
-                            <p className="text-gray-600 text-sm whitespace-pre-line">{info.content}</p>
+                            {info.links ? (
+                              <ul className="space-y-1">
+                                {info.links.map(link => (
+                                  <li key={link.href}>
+                                    <a href={link.href} className="text-sm font-medium text-primary-800 underline underline-offset-2 hover:text-primary-900 break-all">
+                                      {link.label}
+                                    </a>
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p className="text-gray-600 text-sm whitespace-pre-line">{info.content}</p>
+                            )}
                           </div>
                         </div>
                       </m.div>
@@ -342,59 +404,39 @@ export default function ContactPage() {
                   </m.p>
 
                   <AnimatePresence mode="wait">
-                    {submitted ? (
+                    {status === 'sent' ? (
                       <m.div
                         key="success"
                         className="bg-gradient-to-br from-green-50 via-white to-emerald-50 rounded-3xl p-10 text-center border border-green-200 shadow-xl"
-                        initial={{ scale: 0.8, opacity: 0 }}
+                        initial={{ scale: 0.95, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.8, opacity: 0 }}
-                        transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                        exit={{ scale: 0.95, opacity: 0 }}
                       >
-                        <m.div
-                          initial={{ scale: 0, rotate: -180 }}
-                          animate={{ scale: 1, rotate: 0 }}
-                          transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
-                          className="w-24 h-24 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl"
-                          style={{ boxShadow: "0 20px 40px -10px rgba(34, 197, 94, 0.4)" }}
-                        >
-                          <CheckCircle className="w-12 h-12 text-white" />
-                        </m.div>
-                        <m.h3
-                          className="text-3xl font-display font-bold text-green-800 mb-3"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.3 }}
-                        >
-                          Message Sent!
-                        </m.h3>
-                        <m.p
-                          className="text-green-700 mb-6 max-w-md mx-auto"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.4 }}
-                        >
-                          Thank you for reaching out. Our team will get back to you within 24 hours.
-                        </m.p>
-                        <m.button
+                        <div className="w-24 h-24 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
+                          <CheckCircle aria-hidden className="w-12 h-12 text-white" />
+                        </div>
+                        <h3 ref={successRef} tabIndex={-1} className="text-3xl font-display font-bold text-green-800 mb-3 outline-none">
+                          Message received
+                        </h3>
+                        <p className="text-green-800 mb-6 max-w-md mx-auto">
+                          The school office has received your message and will reply to {formData.email}.
+                        </p>
+                        <button
+                          type="button"
                           onClick={() => {
-                            setSubmitted(false)
-                            setFormData({ name: '', email: '', phone: '', subject: '', message: '' })
+                            setStatus('idle')
+                            setFormData(emptyForm)
                           }}
-                          className="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-green-700 transition-colors"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.5 }}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
+                          className="inline-flex items-center gap-2 bg-green-700 text-white px-6 py-3 rounded-full font-semibold hover:bg-green-800 transition-colors"
                         >
                           Send Another Message
-                          <ArrowRight className="w-4 h-4" />
-                        </m.button>
+                          <ArrowRight aria-hidden className="w-4 h-4" />
+                        </button>
                       </m.div>
                     ) : (
                       <m.form
                         key="form"
+                        noValidate
                         onSubmit={handleSubmit}
                         className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 md:p-10"
                         initial={{ opacity: 0 }}
@@ -406,129 +448,146 @@ export default function ContactPage() {
                           initial="hidden"
                           animate="visible"
                         >
+                          {!ENDPOINT && (
+                            <m.p className="mb-6 rounded-xl bg-secondary-50 border border-secondary-100 p-4 text-sm text-gray-700" variants={itemVariants}>
+                              Pressing <strong>Prepare email</strong> opens your email app with your message filled in — press Send there to reach the school. Nothing is sent from this website itself.
+                            </m.p>
+                          )}
                           <m.div className="grid md:grid-cols-2 gap-6 mb-6" variants={itemVariants}>
-                            <div>
-                              <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                                <User className="w-4 h-4 text-primary-600" />
-                                Your Name
-                              </label>
-                              <m.input
+                            <Field
+                              id="contact-name"
+                              required
+                              error={errors.name}
+                              labelClassName={labelClass}
+                              label={<><User aria-hidden className="w-4 h-4 text-primary-700" />Your Name</>}
+                            >
+                              <input
+                                {...fieldA11y('contact-name', errors.name)}
                                 type="text"
                                 name="name"
+                                autoComplete="name"
                                 value={formData.name}
                                 onChange={handleChange}
-                                onFocus={() => setFocusedField('name')}
-                                onBlur={() => setFocusedField(null)}
                                 required
-                                className="w-full px-4 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
-                                placeholder="John Doe"
-                                variants={inputFocusVariants}
-                                animate={focusedField === 'name' ? 'focus' : 'rest'}
+                                className={inputClass(errors.name)}
+                                placeholder="Your full name"
                               />
-                            </div>
-                            <div>
-                              <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                                <Mail className="w-4 h-4 text-primary-600" />
-                                Email Address
-                              </label>
-                              <m.input
+                            </Field>
+                            <Field
+                              id="contact-email"
+                              required
+                              error={errors.email}
+                              labelClassName={labelClass}
+                              label={<><Mail aria-hidden className="w-4 h-4 text-primary-700" />Email Address</>}
+                            >
+                              <input
+                                {...fieldA11y('contact-email', errors.email)}
                                 type="email"
                                 name="email"
+                                autoComplete="email"
                                 value={formData.email}
                                 onChange={handleChange}
-                                onFocus={() => setFocusedField('email')}
-                                onBlur={() => setFocusedField(null)}
                                 required
-                                className="w-full px-4 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
-                                placeholder="john@example.com"
-                                variants={inputFocusVariants}
-                                animate={focusedField === 'email' ? 'focus' : 'rest'}
+                                className={inputClass(errors.email)}
+                                placeholder="name@example.com"
                               />
-                            </div>
+                            </Field>
                           </m.div>
 
                           <m.div className="grid md:grid-cols-2 gap-6 mb-6" variants={itemVariants}>
-                            <div>
-                              <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                                <Phone className="w-4 h-4 text-primary-600" />
-                                Phone Number
-                              </label>
-                              <m.input
+                            <Field
+                              id="contact-phone"
+                              error={errors.phone}
+                              labelClassName={labelClass}
+                              label={<><Phone aria-hidden className="w-4 h-4 text-primary-700" />Phone Number (optional)</>}
+                            >
+                              <input
+                                {...fieldA11y('contact-phone', errors.phone)}
                                 type="tel"
                                 name="phone"
+                                inputMode="tel"
+                                autoComplete="tel"
                                 value={formData.phone}
                                 onChange={handleChange}
-                                onFocus={() => setFocusedField('phone')}
-                                onBlur={() => setFocusedField(null)}
-                                className="w-full px-4 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
+                                className={inputClass(errors.phone)}
                                 placeholder="+91 98765 43210"
-                                variants={inputFocusVariants}
-                                animate={focusedField === 'phone' ? 'focus' : 'rest'}
                               />
-                            </div>
-                            <div>
-                              <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                                <MessageCircle className="w-4 h-4 text-primary-600" />
-                                Subject
-                              </label>
-                              <m.input
+                            </Field>
+                            <Field
+                              id="contact-subject"
+                              required
+                              error={errors.subject}
+                              labelClassName={labelClass}
+                              label={<><MessageCircle aria-hidden className="w-4 h-4 text-primary-700" />Subject</>}
+                            >
+                              <input
+                                {...fieldA11y('contact-subject', errors.subject)}
                                 type="text"
                                 name="subject"
                                 value={formData.subject}
                                 onChange={handleChange}
-                                onFocus={() => setFocusedField('subject')}
-                                onBlur={() => setFocusedField(null)}
                                 required
-                                className="w-full px-4 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
+                                className={inputClass(errors.subject)}
                                 placeholder="How can we help?"
-                                variants={inputFocusVariants}
-                                animate={focusedField === 'subject' ? 'focus' : 'rest'}
                               />
-                            </div>
+                            </Field>
                           </m.div>
 
                           <m.div className="mb-8" variants={itemVariants}>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                              <MessageCircle className="w-4 h-4 text-primary-600" />
-                              Your Message
-                            </label>
-                            <m.textarea
-                              name="message"
-                              value={formData.message}
-                              onChange={handleChange}
-                              onFocus={() => setFocusedField('message')}
-                              onBlur={() => setFocusedField(null)}
+                            <Field
+                              id="contact-message"
                               required
-                              rows={6}
-                              className="w-full px-4 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none bg-gray-50 focus:bg-white"
-                              placeholder="Tell us more about your inquiry..."
-                              variants={inputFocusVariants}
-                              animate={focusedField === 'message' ? 'focus' : 'rest'}
-                            />
+                              error={errors.message}
+                              labelClassName={labelClass}
+                              label={<><MessageCircle aria-hidden className="w-4 h-4 text-primary-700" />Your Message</>}
+                            >
+                              <textarea
+                                {...fieldA11y('contact-message', errors.message)}
+                                name="message"
+                                value={formData.message}
+                                onChange={handleChange}
+                                required
+                                rows={6}
+                                className={inputClass(errors.message, 'resize-none')}
+                                placeholder="Tell us more about your inquiry..."
+                              />
+                            </Field>
                           </m.div>
 
                           <m.button
                             type="submit"
-                            className="w-full bg-gradient-to-r from-primary-600 via-primary-700 to-primary-800 text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl hover:shadow-primary-900/20 transition-all flex items-center justify-center gap-3 group relative overflow-hidden"
+                            disabled={status === 'submitting'}
+                            className="w-full bg-gradient-to-r from-primary-700 to-primary-800 text-white py-4 rounded-xl font-bold text-lg hover:from-primary-800 hover:to-primary-900 hover:shadow-xl transition-all flex items-center justify-center gap-3 disabled:opacity-70"
                             variants={itemVariants}
-                            whileHover={{ scale: 1.02, y: -2 }}
                             whileTap={{ scale: 0.98 }}
                           >
-                            <m.div
-                              className="absolute inset-0 bg-gradient-to-r from-secondary-500 to-secondary-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                            />
-                            <span className="relative z-10 flex items-center gap-3">
-                              <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                              Send Message
+                            <span className="flex items-center gap-3">
+                              {status === 'submitting' ? (
+                                <><Loader2 aria-hidden className="w-5 h-5 animate-spin" />Sending...</>
+                              ) : (
+                                <><Send aria-hidden className="w-5 h-5" />{ENDPOINT ? 'Send Message' : 'Prepare email'}</>
+                              )}
                             </span>
                           </m.button>
 
-                          <m.p
-                            className="text-center text-gray-500 text-sm mt-4"
-                            variants={itemVariants}
-                          >
-                            We typically respond within 24 hours
-                          </m.p>
+                          {status === 'email' && (
+                            <div className="mt-6">
+                              <SubmissionNotice ref={noticeRef} tone="info" title="Finish in your email app" mailto={mailto}>
+                                <p>
+                                  Your email app should have opened with your message filled in. <strong>Nothing has been sent yet</strong> — press Send in your email app. If it didn&apos;t open, use the button below or call the school office.
+                                </p>
+                              </SubmissionNotice>
+                            </div>
+                          )}
+                          {status === 'failed' && (
+                            <div className="mt-6">
+                              <SubmissionNotice ref={noticeRef} tone="error" title="Your message could not be sent" mailto={mailto}>
+                                <p>
+                                  The school has <strong>not</strong> received your message. It is still in the form — try again in a moment, or email or call the school instead.
+                                </p>
+                              </SubmissionNotice>
+                            </div>
+                          )}
                         </m.div>
                       </m.form>
                     )}

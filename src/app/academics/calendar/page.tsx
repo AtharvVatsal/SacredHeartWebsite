@@ -1,9 +1,11 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Calendar, ChevronLeft, ChevronRight, Download, Sparkles, Star, PartyPopper, BookOpen, GraduationCap, Bell } from 'lucide-react'
+import { ArrowLeft, Calendar, ChevronLeft, ChevronRight, Sparkles, Star, PartyPopper, BookOpen, GraduationCap, Bell, Phone, X, Info } from 'lucide-react'
 import { m, AnimatePresence } from 'framer-motion'
+import { useDialog } from '@/lib/useDialog'
+import { schoolPhones, telHref } from '@/lib/contact'
 
 interface CalendarEvent {
   id: string
@@ -13,6 +15,8 @@ interface CalendarEvent {
   description?: string
 }
 
+// The only calendar published on the website so far (session 2024-25).
+// Add the current session's dates here once the school releases them.
 const events: CalendarEvent[] = [
   { id: '1', title: 'Summer Vacation', date: '2024-05-20', type: 'holiday', description: 'Summer break for all students' },
   { id: '2', title: 'School Reopens', date: '2024-07-01', type: 'event', description: 'New academic session begins' },
@@ -36,12 +40,17 @@ const events: CalendarEvent[] = [
   { id: '20', title: 'Summer Vacation', date: '2025-05-20', type: 'holiday', description: 'Summer break begins' },
 ]
 
+const sortedDates = events.map(e => e.date).sort()
+const firstEventDate = sortedDates[0]
+const lastEventDate = sortedDates[sortedDates.length - 1]
+const sessionLabel = `${firstEventDate.slice(0, 4)}-${lastEventDate.slice(2, 4)}`
+
 const eventTypeConfig = {
-  holiday: { icon: PartyPopper, color: 'bg-green-100 text-green-700 border-green-200', label: 'Holiday' },
-  exam: { icon: BookOpen, color: 'bg-red-100 text-red-700 border-red-200', label: 'Exam' },
-  event: { icon: Star, color: 'bg-purple-100 text-purple-700 border-purple-200', label: 'Event' },
-  meeting: { icon: Bell, color: 'bg-blue-100 text-blue-700 border-blue-200', label: 'Meeting' },
-  activity: { icon: GraduationCap, color: 'bg-amber-100 text-amber-700 border-amber-200', label: 'Activity' },
+  holiday: { icon: PartyPopper, color: 'bg-green-100 text-green-800 border-green-200', label: 'Holiday' },
+  exam: { icon: BookOpen, color: 'bg-red-100 text-red-800 border-red-200', label: 'Exam' },
+  event: { icon: Star, color: 'bg-purple-100 text-purple-800 border-purple-200', label: 'Event' },
+  meeting: { icon: Bell, color: 'bg-blue-100 text-blue-800 border-blue-200', label: 'Meeting' },
+  activity: { icon: GraduationCap, color: 'bg-amber-100 text-amber-800 border-amber-200', label: 'Activity' },
 }
 
 const months = [
@@ -51,62 +60,72 @@ const months = [
 
 const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
-export default function AcademicCalendarPage() {
-  const [currentDate, setCurrentDate] = useState(new Date())
-  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
-  const [filterType, setFilterType] = useState<string | null>(null)
+// Local calendar date as YYYY-MM-DD (toISOString would shift it to UTC)
+function toDateStr(d: Date) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
 
-  const currentYear = currentDate.getFullYear()
-  const currentMonth = currentDate.getMonth()
+function formatDate(dateStr: string, options: Intl.DateTimeFormatOptions) {
+  const [y, mo, d] = dateStr.split('-').map(Number)
+  return new Date(y, mo - 1, d).toLocaleDateString('en-IN', options)
+}
+
+export default function AcademicCalendarPage() {
+  // Dates depend on the visitor's clock, so they are set after mount; the static HTML must not bake in the build date
+  const [today, setToday] = useState<string | null>(null)
+  const [view, setView] = useState<{ year: number; month: number } | null>(null)
+  const [selectedDate, setSelectedDate] = useState<string | null>(null)
+  const [filterType, setFilterType] = useState<string | null>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const now = new Date()
+    setToday(toDateStr(now))
+    setView({ year: now.getFullYear(), month: now.getMonth() })
+  }, [])
+
+  useDialog({ open: !!selectedDate, onClose: () => setSelectedDate(null), containerRef: dialogRef })
 
   const navigateMonth = (direction: number) => {
-    const newDate = new Date(currentDate)
-    newDate.setMonth(newDate.getMonth() + direction)
-    setCurrentDate(newDate)
+    // Step from the 1st so short months are never skipped
+    setView(v => {
+      if (!v) return v
+      const d = new Date(v.year, v.month + direction, 1)
+      return { year: d.getFullYear(), month: d.getMonth() }
+    })
   }
 
-  const goToToday = () => setCurrentDate(new Date())
+  const goToToday = () => {
+    const now = new Date()
+    setView({ year: now.getFullYear(), month: now.getMonth() })
+  }
+
+  const showPublishedCalendar = () => {
+    const [y, mo] = firstEventDate.split('-').map(Number)
+    setView({ year: y, month: mo - 1 })
+  }
 
   const calendarDays = useMemo(() => {
-    const firstDay = new Date(currentYear, currentMonth, 1)
-    const lastDay = new Date(currentYear, currentMonth + 1, 0)
-    const startPadding = firstDay.getDay()
-    const totalDays = lastDay.getDate()
-
-    const days: { date: number | null; isCurrentMonth: boolean; dateStr: string }[] = []
-
-    for (let i = 0; i < startPadding; i++) {
-      const prevDate = new Date(currentYear, currentMonth, -startPadding + i + 1)
-      days.push({ date: prevDate.getDate(), isCurrentMonth: false, dateStr: prevDate.toISOString().split('T')[0] })
+    if (!view) return []
+    const { year, month } = view
+    const startPadding = new Date(year, month, 1).getDay()
+    const days: { date: number; isCurrentMonth: boolean; dateStr: string }[] = []
+    for (let i = 0; i < 42; i++) {
+      const d = new Date(year, month, i - startPadding + 1)
+      days.push({ date: d.getDate(), isCurrentMonth: d.getMonth() === month, dateStr: toDateStr(d) })
     }
-
-    for (let day = 1; day <= totalDays; day++) {
-      const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-      days.push({ date: day, isCurrentMonth: true, dateStr })
-    }
-
-    const remaining = 42 - days.length
-    for (let i = 1; i <= remaining; i++) {
-      const nextDate = new Date(currentYear, currentMonth + 1, i)
-      days.push({ date: i, isCurrentMonth: false, dateStr: nextDate.toISOString().split('T')[0] })
-    }
-
     return days
-  }, [currentYear, currentMonth])
+  }, [view])
 
-  const getEventsForDate = (dateStr: string) => {
-    return events.filter(event => event.date === dateStr && (!filterType || event.type === filterType))
-  }
+  const getEventsForDate = (dateStr: string) =>
+    events.filter(event => event.date === dateStr && (!filterType || event.type === filterType))
 
-  const isToday = (dateStr: string) => {
-    const today = new Date().toISOString().split('T')[0]
-    return dateStr === today
-  }
+  const upcomingEvents = today
+    ? events.filter(e => e.date >= today).sort((a, b) => a.date.localeCompare(b.date)).slice(0, 5)
+    : []
+  const calendarIsOutOfDate = today !== null && today > lastEventDate
 
-  const upcomingEvents = events
-    .filter(e => new Date(e.date) >= new Date())
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-    .slice(0, 5)
+  const selectedEvents = selectedDate ? events.filter(e => e.date === selectedDate) : []
 
   return (
     <>
@@ -135,26 +154,16 @@ export default function AcademicCalendarPage() {
               href="/academics"
               className="inline-flex items-center gap-2 text-gray-300 hover:text-white mb-6 transition-all duration-300 hover:gap-3 group"
             >
-              <m.span animate={{ x: [0, -5, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                <ArrowLeft className="w-4 h-4" />
-              </m.span>
+              <ArrowLeft className="w-4 h-4" />
               Back to Academics
             </Link>
           </m.div>
 
-          <m.div
-            className="max-w-3xl"
-            initial="hidden"
-            animate="visible"
-          >
-            <m.div>
-              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-medium mb-6 border border-white/20">
-                <m.div animate={{ rotate: [0, 360] }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }}>
-                  <Calendar className="w-4 h-4 text-secondary-400" />
-                </m.div>
-                <span>Academic Year 2024-25</span>
-              </div>
-            </m.div>
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-medium mb-6 border border-white/20">
+              <Calendar className="w-4 h-4 text-secondary-400" />
+              <span>Holidays, exams and events</span>
+            </div>
 
             <m.h1
               className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-4"
@@ -173,7 +182,7 @@ export default function AcademicCalendarPage() {
             >
               Important dates, holidays, and events throughout the year
             </m.p>
-          </m.div>
+          </div>
         </div>
 
         <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none -mt-1">
@@ -186,6 +195,34 @@ export default function AcademicCalendarPage() {
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="max-w-7xl mx-auto">
+            {calendarIsOutOfDate && (
+              <div role="status" className="mb-8 rounded-2xl border border-secondary-200 bg-secondary-50 p-5 md:p-6 flex flex-col md:flex-row md:items-center gap-4">
+                <Info aria-hidden className="w-6 h-6 text-secondary-800 shrink-0" />
+                <div className="flex-1 text-gray-800">
+                  <p className="font-semibold text-primary-900">The calendar for the current session has not been published on the website yet.</p>
+                  <p className="text-sm mt-1">
+                    Only the {sessionLabel} calendar is available here. For this year&apos;s holidays and exam dates, please contact the school office.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={showPublishedCalendar}
+                    className="rounded-full bg-primary-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-800 transition-colors"
+                  >
+                    View the {sessionLabel} calendar
+                  </button>
+                  <a
+                    href={telHref(schoolPhones[0])}
+                    className="inline-flex items-center gap-2 rounded-full border border-primary-200 bg-white px-5 py-2.5 text-sm font-semibold text-primary-800 hover:bg-primary-50 transition-colors"
+                  >
+                    <Phone aria-hidden size={16} />
+                    Call {schoolPhones[0]}
+                  </a>
+                </div>
+              </div>
+            )}
+
             <div className="grid lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2">
                 <m.div
@@ -196,225 +233,185 @@ export default function AcademicCalendarPage() {
                 >
                   <div className="bg-gradient-to-r from-primary-800 to-primary-900 p-6 text-white">
                     <div className="flex items-center justify-between">
-                      <m.button
+                      <button
+                        type="button"
                         onClick={() => navigateMonth(-1)}
-                        className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
+                        disabled={!view}
+                        aria-label="Previous month"
+                        className="w-11 h-11 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
                       >
-                        <ChevronLeft className="w-5 h-5" />
-                      </m.button>
+                        <ChevronLeft aria-hidden className="w-5 h-5" />
+                      </button>
                       <div className="text-center">
-                        <h2 className="text-2xl font-bold">{months[currentMonth]} {currentYear}</h2>
-                        <m.button
+                        <h2 className="text-2xl font-bold" aria-live="polite">
+                          {view ? `${months[view.month]} ${view.year}` : 'Calendar'}
+                        </h2>
+                        <button
+                          type="button"
                           onClick={goToToday}
-                          className="text-sm text-secondary-400 hover:text-secondary-300 mt-1"
-                          whileHover={{ scale: 1.05 }}
+                          className="text-sm text-secondary-300 hover:text-secondary-200 mt-1 px-3 py-1 min-h-[24px]"
                         >
                           Today
-                        </m.button>
+                        </button>
                       </div>
-                      <m.button
+                      <button
+                        type="button"
                         onClick={() => navigateMonth(1)}
-                        className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
+                        disabled={!view}
+                        aria-label="Next month"
+                        className="w-11 h-11 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
                       >
-                        <ChevronRight className="w-5 h-5" />
-                      </m.button>
+                        <ChevronRight aria-hidden className="w-5 h-5" />
+                      </button>
                     </div>
                   </div>
 
-                  <div className="p-6">
-                    <div className="grid grid-cols-7 gap-1 mb-2">
+                  <div className="p-3 sm:p-6">
+                    <div className="grid grid-cols-7 gap-1 mb-2" aria-hidden="true">
                       {weekdays.map((day) => (
-                        <div key={day} className="text-center text-sm font-semibold text-gray-500 py-2">
+                        <div key={day} className="text-center text-sm font-semibold text-gray-600 py-2">
                           {day}
                         </div>
                       ))}
                     </div>
 
-                    <div className="grid grid-cols-7 gap-1">
-                      {calendarDays.map((day, index) => {
-                        const dayEvents = day.date ? getEventsForDate(day.dateStr) : []
-                        const hasEvent = dayEvents.length > 0
-                        const isTodayDate = day.date && isToday(day.dateStr)
+                    {!view && (
+                      <p className="py-16 text-center text-gray-600">Loading calendar…</p>
+                    )}
 
-                        return (
-                          <m.div
-                            key={index}
-                            className={`
-                              relative aspect-square p-1 rounded-lg transition-all
-                              ${day.isCurrentMonth ? 'bg-gray-50' : 'bg-gray-100/50'}
-                              ${isTodayDate ? 'ring-2 ring-secondary-400 bg-secondary-50' : ''}
-                              ${hasEvent ? 'cursor-pointer hover:bg-primary-50' : ''}
-                            `}
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: index * 0.01 }}
-                            whileHover={hasEvent ? { scale: 1.05 } : {}}
-                            onClick={() => {
-                              if (dayEvents.length === 1) {
-                                setSelectedEvent(dayEvents[0])
-                              }
-                            }}
-                          >
-                            {day.date && (
-                              <>
-                                <div className={`text-sm font-medium ${day.isCurrentMonth ? 'text-gray-700' : 'text-gray-400'} ${isTodayDate ? 'text-secondary-700 font-bold' : ''}`}>
-                                  {day.date}
-                                </div>
-                                {hasEvent && (
-                                  <div className="flex flex-wrap gap-1 mt-1">
-                                    {dayEvents.slice(0, 2).map((event) => {
-                                      const config = eventTypeConfig[event.type]
-                                      return (
-                                        <div
-                                          key={event.id}
-                                          className={`w-2 h-2 rounded-full ${config.color.split(' ')[0]}`}
-                                        />
-                                      )
-                                    })}
-                                    {dayEvents.length > 2 && (
-                                      <span className="text-xs text-gray-500">+{dayEvents.length - 2}</span>
-                                    )}
-                                  </div>
+                    <div className="grid grid-cols-7 gap-1">
+                      {calendarDays.map((day) => {
+                        const dayEvents = getEventsForDate(day.dateStr)
+                        const hasEvent = dayEvents.length > 0
+                        const isTodayDate = day.dateStr === today
+                        const cellClass = `relative aspect-square p-1 rounded-lg text-left transition-colors w-full ${
+                          day.isCurrentMonth ? 'bg-gray-50' : 'bg-gray-100/60'
+                        } ${isTodayDate ? 'ring-2 ring-secondary-500 bg-secondary-50' : ''} ${hasEvent ? 'hover:bg-primary-50' : ''}`
+                        const content = (
+                          <>
+                            <span className={`block text-sm font-medium ${day.isCurrentMonth ? 'text-gray-800' : 'text-gray-500'} ${isTodayDate ? 'text-secondary-800 font-bold' : ''}`}>
+                              {day.date}
+                            </span>
+                            {hasEvent && (
+                              <span className="flex flex-wrap gap-0.5 mt-1" aria-hidden="true">
+                                {dayEvents.slice(0, 2).map((event) => {
+                                  const config = eventTypeConfig[event.type]
+                                  const Icon = config.icon
+                                  return <Icon key={event.id} className={`w-3 h-3 ${config.color.split(' ')[1]}`} />
+                                })}
+                                {dayEvents.length > 2 && (
+                                  <span className="text-xs text-gray-600">+{dayEvents.length - 2}</span>
                                 )}
-                              </>
+                              </span>
                             )}
-                          </m.div>
+                          </>
+                        )
+
+                        if (!hasEvent) {
+                          return (
+                            <div key={day.dateStr} className={cellClass} aria-current={isTodayDate ? 'date' : undefined}>
+                              {content}
+                            </div>
+                          )
+                        }
+                        return (
+                          <button
+                            key={day.dateStr}
+                            type="button"
+                            className={cellClass}
+                            aria-current={isTodayDate ? 'date' : undefined}
+                            aria-label={`${formatDate(day.dateStr, { day: 'numeric', month: 'long' })}: ${dayEvents.map(e => `${e.title} (${eventTypeConfig[e.type].label})`).join(', ')}`}
+                            onClick={() => setSelectedDate(day.dateStr)}
+                          >
+                            {content}
+                          </button>
                         )
                       })}
                     </div>
                   </div>
                 </m.div>
 
-                <m.div
-                  className="mt-6 flex flex-wrap gap-3 justify-center"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                >
+                <div className="mt-6 flex flex-wrap gap-3 justify-center" role="group" aria-label="Show only one type of date">
                   {Object.entries(eventTypeConfig).map(([key, config]) => {
                     const Icon = config.icon
                     return (
-                      <m.button
+                      <button
+                        type="button"
                         key={key}
+                        aria-pressed={filterType === key}
                         onClick={() => setFilterType(filterType === key ? null : key)}
-                        className={`
-                          flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border transition-all
-                          ${filterType === key ? config.color : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'}
-                        `}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border transition-all ${
+                          filterType === key ? config.color : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300'
+                        }`}
                       >
-                        <Icon className="w-4 h-4" />
+                        <Icon aria-hidden className={`w-4 h-4 ${filterType === key ? '' : config.color.split(' ')[1]}`} />
                         {config.label}
-                      </m.button>
+                      </button>
                     )
                   })}
-                </m.div>
+                </div>
               </div>
 
               <div className="space-y-6">
-                <m.div
-                  className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden"
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 }}
-                >
-                  <div className="bg-gradient-to-r from-secondary-500 to-secondary-600 p-4 text-white">
+                <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+                  <div className="bg-gradient-to-r from-secondary-700 to-secondary-800 p-4 text-white">
                     <div className="flex items-center gap-3">
-                      <Sparkles className="w-5 h-5" />
-                      <h3 className="font-bold">Upcoming Events</h3>
+                      <Sparkles aria-hidden className="w-5 h-5" />
+                      <h2 className="font-bold">Upcoming Events</h2>
                     </div>
                   </div>
                   <div className="p-4 space-y-3">
-                    {upcomingEvents.map((event, index) => {
-                      const config = eventTypeConfig[event.type]
-                      const Icon = config.icon
-                      const eventDate = new Date(event.date)
-                      return (
-                        <m.div
-                          key={event.id}
-                          className="flex items-start gap-3 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.1 }}
-                          whileHover={{ scale: 1.02, x: 5 }}
-                          onClick={() => setSelectedEvent(event)}
-                        >
-                          <div className={`w-10 h-10 ${config.color} rounded-lg flex items-center justify-center flex-shrink-0`}>
-                            <Icon className="w-5 h-5" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-semibold text-gray-900 truncate">{event.title}</p>
-                            <p className="text-sm text-gray-500">
-                              {eventDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                            </p>
-                          </div>
-                        </m.div>
-                      )
-                    })}
+                    {today === null ? (
+                      <p className="text-sm text-gray-600">Loading…</p>
+                    ) : upcomingEvents.length === 0 ? (
+                      <p className="text-sm text-gray-700">
+                        No upcoming dates have been published yet. Please contact the school office for this session&apos;s holidays and exams.
+                      </p>
+                    ) : (
+                      upcomingEvents.map(event => {
+                        const config = eventTypeConfig[event.type]
+                        const Icon = config.icon
+                        return (
+                          <button
+                            type="button"
+                            key={event.id}
+                            className="w-full flex items-start gap-3 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors text-left"
+                            onClick={() => setSelectedDate(event.date)}
+                          >
+                            <span className={`w-10 h-10 ${config.color} rounded-lg flex items-center justify-center flex-shrink-0`}>
+                              <Icon aria-hidden className="w-5 h-5" />
+                            </span>
+                            <span className="flex-1 min-w-0">
+                              <span className="block font-semibold text-gray-900">{event.title}</span>
+                              <span className="block text-sm text-gray-600">{formatDate(event.date, { month: 'short', day: 'numeric' })}</span>
+                            </span>
+                          </button>
+                        )
+                      })
+                    )}
                   </div>
-                </m.div>
+                </div>
 
-                <m.div
-                  className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden"
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                >
-                  <div className="bg-gradient-to-r from-primary-600 to-primary-700 p-4 text-white">
-                    <div className="flex items-center gap-3">
-                      <Download className="w-5 h-5" />
-                      <h3 className="font-bold">Download Calendar</h3>
-                    </div>
-                  </div>
-                  <div className="p-4 space-y-3">
-                    <m.a
-                      href="#"
-                      className="flex items-center justify-between p-3 rounded-xl bg-primary-50 hover:bg-primary-100 transition-colors group"
-                      whileHover={{ scale: 1.02 }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <Calendar className="w-5 h-5 text-primary-600" />
-                        <span className="font-medium text-primary-900">Academic Year 2024-25</span>
-                      </div>
-                      <Download className="w-5 h-5 text-primary-600 group-hover:translate-y-1 transition-transform" />
-                    </m.a>
-                  </div>
-                </m.div>
-
-                <m.div
-                  className="bg-gradient-to-br from-primary-800 to-primary-900 rounded-3xl p-6 text-white"
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 0.3 }}
-                >
-                  <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-                    <Star className="w-5 h-5 text-secondary-400" />
-                    Quick Stats
-                  </h3>
+                <div className="bg-gradient-to-br from-primary-800 to-primary-900 rounded-3xl p-6 text-white">
+                  <h2 className="font-bold text-lg mb-1 flex items-center gap-2">
+                    <Star aria-hidden className="w-5 h-5 text-secondary-400" />
+                    In the {sessionLabel} calendar
+                  </h2>
+                  <p className="text-sm text-gray-200 mb-4">The most recent calendar published on this website.</p>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-3 bg-white/10 rounded-xl">
-                      <p className="text-3xl font-bold">{events.filter(e => e.type === 'holiday').length}</p>
-                      <p className="text-sm text-gray-300">Holidays</p>
-                    </div>
-                    <div className="text-center p-3 bg-white/10 rounded-xl">
-                      <p className="text-3xl font-bold">{events.filter(e => e.type === 'exam').length}</p>
-                      <p className="text-sm text-gray-300">Exams</p>
-                    </div>
-                    <div className="text-center p-3 bg-white/10 rounded-xl">
-                      <p className="text-3xl font-bold">{events.filter(e => e.type === 'event').length}</p>
-                      <p className="text-sm text-gray-300">Events</p>
-                    </div>
-                    <div className="text-center p-3 bg-white/10 rounded-xl">
-                      <p className="text-3xl font-bold">12</p>
-                      <p className="text-sm text-gray-300">Months</p>
-                    </div>
+                    {[
+                      ['Holidays', events.filter(e => e.type === 'holiday').length],
+                      ['Exams', events.filter(e => e.type === 'exam').length],
+                      ['Events', events.filter(e => e.type === 'event').length],
+                      ['Meetings & activities', events.filter(e => e.type === 'meeting' || e.type === 'activity').length],
+                    ].map(([label, count]) => (
+                      <div key={label} className="text-center p-3 bg-white/10 rounded-xl">
+                        <p className="text-3xl font-bold">{count}</p>
+                        <p className="text-sm text-gray-200">{label}</p>
+                      </div>
+                    ))}
                   </div>
-                </m.div>
+                </div>
               </div>
             </div>
           </div>
@@ -422,98 +419,56 @@ export default function AcademicCalendarPage() {
       </section>
 
       <AnimatePresence>
-        {selectedEvent && (
+        {selectedDate && selectedEvents.length > 0 && (
           <m.div
-            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setSelectedEvent(null)}
+            onClick={() => setSelectedDate(null)}
           >
             <m.div
-              className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden"
-              initial={{ scale: 0.8, opacity: 0 }}
+              ref={dialogRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="calendar-dialog-title"
+              tabIndex={-1}
+              className="bg-white rounded-3xl shadow-2xl max-w-md w-full max-h-[85vh] overflow-y-auto outline-none"
+              initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className={`p-6 ${eventTypeConfig[selectedEvent.type].color.split(' ')[0]} ${eventTypeConfig[selectedEvent.type].color.split(' ')[1]}`}>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    {(() => {
-                      const Icon = eventTypeConfig[selectedEvent.type].icon
-                      return <Icon className="w-6 h-6" />
-                    })()}
-                    <span className="font-semibold">{eventTypeConfig[selectedEvent.type].label}</span>
-                  </div>
-                  <m.button
-                    onClick={() => setSelectedEvent(null)}
-                    className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <span className="text-xl">&times;</span>
-                  </m.button>
-                </div>
+              <div className="p-6 border-b border-gray-100 flex items-start justify-between gap-4">
+                <h2 id="calendar-dialog-title" className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                  <Calendar aria-hidden className="w-5 h-5 text-primary-700" />
+                  {formatDate(selectedDate, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => setSelectedDate(null)}
+                  aria-label="Close"
+                  className="w-10 h-10 shrink-0 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center"
+                >
+                  <X aria-hidden className="w-5 h-5" />
+                </button>
               </div>
-              <div className="p-6">
-                <m.h3
-                  className="text-2xl font-bold text-gray-900 mb-2"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                >
-                  {selectedEvent.title}
-                </m.h3>
-                <m.p
-                  className="text-gray-500 mb-4 flex items-center gap-2"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.15 }}
-                >
-                  <Calendar className="w-4 h-4" />
-                  {new Date(selectedEvent.date).toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </m.p>
-                {selectedEvent.description && (
-                  <m.p
-                    className="text-gray-600"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    {selectedEvent.description}
-                  </m.p>
-                )}
-                <m.div
-                  className="mt-6 flex gap-3"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.25 }}
-                >
-                  <m.button
-                    onClick={() => setSelectedEvent(null)}
-                    className="flex-1 px-4 py-2 border border-gray-200 rounded-xl font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    Close
-                  </m.button>
-                  <m.button
-                    onClick={() => setSelectedEvent(null)}
-                    className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    Add to Calendar
-                  </m.button>
-                </m.div>
-              </div>
+              <ul className="p-6 space-y-5">
+                {selectedEvents.map(event => {
+                  const config = eventTypeConfig[event.type]
+                  const Icon = config.icon
+                  return (
+                    <li key={event.id}>
+                      <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold border ${config.color}`}>
+                        <Icon aria-hidden className="w-4 h-4" />
+                        {config.label}
+                      </span>
+                      <h3 className="mt-2 text-lg font-bold text-gray-900">{event.title}</h3>
+                      {event.description && <p className="text-gray-700 mt-1">{event.description}</p>}
+                    </li>
+                  )
+                })}
+              </ul>
             </m.div>
           </m.div>
         )}

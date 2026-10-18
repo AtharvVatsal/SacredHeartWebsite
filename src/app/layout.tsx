@@ -44,10 +44,27 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable} ${jakarta.variable}`}>
+      <head>
+        {/* Entrance animations start hidden and are revealed by JavaScript; without it, show everything */}
+        <noscript>
+          {/* dangerouslySetInnerHTML keeps the quotes in the selector from being HTML-escaped */}
+          <style
+            dangerouslySetInnerHTML={{
+              __html: '[style*="opacity:0;"],[style$="opacity:0"]{opacity:1!important;filter:none!important;transform:none!important}',
+            }}
+          />
+        </noscript>
+      </head>
       <body className="min-h-screen flex flex-col font-body">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-primary-800 focus:px-5 focus:py-3 focus:text-white focus:shadow-lg"
+        >
+          Skip to main content
+        </a>
         <SmoothScrollProvider>
           <Header />
-          <main className="flex-grow">{children}</main>
+          <main id="main-content" tabIndex={-1} className="flex-grow outline-none">{children}</main>
           <Footer />
         </SmoothScrollProvider>
       </body>

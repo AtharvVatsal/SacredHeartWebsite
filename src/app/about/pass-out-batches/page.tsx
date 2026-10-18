@@ -2,7 +2,9 @@
 
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useBatchYears } from '@/lib/useCMS'
-import { Image, Calendar, Users, X, ChevronLeft, ChevronRight, Download, Search, Grid, List, Camera, Sparkles, Trophy, ArrowLeft } from 'lucide-react'
+import { Image as ImageIcon, Calendar, Users, X, ChevronLeft, ChevronRight, Download, Search, Grid, List, Camera, Sparkles, Trophy, ArrowLeft } from 'lucide-react'
+import NextImage from 'next/image'
+import { useDialog } from '@/lib/useDialog'
 import Link from 'next/link'
 import { FadeIn, StaggerContainer, FadeInItem, ParallaxSection } from '@/components/animations'
 import { m, useInView, AnimatePresence } from 'framer-motion'
@@ -19,13 +21,10 @@ interface LightboxProps {
 function Lightbox({ photo, allPhotos, currentIndex, onClose, onNavigate }: LightboxProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [isAnimating, setIsAnimating] = useState(false)
+  const dialogRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [])
+  // Focus, Tab trap, Escape and scroll lock
+  useDialog({ open: true, onClose, containerRef: dialogRef })
 
   const handlePrev = useCallback(() => {
     if (currentIndex > 0 && !isAnimating) {
@@ -53,7 +52,9 @@ function Lightbox({ photo, allPhotos, currentIndex, onClose, onNavigate }: Light
       const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
-      link.download = `batch-${photo.year}-photo-${currentIndex + 1}.jpg`
+      // Name the file after its real format (the photos are WebP)
+      const ext = blob.type.split('/')[1]?.replace('jpeg', 'jpg') || photo.image.split('.').pop() || 'webp'
+      link.download = `batch-${photo.year}-photo-${currentIndex + 1}.${ext}`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
@@ -65,13 +66,12 @@ function Lightbox({ photo, allPhotos, currentIndex, onClose, onNavigate }: Light
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-      else if (e.key === 'ArrowLeft') handlePrev()
+      if (e.key === 'ArrowLeft') handlePrev()
       else if (e.key === 'ArrowRight') handleNext()
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [onClose, handlePrev, handleNext])
+  }, [handlePrev, handleNext])
 
   return (
     <>
@@ -85,15 +85,23 @@ function Lightbox({ photo, allPhotos, currentIndex, onClose, onNavigate }: Light
       />
       
       {/* Content container */}
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="batch-viewer-title"
+        tabIndex={-1}
+        className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden outline-none"
+      >
         {/* Close button */}
         <m.button 
           className="absolute top-4 right-4 w-14 h-14 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all z-10 group"
           onClick={onClose}
+          aria-label="Close photo viewer"
           whileHover={{ scale: 1.1, rotate: 90 }}
           whileTap={{ scale: 0.9 }}
         >
-          <X size={24} />
+          <X aria-hidden size={24} />
         </m.button>
 
         {/* Navigation buttons */}
@@ -102,13 +110,14 @@ function Lightbox({ photo, allPhotos, currentIndex, onClose, onNavigate }: Light
             <m.button 
               className="absolute left-4 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all z-10"
               onClick={handlePrev}
+              aria-label="Previous photo"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               whileHover={{ scale: 1.1, x: -5 }}
               whileTap={{ scale: 0.9 }}
             >
-              <ChevronLeft size={32} />
+              <ChevronLeft aria-hidden size={32} />
             </m.button>
           )}
 
@@ -116,13 +125,14 @@ function Lightbox({ photo, allPhotos, currentIndex, onClose, onNavigate }: Light
             <m.button 
               className="absolute right-4 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all z-10"
               onClick={handleNext}
+              aria-label="Next photo"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
               whileHover={{ scale: 1.1, x: 5 }}
               whileTap={{ scale: 0.9 }}
             >
-              <ChevronRight size={32} />
+              <ChevronRight aria-hidden size={32} />
             </m.button>
           )}
         </AnimatePresence>
@@ -131,10 +141,11 @@ function Lightbox({ photo, allPhotos, currentIndex, onClose, onNavigate }: Light
         <m.button 
           className="absolute bottom-4 right-4 w-14 h-14 bg-gradient-to-br from-primary-500 to-primary-700 rounded-full flex items-center justify-center text-white hover:shadow-lg hover:shadow-primary-500/50 transition-all z-10"
           onClick={handleDownload}
+          aria-label="Download this photo"
           whileHover={{ scale: 1.1, y: -5 }}
           whileTap={{ scale: 0.9 }}
         >
-          <Download size={22} />
+          <Download aria-hidden size={22} />
         </m.button>
 
         {/* Progress bar */}
@@ -148,7 +159,7 @@ function Lightbox({ photo, allPhotos, currentIndex, onClose, onNavigate }: Light
         </div>
 
         {/* Counter */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/70 text-sm z-10 flex items-center gap-4">
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/80 text-sm z-10 flex items-center gap-4" aria-live="polite">
           <span className="font-mono text-lg">{String(currentIndex + 1).padStart(2, '0')} / {String(allPhotos.length).padStart(2, '0')}</span>
           <span className="hidden sm:inline border-l border-white/20 pl-4">← → to navigate</span>
         </div>
@@ -160,8 +171,8 @@ function Lightbox({ photo, allPhotos, currentIndex, onClose, onNavigate }: Light
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <p className="text-white font-semibold">{photo.title}</p>
-            <p className="text-white/50 text-sm">{photo.year}</p>
+            <h2 id="batch-viewer-title" className="text-white font-semibold">{photo.title}</h2>
+            <p className="text-white/80 text-sm">{photo.year}</p>
           </m.div>
         </div>
 
@@ -176,6 +187,7 @@ function Lightbox({ photo, allPhotos, currentIndex, onClose, onNavigate }: Light
               src={photo.image}
               alt={photo.title}
               className="max-w-[95vw] max-h-[80vh] w-auto h-auto object-contain rounded-2xl shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
               onLoad={() => setIsLoading(false)}
               onError={() => setIsLoading(false)}
               initial={{ opacity: 0, scale: 0.9, rotate: -2 }}
@@ -241,9 +253,9 @@ function BatchCard({ batch, allPhotos, onPhotoClick }: {
               <Trophy className="w-7 h-7 text-secondary-400" />
             </m.div>
             <div>
-              <h3 className="text-2xl font-display font-bold text-white">Class of {batch.year}</h3>
-              <p className="text-white/70 text-sm flex items-center gap-2">
-                <Camera className="w-4 h-4" />
+              <h2 className="text-2xl font-display font-bold text-white">Class of {batch.year}</h2>
+              <p className="text-white/80 text-sm flex items-center gap-2">
+                <Camera aria-hidden className="w-4 h-4" />
                 {batch.photos?.length || 0} {(batch.photos?.length || 0) === 1 ? 'photo' : 'photos'}
               </p>
             </div>
@@ -265,7 +277,7 @@ function BatchCard({ batch, allPhotos, onPhotoClick }: {
       </m.div>
 
       {/* Photos Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 min-[480px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {(batch.photos || []).map((photo, index) => {
           const globalIndex = allPhotos.findIndex(p => p.id === photo.id)
           return (
@@ -277,16 +289,20 @@ function BatchCard({ batch, allPhotos, onPhotoClick }: {
               whileHover={{ y: -8, scale: 1.02 }}
             >
               <button
+                type="button"
                 onClick={() => onPhotoClick(photo, globalIndex)}
-                className="relative w-full aspect-[4/3] rounded-xl overflow-hidden cursor-pointer group/photo shadow-lg"
+                aria-label={`View ${photo.title} full size`}
+                className="relative w-full aspect-[3/2] rounded-xl overflow-hidden cursor-pointer group/photo shadow-lg bg-gray-200"
               >
-                <m.img
-                  src={photo.image}
-                  alt={photo.title}
-                  className="w-full h-full object-cover"
-                  whileHover={{ scale: 1.1 }}
-                  transition={{ duration: 0.4 }}
-                />
+                {photo.image && (
+                  <NextImage
+                    src={photo.image}
+                    alt=""
+                    fill
+                    sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    className="object-contain transition-transform duration-500 group-hover/photo:scale-105"
+                  />
+                )}
                 
                 {/* Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover/photo:opacity-100 transition-opacity duration-300">
@@ -299,7 +315,7 @@ function BatchCard({ batch, allPhotos, onPhotoClick }: {
                       initial={{ scale: 0 }}
                       whileHover={{ scale: 1 }}
                     >
-                      <Image className="w-6 h-6 text-white" />
+                      <ImageIcon aria-hidden className="w-6 h-6 text-white" />
                     </m.div>
                   </div>
                 </div>
@@ -315,8 +331,8 @@ function BatchCard({ batch, allPhotos, onPhotoClick }: {
       {/* Empty state */}
       {(!batch.photos || batch.photos.length === 0) && (
         <div className="bg-gray-100 rounded-xl p-8 text-center">
-          <Image className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500">No photos available for {batch.year}</p>
+          <ImageIcon aria-hidden className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600">No photos available for {batch.year}</p>
         </div>
       )}
     </m.div>
@@ -363,7 +379,7 @@ export default function PassOutBatchesPage() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
   
-  const batches: BatchYear[] = batchData || []
+  const batches: BatchYear[] = useMemo(() => batchData || [], [batchData])
   const allPhotos = useMemo(() => batches.flatMap(b => b.photos || []), [batches])
   const allYears = useMemo(() => [...new Set(batches.map(b => b.year))].sort((a, b) => b - a), [batches])
   
@@ -375,10 +391,11 @@ export default function PassOutBatchesPage() {
   const filteredBatches = useMemo(() => {
     let result = selectedYear === 'All' ? batches : batches.filter(b => b.year === selectedYear)
     
-    if (searchQuery) {
+    const query = searchQuery.trim().toLowerCase()
+    if (query) {
       result = result.filter(b => 
-        String(b.year).includes(searchQuery) ||
-        b.photos?.some(p => p.title.toLowerCase().includes(searchQuery.toLowerCase()))
+        String(b.year).includes(query) ||
+        b.photos?.some(p => p.title.toLowerCase().includes(query))
       )
     }
     
@@ -557,9 +574,10 @@ export default function PassOutBatchesPage() {
           <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
             {/* Search */}
             <div className="relative w-full lg:w-80">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Search aria-hidden className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
               <input
-                type="text"
+                type="search"
+                aria-label="Search batches by year or title"
                 placeholder="Search batches or photos..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -568,16 +586,18 @@ export default function PassOutBatchesPage() {
             </div>
 
             {/* Results count */}
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-600" aria-live="polite">
               Showing <span className="font-semibold text-primary-700">{filteredBatches.length}</span> batches
             </p>
           </div>
 
           {/* Year Pills */}
-          <div className="mt-4 flex flex-wrap gap-2 items-center">
+          <div className="mt-4 flex gap-2 items-center overflow-x-auto lg:flex-wrap pb-1 lg:pb-0" role="group" aria-label="Filter by year">
             <m.button
+              type="button"
+              aria-pressed={selectedYear === 'All'}
               onClick={() => setSelectedYear('All')}
-              className={`px-5 py-2 rounded-full font-medium transition-all ${
+              className={`shrink-0 px-5 py-2 rounded-full font-medium transition-all ${
                 selectedYear === 'All'
                   ? 'bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg shadow-primary-500/30'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -589,9 +609,11 @@ export default function PassOutBatchesPage() {
             </m.button>
             {allYears.map((year, i) => (
               <m.button
+                type="button"
                 key={`year-${year}-${i}`}
+                aria-pressed={selectedYear === year}
                 onClick={() => setSelectedYear(year)}
-                className={`px-4 py-2 rounded-full font-medium transition-all text-sm ${
+                className={`shrink-0 px-4 py-2 rounded-full font-medium transition-all text-sm ${
                   selectedYear === year
                     ? 'bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg shadow-primary-500/30'
                     : yearsWithPhotos.includes(year)

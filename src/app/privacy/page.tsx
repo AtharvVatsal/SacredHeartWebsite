@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { ArrowLeft, Shield, Eye, Lock, FileText, Users, Mail, AlertCircle } from 'lucide-react'
 import { m } from 'framer-motion'
+import { schoolInfo } from '@/data/school'
 
 const sections = [
   {
@@ -43,7 +44,7 @@ const sections = [
     title: 'Information Sharing',
     content: `We do not sell, trade, or rent personal information to third parties. We may share information:
 
-• With educational authorities as required by law (CBSE, CISCE, State Education Department)
+• With educational authorities as required by law (CISCE, State Education Department)
 • With service providers who assist in our operations (under strict confidentiality)
 • When required by law or to protect our rights
 • With parent/guardian consent for student-related matters
@@ -70,8 +71,8 @@ Sacred Heart Senior Secondary School
 Sidhpur, Dharamshala
 Himachal Pradesh - 176057
 
-Email: []
-Phone: []
+Email: ${schoolInfo.contact.emails.join(', ')}
+Phone: ${schoolInfo.contact.phones.join(', ')}
 
 We aim to respond to all inquiries within 30 days.`
   },

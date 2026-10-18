@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, History, Target, Users, Award, BookOpen, Music, Sparkles, Heart, Building, GraduationCap, Star } from 'lucide-react'
-import { schoolInfo as defaultSchoolInfo, principalMessage as defaultPrincipalMessage } from '@/data/school'
+import { schoolInfo as defaultSchoolInfo, principalMessage as defaultPrincipalMessage, staffMembers } from '@/data/school'
 import { useSchoolInfo, usePrincipalMessage, useSchoolHistory, useSchoolAnthem } from '@/lib/useCMS'
 import { m } from 'framer-motion'
 import { FadeIn, StaggerContainer, FadeInItem, ParallaxSection } from '@/components/animations'
@@ -19,7 +19,8 @@ const aboutNav = [
 
 const stats = [
   { icon: GraduationCap, value: '1969', label: 'Established', color: 'from-emerald-500 to-teal-600' },
-  { icon: Users, value: '90+', label: 'Staff Members', color: 'from-blue-500 to-indigo-600' },
+  // Counted from the staff list so it always matches /about/staff
+  { icon: Users, value: String(staffMembers.length), label: 'Staff Members', color: 'from-blue-500 to-indigo-600' },
   { icon: Heart, value: 'CISCE', label: 'Affiliation', color: 'from-rose-500 to-pink-600' },
   { icon: Star, value: '56+', label: 'Years of Excellence', color: 'from-amber-500 to-orange-600' },
 ]
@@ -48,7 +49,6 @@ export default function AboutPage() {
             animate={{ scale: [1.2, 1, 1.2], opacity: [0.3, 0.2, 0.3] }}
             transition={{ duration: 5, repeat: Infinity }}
           />
-          <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5 mix-blend-overlay pointer-events-none" />
         </div>
 
         {/* Floating elements */}
@@ -117,7 +117,6 @@ export default function AboutPage() {
 
       {/* Stats Section */}
       <section className="py-16 bg-gradient-to-b from-primary-50 to-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.02] pointer-events-none mix-blend-overlay"></div>
         
         <div className="container mx-auto px-4 relative z-10">
           <StaggerContainer className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto" stagger={0.1}>
@@ -130,7 +129,7 @@ export default function AboutPage() {
                   <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
                   <div className="relative z-10 text-center">
                     <stat.icon className="w-8 h-8 mx-auto mb-3 opacity-90" />
-                    <p className="text-3xl font-bold mb-1">{stat.value}</p>
+                    <p className="text-2xl min-[360px]:text-3xl font-bold mb-1">{stat.value}</p>
                     <p className="text-sm opacity-80">{stat.label}</p>
                   </div>
                 </m.div>
@@ -147,7 +146,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 relative z-10">
           <FadeIn blur>
             <div className="text-center mb-12">
-              <h2 className="text-sm font-semibold text-secondary-500 tracking-wider uppercase mb-3">Explore</h2>
+              <h2 className="text-sm font-semibold text-secondary-800 tracking-wider uppercase mb-3">Explore</h2>
               <h3 className="text-3xl md:text-4xl font-display font-bold text-primary-900 mb-4">
                 Discover More About Us
               </h3>
@@ -182,7 +181,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-4">
           <FadeIn blur>
             <div className="text-center mb-16">
-              <span className="text-sm font-semibold text-secondary-500 tracking-wider uppercase">Our Heritage</span>
+              <span className="text-sm font-semibold text-secondary-800 tracking-wider uppercase">Our Heritage</span>
               <h2 className="text-4xl md:text-5xl font-display font-bold text-primary-900 mt-3">
                 Our Journey Through Time
               </h2>
@@ -220,7 +219,7 @@ export default function AboutPage() {
                         <span className="text-white font-bold text-lg">{item.year}</span>
                       </div>
                       <div className="bg-gradient-to-br from-primary-50 to-secondary-50 p-5 rounded-xl w-full">
-                        <h4 className="font-bold text-primary-900 text-base mb-2">{item.title}</h4>
+                        <h3 className="font-bold text-primary-900 text-base mb-2">{item.title}</h3>
                         <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
                       </div>
                     </m.div>
@@ -245,12 +244,12 @@ export default function AboutPage() {
                       whileInView={{ opacity: 1, scale: 1 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.3, delay: index * 0.05 }}
-                      className="bg-gradient-to-br from-primary-50 to-secondary-50 p-5 rounded-xl text-center"
+                      className="bg-gradient-to-br from-primary-50 to-secondary-50 p-3 min-[360px]:p-5 rounded-xl text-center break-words hyphens-auto"
                     >
                       <div className="w-16 h-16 bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-xl flex items-center justify-center shadow mb-4 mx-auto">
                         <span className="text-white font-bold text-base">{item.year}</span>
                       </div>
-                      <h4 className="font-bold text-primary-900 text-base mb-2">{item.title}</h4>
+                      <h3 className="font-bold text-primary-900 text-sm min-[360px]:text-base mb-2">{item.title}</h3>
                       <p className="text-gray-600 text-sm">{item.desc}</p>
                     </m.div>
                   ))}
@@ -271,7 +270,7 @@ export default function AboutPage() {
 
           <FadeIn blur>
             <div className="mt-12 text-center">
-              <Link href="/about/history" className="inline-flex items-center gap-2 bg-primary-600 text-white px-8 py-4 rounded-full font-semibold hover:bg-primary-700 transition-all shadow-lg hover:shadow-xl">
+              <Link href="/about/history" className="inline-flex items-center gap-2 bg-primary-700 text-white px-8 py-4 rounded-full font-semibold hover:bg-primary-800 transition-all shadow-lg hover:shadow-xl">
                 Read Full History <ArrowRight size={18} />
               </Link>
             </div>
@@ -282,9 +281,6 @@ export default function AboutPage() {
       {/* School Anthem */}
       <section className="py-20 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white relative overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
-          <m.div 
-            className="absolute top-0 left-0 w-full h-full bg-[url('/noise.png')] opacity-10 mix-blend-overlay"
-          />
           <m.div 
             className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-secondary-500/10 rounded-full blur-[100px]"
             animate={{ scale: [1, 1.1, 1], x: [0, 30, 0] }}
@@ -381,7 +377,7 @@ export default function AboutPage() {
                       <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-900 mb-2">
                         Principal&apos;s Message
                       </h2>
-                      <h3 className="text-xl text-secondary-600 font-medium mb-6">Sr. Archana</h3>
+                      <p className="text-xl text-secondary-800 font-medium mb-6">Sr. Archana</p>
                       <p className="text-gray-600 leading-relaxed mb-8 text-lg italic">
                         &quot;{principal.split('.')[0]}...&quot;
                       </p>
@@ -422,7 +418,7 @@ export default function AboutPage() {
               Join Our School Family
             </h2>
             <p className="text-gray-200 mb-10 max-w-2xl mx-auto text-lg">
-              Admissions are open for the academic year 2025-26. Give your child the gift of quality education rooted in values and excellence.
+              Give your child the gift of quality education rooted in values and excellence. Contact the school office to ask about admissions for the coming session.
             </p>
           </FadeIn>
           

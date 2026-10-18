@@ -95,7 +95,6 @@ export default function AcademicsPage() {
             animate={{ scale: [1.2, 1, 1.2], opacity: [0.3, 0.2, 0.3] }}
             transition={{ duration: 5, repeat: Infinity }}
           />
-          <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5 mix-blend-overlay pointer-events-none" />
         </div>
 
         {/* Floating elements */}
@@ -169,7 +168,7 @@ export default function AcademicsPage() {
         <div className="container mx-auto px-4 relative z-10">
           <FadeIn blur>
             <div className="text-center mb-16">
-              <h2 className="text-sm font-semibold text-secondary-500 tracking-wider uppercase mb-3">Our Programs</h2>
+              <h2 className="text-sm font-semibold text-secondary-800 tracking-wider uppercase mb-3">Our Programs</h2>
               <h3 className="text-3xl md:text-5xl font-display font-bold text-primary-900 mb-4">
                 Classes We Offer
               </h3>
@@ -206,12 +205,11 @@ export default function AcademicsPage() {
 
       {/* Streams Section */}
       <section className="py-20 bg-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-full h-[500px] bg-[url('/noise.png')] opacity-[0.02] pointer-events-none mix-blend-overlay"></div>
         
         <div className="container mx-auto px-4 relative z-10">
           <FadeIn blur>
             <div className="text-center mb-16">
-              <h2 className="text-sm font-semibold text-secondary-500 tracking-wider uppercase mb-3">Senior Secondary</h2>
+              <h2 className="text-sm font-semibold text-secondary-800 tracking-wider uppercase mb-3">Senior Secondary</h2>
               <h3 className="text-3xl md:text-5xl font-display font-bold text-primary-900 mb-4">
                 Streams in Class 11-12
               </h3>
@@ -221,7 +219,7 @@ export default function AcademicsPage() {
             </div>
           </FadeIn>
           
-          <StaggerContainer className="grid md:grid-cols-3 gap-8" stagger={0.15}>
+          <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8" stagger={0.15}>
             {streams.map((stream, index) => (
               <FadeInItem key={index} direction="up" blur>
                 <m.div
@@ -238,7 +236,7 @@ export default function AcademicsPage() {
                       <stream.icon className="w-8 h-8 text-white" />
                     </m.div>
                     
-                    <h3 className="font-display font-bold text-2xl text-primary-900 mb-4">
+                    <h3 className="font-display font-bold text-2xl text-primary-900 mb-4 break-words">
                       {stream.name}
                     </h3>
                     
@@ -272,7 +270,7 @@ export default function AcademicsPage() {
         <div className="container mx-auto px-4 relative z-10">
           <FadeIn blur>
             <div className="text-center mb-16">
-              <h2 className="text-sm font-semibold text-secondary-500 tracking-wider uppercase mb-3">Core Subjects</h2>
+              <h2 className="text-sm font-semibold text-secondary-800 tracking-wider uppercase mb-3">Core Subjects</h2>
               <h3 className="text-3xl md:text-5xl font-display font-bold text-primary-900 mb-4">
                 Subject Overview
               </h3>
@@ -317,7 +315,7 @@ export default function AcademicsPage() {
         <div className="container mx-auto px-4 relative z-10">
           <FadeIn blur>
             <div className="text-center mb-12">
-              <h2 className="text-sm font-semibold text-secondary-500 tracking-wider uppercase mb-3">Resources</h2>
+              <h2 className="text-sm font-semibold text-secondary-800 tracking-wider uppercase mb-3">Resources</h2>
               <h3 className="text-3xl md:text-4xl font-display font-bold text-primary-900 mb-4">
                 Quick Links
               </h3>
@@ -397,7 +395,7 @@ export default function AcademicsPage() {
                       <BookOpen className="w-8 h-8 text-primary-900" />
                     </m.div>
                     <div>
-                      <h3 className="font-display font-bold text-xl text-primary-900 mb-1">CICSE Documents</h3>
+                      <h3 className="font-display font-bold text-xl text-primary-900 mb-1">CISCE Documents</h3>
                       <p className="text-gray-500">Rules for issuing documents</p>
                     </div>
                     <m.div

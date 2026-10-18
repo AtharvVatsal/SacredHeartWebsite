@@ -5,6 +5,10 @@ import Link from 'next/link'
 import { ArrowRight, Trophy, Medal, Award, Rocket, BookOpen, ArrowLeft, Sparkles, Star as StarIcon, Target, Users, Zap, X, ChevronLeft, ChevronRight, Calendar, Quote, Globe, Satellite } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import { m, useInView, AnimatePresence } from 'framer-motion'
+import { statistics } from '@/data/school'
+import { parseStatValue } from '@/lib/stats'
+import { useDialog } from '@/lib/useDialog'
+import CountUp from '@/components/animations/CountUp'
 
 const chandrayaanPhotos = [
   { src: '/images/Students/Achievers/Chandrayaan 3/Chandrayaan_2.webp', alt: 'Chandrayaan-3 Mission Photo 1' },
@@ -54,29 +58,11 @@ const cardHoverVariants = {
   }
 }
 
-function AnimatedCounter({ end, duration = 2000, suffix = '' }: { end: number; duration?: number; suffix?: string }) {
-  const [count, setCount] = useState(0)
-  const ref = useRef<HTMLSpanElement>(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
-
-  useEffect(() => {
-    if (!isInView) return
-    let startTime: number
-    const animate = (currentTime: number) => {
-      if (!startTime) startTime = currentTime
-      const progress = Math.min((currentTime - startTime) / duration, 1)
-      setCount(Math.floor(progress * end))
-      if (progress < 1) requestAnimationFrame(animate)
-    }
-    requestAnimationFrame(animate)
-  }, [isInView, end, duration])
-
-  return <span ref={ref}>{count}{suffix}</span>
-}
-
 function PhotoGallery({ photos }: { photos: typeof chandrayaanPhotos }) {
   const [selectedPhoto, setSelectedPhoto] = useState<number | null>(null)
   const [isHovered, setIsHovered] = useState<number | null>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
+  useDialog({ open: selectedPhoto !== null, onClose: () => setSelectedPhoto(null), containerRef: dialogRef })
 
   const goToPrevious = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -91,7 +77,6 @@ function PhotoGallery({ photos }: { photos: typeof chandrayaanPhotos }) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (selectedPhoto === null) return
-      if (e.key === 'Escape') setSelectedPhoto(null)
       if (e.key === 'ArrowLeft') setSelectedPhoto(prev => prev === 0 ? photos.length - 1 : prev! - 1)
       if (e.key === 'ArrowRight') setSelectedPhoto(prev => prev === photos.length - 1 ? 0 : prev! + 1)
     }
@@ -109,10 +94,12 @@ function PhotoGallery({ photos }: { photos: typeof chandrayaanPhotos }) {
         viewport={{ once: true }}
       >
         {photos.map((photo, index) => (
-          <m.div
+          <m.button
+            type="button"
             key={index}
             variants={itemVariants}
-            className="relative aspect-square rounded-xl overflow-hidden cursor-pointer group"
+            aria-label={`View ${photo.alt}`}
+            className="relative aspect-square rounded-xl overflow-hidden cursor-pointer group w-full"
             onClick={() => setSelectedPhoto(index)}
             onMouseEnter={() => setIsHovered(index)}
             onMouseLeave={() => setIsHovered(null)}
@@ -121,8 +108,9 @@ function PhotoGallery({ photos }: { photos: typeof chandrayaanPhotos }) {
           >
             <Image
               src={photo.src}
-              alt={photo.alt}
+              alt=""
               fill
+              sizes="(max-width: 768px) 50vw, 33vw"
               className="object-cover"
             />
             <m.div
@@ -149,14 +137,19 @@ function PhotoGallery({ photos }: { photos: typeof chandrayaanPhotos }) {
             >
               View Photo
             </m.p>
-          </m.div>
+          </m.button>
         ))}
       </m.div>
 
       <AnimatePresence>
         {selectedPhoto !== null && (
           <m.div
-            className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="achievement-photo-title"
+            tabIndex={-1}
+            className="fixed inset-0 bg-black/95 z-[60] flex items-center justify-center p-4 outline-none"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -165,28 +158,31 @@ function PhotoGallery({ photos }: { photos: typeof chandrayaanPhotos }) {
             <m.button
               className="absolute top-4 right-4 text-white p-3 hover:bg-white/10 rounded-full transition-colors z-10"
               onClick={() => setSelectedPhoto(null)}
+              aria-label="Close photo viewer"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
-              <X className="w-8 h-8" />
+              <X aria-hidden className="w-8 h-8" />
             </m.button>
 
             <m.button
               className="absolute left-4 top-1/2 -translate-y-1/2 text-white p-3 hover:bg-white/10 rounded-full transition-colors z-10"
               onClick={goToPrevious}
+              aria-label="Previous photo"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
-              <ChevronLeft className="w-8 h-8" />
+              <ChevronLeft aria-hidden className="w-8 h-8" />
             </m.button>
 
             <m.button
               className="absolute right-4 top-1/2 -translate-y-1/2 text-white p-3 hover:bg-white/10 rounded-full transition-colors z-10"
               onClick={goToNext}
+              aria-label="Next photo"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
-              <ChevronRight className="w-8 h-8" />
+              <ChevronRight aria-hidden className="w-8 h-8" />
             </m.button>
 
             <m.div
@@ -211,7 +207,7 @@ function PhotoGallery({ photos }: { photos: typeof chandrayaanPhotos }) {
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
             >
-              <p className="text-lg font-medium">{photos[selectedPhoto].alt}</p>
+              <h2 id="achievement-photo-title" className="text-lg font-medium">{photos[selectedPhoto].alt}</h2>
               <p className="text-sm text-gray-300 mt-1">
                 {selectedPhoto + 1} / {photos.length}
               </p>
@@ -394,7 +390,7 @@ export default function OtherAchievementsPage() {
                       <p className="text-primary-900 italic font-medium mb-2">
                         &apos;Dreams have no boundaries when you have the courage to pursue them.&apos;
                       </p>
-                      <p className="text-secondary-600 text-sm">— Rajat Awasthi</p>
+                      <p className="text-secondary-800 text-sm">— Rajat Awasthi</p>
                     </m.div>
 
                     <m.div
@@ -459,12 +455,12 @@ export default function OtherAchievementsPage() {
             initial="hidden"
             animate={statsInView ? "visible" : "hidden"}
           >
-            {[
-              { value: 20, suffix: '+', label: 'Years of Excellence', icon: StarIcon, color: 'from-secondary-400 to-secondary-500' },
-              { value: 500, suffix: '+', label: 'Students Enrolled', icon: Users, color: 'from-blue-400 to-blue-500' },
-              { value: 50, suffix: '+', label: 'Awards Won', icon: Trophy, color: 'from-emerald-400 to-emerald-500' },
-              { value: 100, suffix: '%', label: 'Success Rate', icon: Target, color: 'from-purple-400 to-purple-500' },
-            ].map((stat, i) => (
+            {statistics.map((s, i) => ({
+              ...s,
+              ...parseStatValue(s.value),
+              icon: [StarIcon, Users, Trophy, BookOpen][i % 4],
+              color: 'from-primary-600 to-primary-700',
+            })).map((stat, i) => (
               <m.div
                 key={i}
                 className="text-center"
@@ -475,10 +471,10 @@ export default function OtherAchievementsPage() {
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   transition={{ type: "spring", stiffness: 400 }}
                 >
-                  <stat.icon className="w-7 h-7 md:w-8 md:h-8 text-white" />
+                  <stat.icon aria-hidden className="w-7 h-7 md:w-8 md:h-8 text-white" />
                 </m.div>
                 <p className="text-3xl md:text-4xl font-bold text-primary-900 mb-1">
-                  <AnimatedCounter end={stat.value} suffix={stat.suffix} />
+                  <CountUp end={stat.end} decimals={stat.decimals} suffix={stat.unit + (stat.suffix || '')} />
                 </p>
                 <p className="text-sm md:text-base text-gray-600">{stat.label}</p>
               </m.div>
@@ -597,7 +593,7 @@ export default function OtherAchievementsPage() {
                     <div className="flex-1">
                       <div className="flex flex-wrap items-center gap-3 mb-4">
                         <m.span
-                          className="text-sm font-semibold text-secondary-600 bg-secondary-50 px-4 py-1.5 rounded-full border border-secondary-100"
+                          className="text-sm font-semibold text-secondary-800 bg-secondary-50 px-4 py-1.5 rounded-full border border-secondary-100"
                           whileHover={{ scale: 1.05 }}
                         >
                           {achievement.year}
@@ -617,7 +613,7 @@ export default function OtherAchievementsPage() {
                       </m.h3>
                       <p className="font-bold text-lg text-primary-800 mb-4 flex items-center gap-2">
                         {achievement.student}
-                        <span className="text-gray-400 font-normal text-sm">- {achievement.class}</span>
+                        <span className="text-gray-600 font-normal text-sm">- {achievement.class}</span>
                       </p>
                       <p className="text-gray-600 leading-relaxed">
                         {achievement.description}

@@ -4,13 +4,18 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { m, useScroll, useTransform, useSpring } from 'framer-motion'
 import { useRef, useEffect, useState } from 'react'
-import { ArrowRight, Award, BookOpen, Users, Trophy, Calendar, GraduationCap, Star, Sparkles, CheckCircle, Smartphone, CreditCard, Bell, Video, Eye, Rocket } from 'lucide-react'
+import { ArrowRight, Award, BookOpen, Users, Trophy, Calendar, GraduationCap, Star, Sparkles, CheckCircle, CreditCard, Rocket, Monitor, Laptop, FlaskConical, Library, Flower2, Bus, Stethoscope, FileText, type LucideIcon } from 'lucide-react'
 import { schoolInfo as defaultSchoolInfo, heroSection as defaultHeroSection, heroImages as defaultHeroImages, statistics as defaultStatistics, quickLinks as defaultQuickLinks, notifications as defaultNotifications, achievements as defaultAchievements, facilities as defaultFacilities, principalMessage as defaultPrincipalMessage, studentLeaders as defaultStudentLeaders } from '@/data/school'
 import { useSchoolInfo, useHeroSection, useStatistics, useQuickLinks, useNotifications, useAchievements, usePrincipalMessage, useFacilities, useStudentLeaders } from '@/lib/useCMS'
 import Section from '@/components/ui/Section'
 import HeroSlideshow from '@/components/home/HeroSlideshow'
 import { FadeIn, StaggerContainer, FadeInItem, ScaleIn, ParallaxSection, CountUp, TextReveal, MagneticButton } from '@/components/animations'
 import type { Stat, QuickLink, Achievement, Notification, Facility, StudentLeader } from '@/types'
+import { parseStatValue } from '@/lib/stats'
+
+const iconMap: Record<string, LucideIcon> = {
+  FileText, CreditCard, Calendar, Monitor, Laptop, FlaskConical, Library, Trophy, Flower2, Bus, Stethoscope,
+}
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -50,7 +55,7 @@ export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center bg-mesh overflow-hidden pt-20">
+      <section className="relative min-h-[90vh] flex items-center bg-mesh overflow-hidden pt-20 [@media(max-height:760px)]:pt-24 [@media(max-height:760px)]:pb-12">
         <div className="noise-overlay" />
         <div className="geometric-bg absolute inset-0" />
         
@@ -95,13 +100,13 @@ export default function Home() {
             >
               <m.div 
                 variants={fadeInUp}
-                className="inline-flex items-center gap-2 glass px-6 py-2.5 rounded-full text-sm font-medium text-primary-900 mb-8 border-white/40 shadow-xl"
+                className="inline-flex items-center gap-2 glass px-6 py-2.5 rounded-full text-sm font-medium text-primary-900 mb-8 [@media(max-height:760px)]:mb-5 border-white/40 shadow-xl"
               >
                 <Sparkles size={16} className="text-secondary-600 animate-pulse" />
                 {schoolInfo.affiliation} • Est. {schoolInfo.established}
               </m.div>
               
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold text-primary-950 mb-6 leading-[1.1] tracking-tight text-shadow-lg">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl lg:[@media(max-height:760px)]:text-5xl xl:[@media(max-height:760px)]:text-6xl font-display font-bold text-primary-950 mb-6 [@media(max-height:760px)]:mb-4 leading-[1.1] tracking-tight text-shadow-lg">
                 <TextReveal delay={2}>Welcome to</TextReveal><br />
                 <TextReveal delay={4} className="heading-gradient">{schoolInfo.fullName}</TextReveal>
               </h1>
@@ -110,7 +115,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.35, ease: 'easeOut' }}
-                className="text-xl md:text-2xl text-primary-800/90 mb-10 max-w-2xl leading-relaxed font-medium"
+                className="text-xl md:text-2xl text-primary-800/90 mb-10 [@media(max-height:760px)]:mb-6 max-w-2xl leading-relaxed font-medium"
               >
                 {heroSection.subtitle}
               </m.p>
@@ -124,7 +129,7 @@ export default function Home() {
                 <MagneticButton>
                   <Link
                     href={heroSection.ctaLink}
-                    className="inline-flex items-center gap-2 bg-primary-700 text-white px-8 py-4 rounded-full font-semibold hover:bg-primary-600 transition-all shadow-glow hover:shadow-glow-secondary"
+                    className="inline-flex items-center gap-2 bg-primary-700 text-white px-8 py-4 rounded-full font-semibold hover:bg-primary-800 transition-all shadow-glow hover:shadow-glow-secondary"
                   >
                     {heroSection.ctaText}
                     <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
@@ -163,7 +168,7 @@ export default function Home() {
 
                   {/* Floating Badge */}
                   <m.div 
-                    className="absolute -bottom-6 -left-6 glass px-5 py-3 rounded-2xl shadow-xl border border-white/40"
+                    className="absolute -bottom-12 left-3 sm:-bottom-6 sm:-left-6 glass px-5 py-3 rounded-2xl shadow-xl border border-white/40"
                     animate={{ y: [0, -8, 0] }}
                     transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
                   >
@@ -172,7 +177,7 @@ export default function Home() {
                         <Award className="w-5 h-5 text-white" />
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500 font-medium">Ranked</p>
+                        <p className="text-xs text-gray-600 font-medium">Ranked</p>
                         <p className="text-sm font-bold text-primary-900">Top School</p>
                       </div>
                     </div>
@@ -217,10 +222,10 @@ export default function Home() {
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="/admission/fee-structure" className="inline-flex items-center gap-2 bg-secondary-400 text-primary-900 px-5 py-2.5 rounded-full font-semibold hover:bg-secondary-300 transition-all text-sm">
               <CreditCard size={16} />
-              Pay School Fee Online
+              Fee Structure
             </Link>
             <Link href="/admission/register" className="inline-flex items-center gap-2 bg-white/10 text-white px-5 py-2.5 rounded-full font-medium hover:bg-white/20 transition-all text-sm border border-white/20">
-              Register or Login For Online Registration
+              Register Interest in Admission
             </Link>
           </div>
         </div>
@@ -239,10 +244,10 @@ export default function Home() {
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                     <div className="text-4xl md:text-5xl font-display font-bold text-primary-700 mb-2 drop-shadow-sm">
-                      <CountUp 
-                        end={parseInt(stat.value.replace(/[^0-9]/g, ''), 10)} 
-                        suffix={stat.value.replace(/[0-9]/g, '') + (stat.suffix || '')} 
-                      />
+                      {(() => {
+                        const { end, decimals, unit } = parseStatValue(stat.value)
+                        return <CountUp end={end} decimals={decimals} suffix={unit + (stat.suffix || '')} />
+                      })()}
                     </div>
                     <div className="text-gray-600 font-medium group-hover:text-primary-800 transition-colors">{stat.label}</div>
                   </m.div>
@@ -260,7 +265,7 @@ export default function Home() {
         <div className="container mx-auto px-4 relative z-10">
           <FadeIn blur>
             <div className="text-center mb-16">
-              <h2 className="text-sm font-semibold text-secondary-500 tracking-wider uppercase mb-3">Navigate Fast</h2>
+              <h2 className="text-sm font-semibold text-secondary-800 tracking-wider uppercase mb-3">Navigate Fast</h2>
               <h3 className="text-3xl md:text-4xl font-display font-bold text-primary-900 mb-4">
                 Quick Links
               </h3>
@@ -273,14 +278,10 @@ export default function Home() {
             </div>
           </FadeIn>
 
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {links.map((link: QuickLink, index: number) => {
-              const Icon = link.icon === 'FileText' ? BookOpen : 
-                           link.icon === 'CreditCard' ? Award : 
-                           link.icon === 'Calendar' ? Calendar : Star
-              
-              const key = link.href === '#' ? `quicklink-${index}` : link.href
-                            
+              const Icon = iconMap[link.icon || ''] || Star
+              const key = link.href
               return (
                 <FadeInItem key={key} direction="up" blur>
                   <Link href={link.href}>
@@ -294,7 +295,7 @@ export default function Home() {
                         <Icon size={28} />
                       </div>
                       <h4 className="text-lg font-semibold text-gray-800 group-hover:text-primary-900 transition-colors relative z-10">{link.title}</h4>
-                      <p className="text-sm text-gray-500 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-4 group-hover:translate-y-0 relative z-10">Click here to access</p>
+                      
                     </m.div>
                   </Link>
                 </FadeInItem>
@@ -313,7 +314,7 @@ export default function Home() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <FadeIn direction="right" blur>
-              <h2 className="text-sm font-semibold text-secondary-500 tracking-wider uppercase mb-3 text-left">Our Heritage</h2>
+              <h2 className="text-sm font-semibold text-secondary-800 tracking-wider uppercase mb-3 text-left">Our Heritage</h2>
               <h3 className="text-3xl md:text-5xl font-display font-bold text-primary-900 mb-6 leading-tight">
                 <TextReveal>About Our School</TextReveal>
               </h3>
@@ -343,7 +344,7 @@ export default function Home() {
               <MagneticButton intensity={0.2}>
                 <Link
                   href="/about"
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-primary-700 to-primary-600 text-white font-semibold px-8 py-3.5 rounded-full hover:shadow-glow transition-all group"
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-primary-800 to-primary-700 text-white font-semibold px-8 py-3.5 rounded-full hover:shadow-glow transition-all group"
                 >
                   Know More About Us 
                   <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
@@ -360,45 +361,45 @@ export default function Home() {
 
                 <div className="space-y-5 mt-8">
                   <m.div 
-                    className="bg-white p-6 md:p-8 rounded-3xl shadow-card hover:shadow-xl border border-gray-50 transition-all group"
+                    className="bg-white p-5 sm:p-6 md:p-8 rounded-3xl shadow-card hover:shadow-xl border border-gray-50 transition-all group break-words hyphens-auto"
                     whileHover={{ scale: 1.02, y: -4 }}
                   >
                     <div className="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-primary-600 transition-colors">
                       <Users className="w-7 h-7 text-primary-600 group-hover:text-white transition-colors" />
                     </div>
-                    <h4 className="font-display font-bold text-xl text-primary-900 mb-2">Expert Faculty</h4>
-                    <p className="text-gray-500 leading-relaxed">50+ experienced educators molding young minds</p>
+                    <h4 className="font-display font-bold text-lg sm:text-xl text-primary-900 mb-2">Expert Faculty</h4>
+                    <p className="text-gray-600 leading-relaxed">Experienced educators molding young minds</p>
                   </m.div>
                   <m.div 
-                    className="bg-gradient-to-br from-primary-600 to-primary-800 p-6 md:p-8 rounded-3xl shadow-glow hover:shadow-xl transition-all group"
+                    className="bg-gradient-to-br from-primary-600 to-primary-800 p-5 sm:p-6 md:p-8 rounded-3xl shadow-glow hover:shadow-xl transition-all group break-words hyphens-auto"
                     whileHover={{ scale: 1.02, y: -4 }}
                   >
                     <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mb-5 backdrop-blur-md">
                       <BookOpen className="w-7 h-7 text-white" />
                     </div>
-                    <h4 className="font-display font-bold text-xl text-white mb-2">CISCE Curriculum</h4>
+                    <h4 className="font-display font-bold text-lg sm:text-xl text-white mb-2">CISCE Curriculum</h4>
                     <p className="text-primary-100 leading-relaxed">Rigorous academic framework from Nursery to Class 12</p>
                   </m.div>
                 </div>
                 <div className="space-y-5">
                   <m.div 
-                    className="bg-gradient-to-br from-secondary-400 to-secondary-600 p-6 md:p-8 rounded-3xl shadow-glow-secondary hover:shadow-xl transition-all group"
+                    className="bg-gradient-to-br from-secondary-400 to-secondary-600 p-5 sm:p-6 md:p-8 rounded-3xl shadow-glow-secondary hover:shadow-xl transition-all group break-words hyphens-auto"
                     whileHover={{ scale: 1.02, y: -4 }}
                   >
                     <div className="w-14 h-14 bg-white/30 rounded-2xl flex items-center justify-center mb-5 backdrop-blur-md">
                       <Trophy className="w-7 h-7 text-primary-900" />
                     </div>
-                    <h4 className="font-display font-bold text-xl text-primary-900 mb-2">Excellence</h4>
+                    <h4 className="font-display font-bold text-lg sm:text-xl text-primary-900 mb-2">Excellence</h4>
                     <p className="text-primary-800 font-medium leading-relaxed">Consistent 100% board pass rate</p>
                   </m.div>
                   <m.div 
-                    className="bg-white p-6 md:p-8 rounded-3xl shadow-card hover:shadow-xl border border-gray-50 transition-all group"
+                    className="bg-white p-5 sm:p-6 md:p-8 rounded-3xl shadow-card hover:shadow-xl border border-gray-50 transition-all group break-words hyphens-auto"
                     whileHover={{ scale: 1.02, y: -4 }}
                   >
                     <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-primary-600 transition-colors">
                       <GraduationCap className="w-7 h-7 text-primary-600 group-hover:text-white transition-colors" />
                     </div>
-                    <h4 className="font-display font-bold text-xl text-primary-900 mb-2">10K+ Alumni</h4>
+                    <h4 className="font-display font-bold text-lg sm:text-xl text-primary-900 mb-2">10K+ Alumni</h4>
                     <p className="text-gray-500 leading-relaxed">Global network making us proud worldwide</p>
                   </m.div>
                 </div>
@@ -411,7 +412,6 @@ export default function Home() {
       {/* Principal's Message */}
       <Section className="bg-gradient-to-br from-primary-50 to-white relative overflow-hidden py-24">
         {/* Background Elements */}
-        <div className="absolute top-0 right-0 w-full h-[500px] bg-[url('/noise.png')] opacity-20 pointer-events-none mix-blend-overlay"></div>
         <ParallaxSection offset={-80} className="absolute top-0 right-0 w-[500px] h-[500px] bg-secondary-400/5 rounded-full blur-[100px] pointer-events-none" />
         <ParallaxSection offset={60} className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary-200/20 rounded-full blur-[80px] pointer-events-none" />
         
@@ -419,7 +419,7 @@ export default function Home() {
           <FadeIn blur>
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-sm font-semibold text-secondary-500 tracking-wider uppercase mb-3 text-center">Leadership</h2>
+                <h2 className="text-sm font-semibold text-secondary-800 tracking-wider uppercase mb-3 text-center">Leadership</h2>
                 <h3 className="text-3xl md:text-5xl font-display font-bold text-primary-900 mb-6">
                   Principal&apos;s Message
                 </h3>
@@ -455,7 +455,7 @@ export default function Home() {
                     </p>
                     <div className="inline-block">
                       <h4 className="font-display font-bold text-xl md:text-2xl text-primary-900 mb-1">Sr. Archana</h4>
-                      <p className="text-secondary-600 font-medium tracking-wide uppercase text-sm">Principal, {schoolInfo.fullName}</p>
+                      <p className="text-secondary-800 font-medium tracking-wide uppercase text-sm">Principal, {schoolInfo.fullName}</p>
                     </div>
                   </div>
                 </div>
@@ -473,7 +473,7 @@ export default function Home() {
         <div className="container mx-auto px-4 relative z-10">
           <FadeIn blur>
             <div className="text-center mb-16">
-              <h2 className="text-sm font-semibold text-secondary-500 tracking-wider uppercase mb-3">Campus Life</h2>
+              <h2 className="text-sm font-semibold text-secondary-800 tracking-wider uppercase mb-3">Campus Life</h2>
               <h3 className="text-3xl md:text-5xl font-display font-bold text-primary-900 mb-6">
                 Our Facilities
               </h3>
@@ -497,12 +497,15 @@ export default function Home() {
                   <div className="absolute inset-0 bg-gradient-to-b from-primary-50/0 to-primary-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                   
                   <div className="w-20 h-20 bg-gradient-to-br from-primary-50 to-primary-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary-600 transition-colors duration-300 shadow-sm relative z-10 group-hover:-rotate-6 transform">
-                    <BookOpen className="w-10 h-10 text-primary-600 group-hover:text-white transition-colors duration-300" />
+                    {(() => {
+                      const Icon = iconMap[facility.icon || ''] || BookOpen
+                      return <Icon aria-hidden className="w-10 h-10 text-primary-700 group-hover:text-white transition-colors duration-300" />
+                    })()}
                   </div>
                   <h3 className="font-display font-bold text-xl text-primary-900 mb-4 relative z-10">
                     {facility.name}
                   </h3>
-                  <p className="text-gray-500 text-sm leading-relaxed relative z-10">{facility.description}</p>
+                  <p className="text-gray-600 text-sm leading-relaxed relative z-10">{facility.description}</p>
                 </m.div>
               </FadeInItem>
             ))}
@@ -514,7 +517,6 @@ export default function Home() {
       <Section className="bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white relative overflow-hidden py-24">
         {/* Mesh Gradient Background */}
         <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-primary-900/50 to-transparent"></div>
-        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay"></div>
         <ParallaxSection offset={-120} className="absolute -top-40 right-[-10%] w-[600px] h-[600px] bg-secondary-500/10 rounded-full blur-[120px] pointer-events-none" />
         <ParallaxSection offset={80} className="absolute -bottom-40 -left-20 w-[500px] h-[500px] bg-primary-400/10 rounded-full blur-[100px] pointer-events-none" />
         
@@ -525,7 +527,7 @@ export default function Home() {
               <h2 className="text-3xl md:text-5xl font-display font-bold mb-4 text-white">
                 Student Leaders
               </h2>
-              <p className="text-primary-200">Academic Year {new Date().getFullYear()}-{new Date().getFullYear() + 1}</p>
+              {leaders[0]?.year && <p className="text-primary-200">Academic Year {leaders[0].year}</p>}
             </div>
           </FadeIn>
           
@@ -587,7 +589,7 @@ export default function Home() {
         <div className="container mx-auto px-4 relative z-10">
           <FadeIn blur>
             <div className="text-center mb-16">
-              <h2 className="text-sm font-semibold text-secondary-500 tracking-wider uppercase mb-3 text-center">Hall of Fame</h2>
+              <h2 className="text-sm font-semibold text-secondary-800 tracking-wider uppercase mb-3 text-center">Hall of Fame</h2>
               <h3 className="text-3xl md:text-5xl font-display font-bold text-primary-900 mb-6">
                 Our Achievements
               </h3>
@@ -648,9 +650,9 @@ export default function Home() {
           <FadeIn blur>
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-16">
-                <h2 className="text-sm font-semibold text-secondary-500 tracking-wider uppercase mb-3 px-4 py-1.5 bg-secondary-50 rounded-full inline-block border border-secondary-100">Updates</h2>
+                <h2 className="text-sm font-semibold text-secondary-800 tracking-wider uppercase mb-3 px-4 py-1.5 bg-secondary-50 rounded-full inline-block border border-secondary-100">Updates</h2>
                 <h3 className="text-3xl md:text-5xl font-display font-bold text-primary-900 mt-4 mb-4">
-                  Latest Notifications
+                  Notifications
                 </h3>
               </div>
             </div>
@@ -674,7 +676,7 @@ export default function Home() {
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pl-4 md:pl-6">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="text-xs font-bold text-primary-600 bg-primary-50 px-3 py-1 rounded-full border border-primary-100/50 flex items-center gap-1">
+                        <span className="text-xs font-bold text-primary-800 bg-primary-50 px-3 py-1 rounded-full border border-primary-100/50 flex items-center gap-1">
                           <Calendar size={12} /> {notification.date}
                         </span>
                         {notification.important && (
@@ -691,10 +693,7 @@ export default function Home() {
                       <h4 className="font-display font-bold text-xl text-gray-900 mb-2 group-hover:text-primary-700 transition-colors">
                         {notification.title}
                       </h4>
-                      <p className="text-gray-500 leading-relaxed text-sm md:text-base">{notification.description}</p>
-                    </div>
-                    <div className="hidden md:flex flex-shrink-0 items-center justify-center w-12 h-12 rounded-full border border-gray-100 group-hover:bg-primary-50 group-hover:border-primary-100 group-hover:text-primary-600 text-gray-400 transition-all">
-                      <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                      <p className="text-gray-600 leading-relaxed text-sm md:text-base">{notification.description}</p>
                     </div>
                   </div>
                 </m.div>
@@ -720,7 +719,6 @@ export default function Home() {
 
       {/* Chandrayaan-3 Achievement */}
       <Section className="bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay"></div>
         <ParallaxSection offset={-50} className="absolute top-0 right-0 w-[500px] h-[500px] bg-secondary-500/10 rounded-full blur-[100px] pointer-events-none" />
         
         <div className="container mx-auto px-4 relative z-10">
@@ -751,35 +749,9 @@ export default function Home() {
         </div>
       </Section>
 
-      {/* Video Gallery */}
-      <Section className="bg-gray-50 py-20">
-        <div className="container mx-auto px-4">
-          <FadeIn blur>
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-900 mb-4">
-                Video Gallery
-              </h2>
-            </div>
-          </FadeIn>
-          
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-sm border p-12 text-center">
-              <Video className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-xl font-display font-bold text-primary-900 mb-2">Video Gallery</h3>
-              <p className="text-gray-500 mb-6">Coming soon - Watch videos of school events and activities</p>
-              <Link href="/gallery" className="inline-flex items-center gap-2 text-primary-700 font-semibold hover:gap-3 transition-all">
-                View More Videos <ArrowRight size={18} />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </Section>
-
-      {/* CTA Section */}
       {/* CTA Section */}
       <Section className="bg-gradient-to-br from-primary-800 via-primary-700 to-primary-900 text-white relative overflow-hidden py-32 rounded-t-[3rem] -mt-10 z-20 shadow-[0_-20px_50px_rgba(0,0,0,0.1)]">
         <div className="absolute inset-0 pattern-grid opacity-20 select-none"></div>
-        <div className="absolute top-0 right-0 w-full h-full bg-[url('/noise.png')] opacity-10 pointer-events-none mix-blend-overlay"></div>
         
         <ParallaxSection offset={-50} className="absolute top-0 right-0">
            <div className="w-[800px] h-[800px] bg-secondary-400/10 rounded-full blur-[120px] translate-x-1/3 -translate-y-1/3 pointer-events-none"></div>
@@ -790,7 +762,7 @@ export default function Home() {
         
         <div className="container mx-auto px-4 relative z-10 text-center">
           <FadeIn blur direction="up">
-            <h2 className="text-sm font-semibold text-secondary-400 tracking-wider uppercase mb-4 text-center">Admissions Open</h2>
+            <h2 className="text-sm font-semibold text-secondary-400 tracking-wider uppercase mb-4 text-center">Admissions</h2>
             <h3 className="text-4xl md:text-6xl font-display font-bold mb-6 text-white drop-shadow-sm">
               Join Our School Family
             </h3>
@@ -806,7 +778,7 @@ export default function Home() {
                   href="/admission"
                   className="inline-flex items-center gap-2 bg-gradient-to-r from-secondary-500 to-secondary-400 text-primary-900 px-10 py-4 rounded-full font-bold hover:shadow-glow-secondary transition-all text-lg group relative overflow-hidden"
                 >
-                  <span className="relative z-10">Apply For Admission</span>
+                  <span className="relative z-10">Apply for Admission</span>
                   <ArrowRight size={20} className="relative z-10 group-hover:translate-x-1 transition-transform" />
                   <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                 </Link>
@@ -827,17 +799,6 @@ export default function Home() {
         </div>
       </Section>
 
-      {/* Visitors Counter */}
-      <Section className="bg-primary-900 py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-center items-center gap-3">
-            <Eye className="w-6 h-6 text-secondary-400" />
-            <span className="text-white font-medium">
-              <CountUp end={100} suffix="K+" /> Visitors
-            </span>
-          </div>
-        </div>
-      </Section>
     </>
   )
 }

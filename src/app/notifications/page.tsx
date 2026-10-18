@@ -28,7 +28,6 @@ export default function NotificationsPage() {
             animate={{ scale: [1.2, 1, 1.2], opacity: [0.3, 0.2, 0.3] }}
             transition={{ duration: 5, repeat: Infinity }}
           />
-          <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5 mix-blend-overlay pointer-events-none" />
         </div>
 
         {/* Floating bells */}
@@ -92,13 +91,13 @@ export default function NotificationsPage() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
             >
-              <div className="glass px-5 py-3 rounded-xl border border-white/20">
+              <div className="bg-white/10 backdrop-blur-sm px-5 py-3 rounded-xl border border-white/25">
                 <p className="text-2xl font-bold text-white">{notifs.length}</p>
-                <p className="text-sm text-white/70">Total</p>
+                <p className="text-sm text-white/90">Total</p>
               </div>
-              <div className="glass px-5 py-3 rounded-xl border border-white/20">
+              <div className="bg-white/10 backdrop-blur-sm px-5 py-3 rounded-xl border border-white/25">
                 <p className="text-2xl font-bold text-secondary-400">{importantCount}</p>
-                <p className="text-sm text-white/70">Important</p>
+                <p className="text-sm text-white/90">Important</p>
               </div>
             </m.div>
           </m.div>
@@ -141,7 +140,7 @@ export default function NotificationsPage() {
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pl-4 md:pl-6 relative z-10">
                         <div className="flex-1">
                           <div className="flex flex-wrap items-center gap-3 mb-3">
-                            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary-600 bg-primary-50 px-3 py-1.5 rounded-full border border-primary-100/50">
+                            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary-800 bg-primary-50 px-3 py-1.5 rounded-full border border-primary-100/50">
                               <Calendar size={12} />
                               {notification.date}
                             </span>
@@ -156,20 +155,12 @@ export default function NotificationsPage() {
                               </m.span>
                             )}
                           </div>
-                          <h3 className="font-display font-bold text-xl text-gray-900 mb-2 group-hover:text-primary-700 transition-colors">
+                          <h2 className="font-display font-bold text-xl text-gray-900 mb-2">
                             {notification.title}
-                          </h3>
-                          <p className="text-gray-500 leading-relaxed">{notification.description}</p>
+                          </h2>
+                          <p className="text-gray-600 leading-relaxed">{notification.description}</p>
                         </div>
                         
-                        <div className="hidden md:flex flex-shrink-0 items-center justify-center w-14 h-14 rounded-2xl border-2 border-gray-100 group-hover:bg-primary-50 group-hover:border-primary-200 group-hover:text-primary-600 text-gray-300 transition-all">
-                          <m.div
-                            animate={{ x: [0, 5, 0] }}
-                            transition={{ duration: 2, repeat: Infinity }}
-                          >
-                            <ExternalLink size={20} />
-                          </m.div>
-                        </div>
                       </div>
                     </m.div>
                   </FadeInItem>
@@ -186,7 +177,7 @@ export default function NotificationsPage() {
                     <Bell className="w-12 h-12 text-gray-300" />
                   </m.div>
                   <h3 className="text-2xl font-display font-bold text-gray-700 mb-2">No Notifications</h3>
-                  <p className="text-gray-500">Check back later for updates</p>
+                  <p className="text-gray-600">Check back later for updates</p>
                 </div>
               </FadeIn>
             )}

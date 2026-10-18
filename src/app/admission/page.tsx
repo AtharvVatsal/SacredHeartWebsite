@@ -1,20 +1,21 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, FileText, CreditCard, Shield, Calendar, UserPlus, GraduationCap, CheckCircle, BookOpen, Clipboard, Sparkles } from 'lucide-react'
+import { ArrowRight, FileText, CreditCard, Shield, Calendar, UserPlus, GraduationCap, CheckCircle, BookOpen, Clipboard, Sparkles, Phone, Mail } from 'lucide-react'
+import { schoolEmail, schoolPhones, telHref } from '@/lib/contact'
 import { m } from 'framer-motion'
 import { FadeIn, StaggerContainer, FadeInItem, ParallaxSection } from '@/components/animations'
 
 const steps = [
   { 
-    title: 'Register Online', 
-    description: 'Fill the online registration form', 
+    title: 'Register Interest', 
+    description: 'Fill in the registration form', 
     icon: FileText,
     color: 'from-blue-500 to-indigo-600'
   },
   { 
-    title: 'Submit Documents', 
-    description: 'Upload required documents', 
+    title: 'Bring Documents', 
+    description: 'Bring the documents listed below to the school', 
     icon: Clipboard,
     color: 'from-purple-500 to-pink-600'
   },
@@ -64,12 +65,6 @@ const quickLinks = [
   },
 ]
 
-const importantDates = [
-  { label: 'Registration Opens', value: 'March 2025', icon: Calendar },
-  { label: 'Last Date', value: 'June 30, 2025', icon: Calendar },
-  { label: 'Assessment Date', value: 'July 2025', icon: Shield },
-  { label: 'Session Starts', value: 'July 2025', icon: GraduationCap },
-]
 
 export default function AdmissionPage() {
   return (
@@ -87,7 +82,6 @@ export default function AdmissionPage() {
             animate={{ scale: [1.2, 1, 1.2], opacity: [0.3, 0.2, 0.3] }}
             transition={{ duration: 5, repeat: Infinity }}
           />
-          <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5 mix-blend-overlay pointer-events-none" />
         </div>
 
         {/* Floating elements */}
@@ -125,7 +119,7 @@ export default function AdmissionPage() {
               transition={{ delay: 0.3 }}
             >
               <GraduationCap className="w-4 h-4 text-secondary-400" />
-              Admissions 2025
+              Admissions
             </m.div>
             <m.h1 
               className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-4"
@@ -161,7 +155,7 @@ export default function AdmissionPage() {
         <div className="container mx-auto px-4 relative z-10">
           <FadeIn blur>
             <div className="text-center mb-16">
-              <h2 className="text-sm font-semibold text-secondary-500 tracking-wider uppercase mb-3">Step by Step</h2>
+              <h2 className="text-sm font-semibold text-secondary-800 tracking-wider uppercase mb-3">Step by Step</h2>
               <h3 className="text-3xl md:text-5xl font-display font-bold text-primary-900 mb-4">
                 Admission Process
               </h3>
@@ -226,7 +220,6 @@ export default function AdmissionPage() {
 
       {/* Documents Required */}
       <section className="py-20 bg-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-full h-[500px] bg-[url('/noise.png')] opacity-[0.02] pointer-events-none mix-blend-overlay"></div>
         
         <div className="container mx-auto px-4 relative z-10">
           <FadeIn blur>
@@ -274,7 +267,7 @@ export default function AdmissionPage() {
         <div className="container mx-auto px-4 relative z-10">
           <FadeIn blur>
             <div className="text-center mb-12">
-              <h2 className="text-sm font-semibold text-secondary-500 tracking-wider uppercase mb-3">Resources</h2>
+              <h2 className="text-sm font-semibold text-secondary-800 tracking-wider uppercase mb-3">Resources</h2>
               <h3 className="text-3xl md:text-4xl font-display font-bold text-primary-900 mb-4">
                 Quick Links
               </h3>
@@ -331,7 +324,7 @@ export default function AdmissionPage() {
         <div className="container mx-auto px-4 relative z-10">
           <FadeIn blur>
             <div className="text-center mb-12">
-              <h2 className="text-sm font-semibold text-secondary-500 tracking-wider uppercase mb-3">Mark Your Calendar</h2>
+              <h2 className="text-sm font-semibold text-secondary-800 tracking-wider uppercase mb-3">Mark Your Calendar</h2>
               <h3 className="text-3xl md:text-4xl font-display font-bold text-primary-900 mb-4">
                 Important Dates
               </h3>
@@ -341,26 +334,22 @@ export default function AdmissionPage() {
             </div>
           </FadeIn>
 
-          <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto" stagger={0.1}>
-            {importantDates.map((date, index) => (
-              <FadeInItem key={index} direction="up" blur>
-                <m.div
-                  whileHover={{ y: -5 }}
-                  className="bg-gradient-to-br from-primary-50 to-white p-8 rounded-2xl border border-primary-100 hover:shadow-xl hover:border-primary-200 transition-all duration-300 text-center relative overflow-hidden group"
-                >
-                  <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary-200/30 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
-                  
-                  <div className="relative z-10">
-                    <div className="w-14 h-14 bg-primary-100 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-200 transition-colors">
-                      <date.icon className="w-7 h-7 text-primary-600" />
-                    </div>
-                    <p className="text-sm text-gray-500 mb-1">{date.label}</p>
-                    <p className="font-display font-bold text-xl text-primary-900">{date.value}</p>
-                  </div>
-                </m.div>
-              </FadeInItem>
-            ))}
-          </StaggerContainer>
+          {/* Dates for the current admission cycle have not been published on the website yet */}
+          <div className="max-w-3xl mx-auto rounded-2xl border border-primary-100 bg-primary-50 p-6 md:p-8 text-center">
+            <Calendar aria-hidden className="w-10 h-10 text-primary-700 mx-auto mb-4" />
+            <p className="font-display font-bold text-xl text-primary-900 mb-2">Dates for the next admission cycle have not been announced here yet</p>
+            <p className="text-gray-700 mb-6">Please call or email the school office for registration and assessment dates.</p>
+            <div className="flex flex-wrap justify-center gap-3">
+              {schoolPhones.map(phone => (
+                <a key={phone} href={telHref(phone)} className="inline-flex items-center gap-2 rounded-full bg-primary-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-800 transition-colors">
+                  <Phone aria-hidden size={16} /> Call {phone}
+                </a>
+              ))}
+              <a href={`mailto:${schoolEmail}`} className="inline-flex items-center gap-2 rounded-full border border-primary-200 bg-white px-5 py-2.5 text-sm font-semibold text-primary-800 hover:bg-primary-100 transition-colors">
+                <Mail aria-hidden size={16} /> Email the office
+              </a>
+            </div>
+          </div>
         </div>
       </section>
 

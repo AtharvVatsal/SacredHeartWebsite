@@ -57,3 +57,5 @@ logs/
 # Local development
 *.db
 *.db-journal
+/.claude
+/issues.md

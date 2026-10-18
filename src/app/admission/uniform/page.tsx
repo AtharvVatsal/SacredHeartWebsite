@@ -160,7 +160,7 @@ export default function UniformPage() {
                       </div>
                       <div className="flex-1">
                         <p className="text-gray-800 font-medium">{item.item}</p>
-                        {item.note && <p className="text-amber-600 text-sm mt-1">{item.note}</p>}
+                        {item.note && <p className="text-amber-800 text-sm mt-1">{item.note}</p>}
                       </div>
                     </div>
                   ))}

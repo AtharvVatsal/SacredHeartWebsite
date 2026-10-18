@@ -3,8 +3,6 @@ import {
   staffMembers, 
   notifications, 
   achievements, 
-  class10Toppers, 
-  class12Toppers, 
   officeBearers, 
   principalMessage, 
   schoolHistory as defaultSchoolHistory, 
@@ -17,7 +15,6 @@ import {
   studentLeaders as defaultStudentLeaders,
   batchPhotos
 } from '@/data/school'
-import type { Facility, StudentLeader, BatchYear } from '@/types'
 
 // All functions now return local data directly (no CMS)
 export async function getSchoolInfo() {
@@ -34,14 +31,6 @@ export async function getNotifications() {
 
 export async function getAchievements() {
   return achievements
-}
-
-export async function getClass10Toppers() {
-  return class10Toppers
-}
-
-export async function getClass12Toppers() {
-  return class12Toppers
 }
 
 export async function getOfficeBearers() {
