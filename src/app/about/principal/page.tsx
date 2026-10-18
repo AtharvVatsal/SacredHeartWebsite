@@ -132,7 +132,7 @@ export default function PrincipalPage() {
                 >
                   <div className="relative overflow-hidden rounded-[2rem] aspect-[4/5]">
                     <Image 
-                      src="/images/principal.jpg" 
+                      src="/images/principal.webp" 
                       alt="Sr. Archana - Principal" 
                       fill
                       className="object-cover"

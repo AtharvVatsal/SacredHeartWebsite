@@ -11,29 +11,33 @@ interface FadeInProps {
   className?: string
   once?: boolean
   blur?: boolean
+  distance?: number
 }
+
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const
 
 export default function FadeIn({
   children,
   delay = 0,
   direction = 'up',
-  duration = 0.6,
+  duration = 0.7,
   className = '',
   once = true,
   blur = true,
+  distance = 36,
 }: FadeInProps) {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once, margin: '-50px' })
+  const isInView = useInView(ref, { once, margin: '-60px' })
 
   const directions = {
-    up: { y: 40, x: 0 },
-    down: { y: -40, x: 0 },
-    left: { x: 40, y: 0 },
-    right: { x: -40, y: 0 },
+    up: { y: distance, x: 0 },
+    down: { y: -distance, x: 0 },
+    left: { x: distance, y: 0 },
+    right: { x: -distance, y: 0 },
     none: { x: 0, y: 0 },
   }
 
-  const blurInitial = blur ? { filter: 'blur(8px)' } : {}
+  const blurInitial = blur ? { filter: 'blur(10px)' } : {}
   const blurAnimate = blur ? { filter: 'blur(0px)' } : {}
 
   return (
@@ -41,13 +45,12 @@ export default function FadeIn({
       ref={ref}
       initial={{ opacity: 0, ...directions[direction], ...blurInitial }}
       animate={isInView ? { opacity: 1, x: 0, y: 0, ...blurAnimate } : {}}
-      transition={{ 
-        duration, 
-        delay, 
-        type: 'spring',
-        damping: 20,
-        stiffness: 100
+      transition={{
+        duration,
+        delay,
+        ease: EASE_OUT_EXPO,
       }}
+      style={{ willChange: 'transform, opacity, filter' }}
       className={className}
     >
       {children}

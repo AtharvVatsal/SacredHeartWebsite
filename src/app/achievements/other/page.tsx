@@ -7,12 +7,12 @@ import { useState, useEffect, useRef } from 'react'
 import { m, useInView, AnimatePresence } from 'framer-motion'
 
 const chandrayaanPhotos = [
-  { src: '/images/students/achievers/Chandrayaan 3/Chandrayaan_2.png', alt: 'Chandrayaan-3 Mission Photo 1' },
-  { src: '/images/students/achievers/Chandrayaan 3/Chandrayaan_1.webp', alt: 'Chandrayaan-3 Mission Photo 2' },
-  { src: '/images/students/achievers/Chandrayaan 3/Chandrayaan_3.webp', alt: 'Chandrayaan-3 Mission Photo 3' },
-  { src: '/images/students/achievers/Chandrayaan 3/Chandrayaan_4.webp', alt: 'Chandrayaan-3 Mission Photo 4' },
-  { src: '/images/students/achievers/Chandrayaan 3/Chandrayaan_5.jpeg', alt: 'Chandrayaan-3 Mission Photo 5' },
-  { src: '/images/students/achievers/Chandrayaan 3/Chandrayaan_6.jpg', alt: 'Chandrayaan-3 Mission Photo 6' },
+  { src: '/images/Students/Achievers/Chandrayaan 3/Chandrayaan_2.webp', alt: 'Chandrayaan-3 Mission Photo 1' },
+  { src: '/images/Students/Achievers/Chandrayaan 3/Chandrayaan_1.webp', alt: 'Chandrayaan-3 Mission Photo 2' },
+  { src: '/images/Students/Achievers/Chandrayaan 3/Chandrayaan_3.webp', alt: 'Chandrayaan-3 Mission Photo 3' },
+  { src: '/images/Students/Achievers/Chandrayaan 3/Chandrayaan_4.webp', alt: 'Chandrayaan-3 Mission Photo 4' },
+  { src: '/images/Students/Achievers/Chandrayaan 3/Chandrayaan_5.webp', alt: 'Chandrayaan-3 Mission Photo 5' },
+  { src: '/images/Students/Achievers/Chandrayaan 3/Chandrayaan_6.webp', alt: 'Chandrayaan-3 Mission Photo 6' },
 ]
 
 const otherAchievements = [
@@ -24,7 +24,7 @@ const otherAchievements = [
     description: 'Won 3rd position in the Personalities of Himachal Pradesh Quiz competition conducted by Zee TV.',
     year: 2024,
     category: 'Academic',
-    image: '/images/students/achievers/aarav.jpg',
+    image: '/images/Students/Achievers/aarav.webp',
   },
 ]
 

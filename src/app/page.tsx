@@ -14,7 +14,7 @@ import type { Stat, QuickLink, Achievement, Notification, Facility, StudentLeade
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0 }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } }
 }
 
 const staggerContainer = {
@@ -22,8 +22,8 @@ const staggerContainer = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2
+      staggerChildren: 0.08,
+      delayChildren: 0.1
     }
   }
 }
@@ -107,14 +107,18 @@ export default function Home() {
               </h1>
               
               <m.p 
-                variants={fadeInUp}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.35, ease: 'easeOut' }}
                 className="text-xl md:text-2xl text-primary-800/90 mb-10 max-w-2xl leading-relaxed font-medium"
               >
                 {heroSection.subtitle}
               </m.p>
               
               <m.div 
-                variants={fadeInUp}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5, ease: 'easeOut' }}
                 className="flex flex-wrap gap-5"
               >
                 <MagneticButton>
@@ -439,7 +443,7 @@ export default function Home() {
                   >
                     <div className="absolute inset-0 rounded-full border-2 border-primary-200 opacity-50 scale-110 animate-ping" style={{ animationDuration: '3s' }}></div>
                     <Image
-                      src="/images/principal.jpg"
+                      src="/images/principal.webp"
                       alt="Sr. Archana - Principal"
                       fill
                       className="object-cover rounded-full"

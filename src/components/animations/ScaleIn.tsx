@@ -8,29 +8,32 @@ interface ScaleInProps {
   delay?: number
   duration?: number
   className?: string
+  from?: number
 }
+
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const
 
 export default function ScaleIn({
   children,
   delay = 0,
-  duration = 0.5,
+  duration = 0.65,
   className = '',
+  from = 0.85,
 }: ScaleInProps) {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-50px' })
+  const isInView = useInView(ref, { once: true, margin: '-60px' })
 
   return (
     <m.div
       ref={ref}
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={isInView ? { opacity: 1, scale: 1 } : {}}
-      transition={{ 
-        duration, 
-        delay, 
-        type: 'spring',
-        damping: 15,
-        stiffness: 100
+      initial={{ opacity: 0, scale: from, filter: 'blur(8px)' }}
+      animate={isInView ? { opacity: 1, scale: 1, filter: 'blur(0px)' } : {}}
+      transition={{
+        duration,
+        delay,
+        ease: EASE_OUT_EXPO,
       }}
+      style={{ willChange: 'transform, opacity, filter' }}
       className={className}
     >
       {children}

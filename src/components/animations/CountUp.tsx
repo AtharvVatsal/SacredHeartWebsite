@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { m, useInView, useSpring } from 'framer-motion'
+import { m, useInView, useSpring, useMotionValue, animate } from 'framer-motion'
 
 interface CountUpProps {
   end: number
@@ -23,27 +23,30 @@ export default function CountUp({
   const ref = useRef<HTMLSpanElement>(null)
   const [hasAnimated, setHasAnimated] = useState(false)
   const isInView = useInView(ref, { once: true, margin: '-50px' })
-  const springValue = useSpring(0, {
-    duration: duration * 1000,
-    bounce: 0,
-  })
+  const value = useMotionValue(0)
 
   useEffect(() => {
-    if (isInView && !hasAnimated) {
-      setTimeout(() => {
-        springValue.set(end)
-        setHasAnimated(true)
-      }, delay * 1000)
-    }
-  }, [isInView, end, springValue, delay, hasAnimated])
+    if (!isInView || hasAnimated) return
+
+    const timeoutId = setTimeout(() => {
+      const controls = animate(value, end, {
+        duration,
+        ease: [0.16, 1, 0.3, 1],
+      })
+      setHasAnimated(true)
+      return () => controls.stop()
+    }, delay * 1000)
+
+    return () => clearTimeout(timeoutId)
+  }, [isInView, end, value, delay, duration, hasAnimated])
 
   useEffect(() => {
-    return springValue.on('change', (latest) => {
+    return value.on('change', (latest) => {
       if (ref.current) {
         ref.current.textContent = `${prefix}${Math.floor(latest)}${suffix}`
       }
     })
-  }, [springValue, prefix, suffix])
+  }, [value, prefix, suffix])
 
   return (
     <m.span ref={ref} className={className}>

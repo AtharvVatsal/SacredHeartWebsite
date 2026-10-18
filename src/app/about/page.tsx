@@ -362,7 +362,7 @@ export default function AboutPage() {
                       <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-primary-700 rounded-full shadow-xl" />
                       <div className="absolute inset-2 bg-gradient-to-br from-primary-600 to-primary-800 rounded-full flex items-center justify-center overflow-hidden">
                         <Image
-                          src="/images/principal.jpg"
+                          src="/images/principal.webp"
                           alt="Sr. Archana"
                           fill
                           className="object-cover rounded-full"

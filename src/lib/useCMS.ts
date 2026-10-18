@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import * as cms from './cms'
 import type { Facility, StudentLeader, BatchYear } from '@/types'
-import { 
-  facilities as defaultFacilities, 
+import {
+  facilities as defaultFacilities,
   studentLeaders as defaultStudentLeaders,
   schoolHistory as defaultSchoolHistory,
   schoolAnthem as defaultSchoolAnthem,
@@ -14,9 +14,17 @@ export function useCMS<T>(fetchFn: () => Promise<T>, defaultValue: T) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // Hold the latest defaultValue in a ref so we can use it inside the
+  // effect without making it a dependency. Otherwise, callers that pass
+  // an inline object literal recreate the reference every render and the
+  // effect would re-fire on each render — pinning the CPU and starving
+  // user input events (clicks, navigation).
+  const defaultValueRef = useRef(defaultValue)
+  defaultValueRef.current = defaultValue
+
   useEffect(() => {
     let mounted = true
-    
+
     async function load() {
       try {
         setLoading(true)
@@ -28,7 +36,7 @@ export function useCMS<T>(fetchFn: () => Promise<T>, defaultValue: T) {
       } catch (err) {
         if (mounted) {
           setError(err instanceof Error ? err.message : 'Failed to load data')
-          setData(defaultValue)
+          setData(defaultValueRef.current)
         }
       } finally {
         if (mounted) {
@@ -36,13 +44,13 @@ export function useCMS<T>(fetchFn: () => Promise<T>, defaultValue: T) {
         }
       }
     }
-    
+
     load()
-    
+
     return () => {
       mounted = false
     }
-  }, [fetchFn, defaultValue])
+  }, [fetchFn])
 
   return { data, loading, error }
 }

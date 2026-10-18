@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { MapPin, Phone, Mail, Facebook, Twitter, Linkedin, Instagram, ArrowRight } from 'lucide-react'
 import { m } from 'framer-motion'
 import { schoolInfo, navigation, quickLinks } from '@/data/school'
@@ -10,7 +11,9 @@ export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="bg-gradient-to-b from-primary-900 to-primary-950 text-white relative overflow-hidden">
+    <footer className="bg-gradient-to-b from-primary-900 via-primary-950 to-[#031c0d] text-white relative overflow-hidden">
+      {/* Top accent line */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-secondary-400/60 to-transparent z-10" />
       {/* Wave Separator */}
       <div className="absolute top-0 left-0 right-0 -translate-y-full w-full overflow-hidden leading-[0]">
         <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-[60px] md:h-[100px]">
@@ -31,16 +34,18 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* About */}
           <m.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, margin: '-50px' }}
           >
             <div className="flex items-center gap-3 mb-5">
               <div className="w-12 h-12 relative">
-                <img 
+                <Image 
                   src="/images/logo_batch.png" 
-                  alt="School Logo" 
+                  alt="School Logo"
+                  width={48}
+                  height={48}
                   className="w-full h-full object-contain"
                 />
               </div>
@@ -62,9 +67,10 @@ export default function Footer() {
                 <m.a
                   key={index}
                   href={social.href}
-                  className={`w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-gray-300 ${social.color} transition-all duration-300`}
-                  whileHover={{ scale: 1.1, backgroundColor: 'rgba(255,255,255,0.2)' }}
-                  whileTap={{ scale: 0.95 }}
+                  aria-label={social.icon.displayName || 'social-link'}
+                  className={`w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-gray-300 ${social.color} transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] backdrop-blur-sm border border-white/10`}
+                  whileHover={{ scale: 1.12, rotate: -6, backgroundColor: 'rgba(255,255,255,0.2)', y: -2 }}
+                  whileTap={{ scale: 0.92 }}
                 >
                   <social.icon size={18} />
                 </m.a>
@@ -73,11 +79,11 @@ export default function Footer() {
           </m.div>
 
           {/* Quick Links */}
-          <m.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            viewport={{ once: true }}
+          <m.div
+            initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, margin: '-50px' }}
           >
             <h3 className="font-display text-lg font-semibold mb-5 flex items-center gap-2">
               <span className="w-1 h-5 bg-secondary-400 rounded-full"></span>
@@ -102,11 +108,11 @@ export default function Footer() {
           </m.div>
 
           {/* Navigation */}
-          <m.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            viewport={{ once: true }}
+          <m.div
+            initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, margin: '-50px' }}
           >
             <h3 className="font-display text-lg font-semibold mb-5 flex items-center gap-2">
               <span className="w-1 h-5 bg-secondary-400 rounded-full"></span>
@@ -143,11 +149,11 @@ export default function Footer() {
           </m.div>
 
           {/* Contact */}
-          <m.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            viewport={{ once: true }}
+          <m.div
+            initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, margin: '-50px' }}
           >
             <h3 className="font-display text-lg font-semibold mb-5 flex items-center gap-2">
               <span className="w-1 h-5 bg-secondary-400 rounded-full"></span>

@@ -8,16 +8,18 @@ interface StaggerContainerProps {
   delay?: number
   stagger?: number
   className?: string
+  once?: boolean
 }
 
 export default function StaggerContainer({
   children,
   delay = 0,
-  stagger = 0.1,
+  stagger = 0.09,
   className = '',
+  once = true,
 }: StaggerContainerProps) {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-50px' })
+  const isInView = useInView(ref, { once, margin: '-60px' })
 
   return (
     <m.div

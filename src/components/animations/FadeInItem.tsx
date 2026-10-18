@@ -8,19 +8,23 @@ interface FadeInItemProps {
   direction?: 'up' | 'down' | 'left' | 'right' | 'none'
   className?: string
   blur?: boolean
+  distance?: number
 }
+
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const
 
 export default function FadeInItem({
   children,
   direction = 'up',
   className = '',
   blur = true,
+  distance = 28,
 }: FadeInItemProps) {
   const directions: Variants = {
-    up: { y: 30, x: 0 },
-    down: { y: -30, x: 0 },
-    left: { x: 30, y: 0 },
-    right: { x: -30, y: 0 },
+    up: { y: distance, x: 0 },
+    down: { y: -distance, x: 0 },
+    left: { x: distance, y: 0 },
+    right: { x: -distance, y: 0 },
     none: { x: 0, y: 0 },
   }
 
@@ -35,17 +39,19 @@ export default function FadeInItem({
       y: 0,
       ...blurAnimate,
       transition: {
-        type: 'spring',
-        damping: 15,
-        stiffness: 100,
+        duration: 0.65,
+        ease: EASE_OUT_EXPO,
       },
     },
   }
 
   return (
-    <m.div variants={itemVariants} className={className}>
+    <m.div
+      variants={itemVariants}
+      style={{ willChange: 'transform, opacity, filter' }}
+      className={className}
+    >
       {children}
     </m.div>
   )
 }
-

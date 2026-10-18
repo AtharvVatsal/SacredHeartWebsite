@@ -167,7 +167,7 @@ export default function MessagesPage() {
                     whileHover={{ scale: 1.02 }}
                   >
                     <Image
-                      src="/images/Students/HeadBoy.jpg"
+                      src="/images/Students/HeadBoy.webp"
                       alt="Vijit Veer Chaudhary - Head Boy"
                       fill
                       className="object-contain bg-primary-800"
@@ -244,7 +244,7 @@ export default function MessagesPage() {
                     whileHover={{ scale: 1.02 }}
                   >
                     <Image
-                      src="/images/Students/HeadGirl.jpg"
+                      src="/images/Students/HeadGirl.webp"
                       alt="Gurnoor Kaur - Head Girl"
                       fill
                       className="object-contain bg-secondary-700"

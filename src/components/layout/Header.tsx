@@ -2,389 +2,507 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
-import { 
-  Menu, X, ChevronDown, 
-  Home, Info, Users, BookOpen, Trophy, 
-  Calendar, Image, MessageCircle, Phone, 
-  ClipboardList,Award, GraduationCap
-} from 'lucide-react'
-import { m, AnimatePresence } from 'framer-motion'
+import Image from 'next/image'
+import { usePathname } from 'next/navigation'
+import { Menu, X, ChevronDown, ExternalLink, Phone, Mail } from 'lucide-react'
+import { m, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { navigation, schoolInfo } from '@/data/school'
+import type { NavigationItem } from '@/types'
 
-const iconMap: Record<string, any> = {
-  '/': Home,
-  '/about': Info,
-  '/academics': BookOpen,
-  '/achievements': Trophy,
-  '/gallery': Image,
-  '/contact': Phone,
-  '/admission': GraduationCap,
-  '/admin': Users,
+// One-line summaries shown at the top of each desktop dropdown
+const sectionSummaries: Record<string, string> = {
+  '/about': `Our story since ${schoolInfo.established}, the people who run the school, and our alumni.`,
+  '/academics': 'Syllabus, homework, leave rules and the school calendar.',
+  '/admission': 'How to register, fees, uniform and school rules.',
+  '/achievements': 'Board exam toppers and achievements beyond the classroom.',
+}
+
+const HIDE_AFTER = 120 // px scrolled before the bar may tuck away on scroll down
+const CLOSE_DELAY = 140 // ms grace period when the pointer leaves a dropdown
+const DESKTOP_QUERY = '(min-width: 1280px)' // keep in sync with the `xl:` classes below
+const EASE = [0.16, 1, 0.3, 1] as const
+
+const phone = schoolInfo.contact.phones[0]
+const email = schoolInfo.contact.emails[0]
+
+function isActive(pathname: string, href: string) {
+  if (href === '/') return pathname === '/'
+  return pathname === href || pathname.startsWith(href + '/')
+}
+
+function panelId(prefix: string, href: string) {
+  return `${prefix}${href.replace(/\W+/g, '-')}`
+}
+
+function ChildLink({
+  item,
+  active,
+  className,
+  onClick,
+}: {
+  item: NavigationItem
+  active: boolean
+  className: string
+  onClick?: () => void
+}) {
+  if (item.external) {
+    return (
+      <a href={item.href} target="_blank" rel="noopener noreferrer" className={className} onClick={onClick}>
+        <span>{item.text}</span>
+        <ExternalLink aria-hidden size={14} className="shrink-0 opacity-60" />
+        <span className="sr-only">(opens in a new tab)</span>
+      </a>
+    )
+  }
+  return (
+    <Link href={item.href} className={className} onClick={onClick} aria-current={active ? 'page' : undefined}>
+      {item.text}
+    </Link>
+  )
 }
 
 export default function Header() {
+  const pathname = usePathname() ?? '/'
+  const reduceMotion = useReducedMotion()
+
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [expandedItem, setExpandedItem] = useState<string | null>(null)
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const [scrolled, setScrolled] = useState(false)
   const [hidden, setHidden] = useState(false)
-  const [lastScrollY, setLastScrollY] = useState(0)
-  const menuRef = useRef<HTMLDivElement>(null)
 
+  const navRef = useRef<HTMLUListElement>(null)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
+  const sheetRef = useRef<HTMLDivElement>(null)
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const openedByHoverRef = useRef(false)
+  const triggerRefs = useRef<Record<string, HTMLButtonElement | null>>({})
+
+  // Shadow once scrolled; tuck the bar away while scrolling down, bring it back on scroll up
   useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      setScrolled(currentScrollY > 20)
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setHidden(true)
-      } else {
-        setHidden(false)
-      }
-      setLastScrollY(currentScrollY)
-    }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastScrollY])
+    let lastY = window.scrollY
+    let ticking = false
 
-  useEffect(() => {
-    if (isMenuOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = 'unset'
+    const onScroll = () => {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(() => {
+        const y = window.scrollY
+        setScrolled(y > 8)
+        if (Math.abs(y - lastY) > 4) {
+          setHidden(y > lastY && y > HIDE_AFTER)
+          lastY = y
+        }
+        ticking = false
+      })
     }
-    return () => {
-      document.body.style.overflow = 'unset'
-    }
-  }, [isMenuOpen])
 
-  const toggleSubMenu = useCallback((href: string) => {
-    setExpandedItem(prev => prev === href ? null : href)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  const cancelClose = useCallback(() => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current)
+      closeTimerRef.current = null
+    }
   }, [])
 
   const closeMenu = useCallback(() => {
     setIsMenuOpen(false)
-    setExpandedItem(null)
   }, [])
 
-  const menuVariants = {
-    closed: { opacity: 0, height: 0, y: -20 },
-    open: { opacity: 1, height: 'auto', y: 0, transition: { type: 'spring', stiffness: 300, damping: 30, staggerChildren: 0.05 } }
-  }
+  const openMenu = useCallback(() => {
+    // Start with the current page's section unfolded
+    const current = navigation.find(item => item.children && isActive(pathname, item.href))
+    setExpandedItem(current?.href ?? null)
+    setIsMenuOpen(true)
+  }, [pathname])
 
-  const overlayVariants = {
-    closed: { opacity: 0 },
-    open: { opacity: 1, transition: { duration: 0.3 } }
-  }
+  // Navigating anywhere closes every menu
+  useEffect(() => {
+    setIsMenuOpen(false)
+    setOpenDropdown(null)
+  }, [pathname])
 
-  const itemVariants = {
-    closed: { opacity: 0, x: -10 },
-    open: { opacity: 1, x: 0, transition: { type: 'spring', stiffness: 300, damping: 25 } }
-  }
+  useEffect(() => cancelClose, [cancelClose])
 
-  const subMenuVariants = {
-    closed: { 
-      opacity: 0, 
-      height: 0,
-      transition: { duration: 0.2 }
-    },
-    open: { 
-      opacity: 1, 
-      height: 'auto',
-      transition: { type: 'spring', stiffness: 300, damping: 25 }
+  // Mobile sheet: lock page scroll, Escape closes, Tab stays inside the button + sheet
+  useEffect(() => {
+    if (!isMenuOpen) return
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsMenuOpen(false)
+        menuButtonRef.current?.focus()
+        return
+      }
+      if (e.key !== 'Tab' || !sheetRef.current || !menuButtonRef.current) return
+      const focusables = [
+        menuButtonRef.current,
+        ...Array.from(sheetRef.current.querySelectorAll<HTMLElement>('a[href], button')),
+      ]
+      const first = focusables[0]
+      const last = focusables[focusables.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
     }
+
+    // Growing into the desktop layout leaves no sheet to show
+    const desktop = window.matchMedia(DESKTOP_QUERY)
+    const onWiden = () => desktop.matches && setIsMenuOpen(false)
+
+    document.addEventListener('keydown', onKeyDown)
+    desktop.addEventListener('change', onWiden)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      document.removeEventListener('keydown', onKeyDown)
+      desktop.removeEventListener('change', onWiden)
+    }
+  }, [isMenuOpen])
+
+  // Desktop dropdown: a click anywhere outside the nav closes it
+  useEffect(() => {
+    if (!openDropdown) return
+    const onPointerDown = (e: PointerEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) setOpenDropdown(null)
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    return () => document.removeEventListener('pointerdown', onPointerDown)
+  }, [openDropdown])
+
+  const showDropdown = (href: string) => {
+    cancelClose()
+    openedByHoverRef.current = true
+    setOpenDropdown(href)
   }
+
+  const hideDropdownSoon = () => {
+    cancelClose()
+    closeTimerRef.current = setTimeout(() => setOpenDropdown(null), CLOSE_DELAY)
+  }
+
+  const toggleDropdown = (href: string) => {
+    cancelClose()
+    // A mouse click lands after hover has already opened the panel; keep it open rather than toggling it shut
+    if (openDropdown === href && openedByHoverRef.current) {
+      openedByHoverRef.current = false
+      return
+    }
+    openedByHoverRef.current = false
+    setOpenDropdown(prev => (prev === href ? null : href))
+  }
+
+  const toggleSubMenu = (href: string) => {
+    setExpandedItem(prev => (prev === href ? null : href))
+  }
+
+  const tucked = hidden && !isMenuOpen && !openDropdown
 
   return (
-    <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled 
-          ? 'glass' 
-          : 'bg-white'
-      } ${hidden ? '-translate-y-full' : 'translate-y-0'}`}
-    >
-      {/* Main Navigation */}
-      <nav className="container mx-auto px-4">
-        <div className="flex items-center justify-between py-3">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-4 group">
-            <m.div 
-              className="w-12 h-12 relative"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <img 
-                src="/images/logo_batch.png" 
-                alt="School Logo" 
-                className="w-full h-full object-contain"
-              />
-            </m.div>
-            <div className="hidden sm:block">
-              <h1 className="font-display text-base md:text-lg font-bold bg-gradient-to-r from-primary-700 to-primary-600 bg-clip-text text-transparent leading-tight">
+    <>
+      <header
+        onFocus={() => setHidden(false)}
+        className={`fixed inset-x-0 top-0 z-50 h-[72px] bg-white border-b transition-[transform,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none ${
+          scrolled || isMenuOpen
+            ? 'border-gray-200 shadow-[0_8px_24px_-16px_rgba(20,83,45,0.35)]'
+            : 'border-transparent'
+        } ${tucked ? '-translate-y-full' : 'translate-y-0'}`}
+      >
+        <nav aria-label="Main" className="container mx-auto h-full px-4 flex items-center justify-between gap-4">
+          {/* School name */}
+          <Link href="/" className="flex items-center gap-3 min-w-0 shrink-0">
+            <Image
+              src="/images/logo_batch.png"
+              alt=""
+              width={44}
+              height={44}
+              priority
+              className="h-10 w-10 sm:h-11 sm:w-11 shrink-0 object-contain"
+            />
+            <span className="flex flex-col min-w-0">
+              <span className="font-heading text-[15px] sm:text-[17px] font-semibold leading-tight text-primary-900 whitespace-nowrap">
                 {schoolInfo.name}
-              </h1>
-              <p className="text-[9px] text-gray-500 font-medium mt-1">{schoolInfo.address.tehsil}, {schoolInfo.address.district}</p>
-            </div>
+              </span>
+              <span className="text-xs leading-tight text-gray-500 whitespace-nowrap mt-0.5">
+                {schoolInfo.address.tehsil}, {schoolInfo.address.district}
+              </span>
+            </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <m.div 
-            initial="hidden"
-            animate="visible"
-            variants={{
-              visible: { transition: { staggerChildren: 0.1 } },
-              hidden: {}
-            }}
-            className="hidden lg:flex items-center gap-1"
-          >
-            {navigation.map((item) => (
-              <m.div
-                variants={{
-                  hidden: { opacity: 0, y: -10 },
-                  visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } }
-                }}
-                key={item.href}
-                className="relative"
-                onMouseEnter={() => item.children && setActiveDropdown(item.href)}
-                onMouseLeave={() => setActiveDropdown(null)}
-              >
-                <Link
-                  href={item.href}
-                  className="flex items-center gap-1 px-4 py-2 text-gray-700 hover:text-primary-700 font-medium transition-colors rounded-lg hover:bg-primary-50 relative group"
+          {/* Desktop links */}
+          <ul ref={navRef} className="hidden xl:flex items-center gap-0.5">
+            {navigation.map(item => {
+              const active = isActive(pathname, item.href)
+              const open = openDropdown === item.href
+              const id = panelId('nav-panel', item.href)
+
+              return (
+                <li
+                  key={item.href}
+                  className="relative"
+                  onPointerEnter={e => item.children && e.pointerType === 'mouse' && showDropdown(item.href)}
+                  onPointerLeave={e => item.children && e.pointerType === 'mouse' && hideDropdownSoon()}
+                  onBlur={e => {
+                    if (open && !e.currentTarget.contains(e.relatedTarget as Node | null)) setOpenDropdown(null)
+                  }}
+                  onKeyDown={e => {
+                    if (e.key === 'Escape' && open) {
+                      setOpenDropdown(null)
+                      triggerRefs.current[item.href]?.focus()
+                    }
+                  }}
                 >
-                  {item.text}
-                  {item.children && (
-                    <ChevronDown 
-                      size={16} 
-                      className={`transition-transform duration-200 ${activeDropdown === item.href ? 'rotate-180' : ''}`} 
-                    />
-                  )}
-                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-600 transform scale-x-0 origin-left transition-transform duration-300 opacity-0 group-hover:opacity-100 group-hover:scale-x-100" />
-                </Link>
-                <AnimatePresence>
-                  {item.children && activeDropdown === item.href && (
-                    <m.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95, filter: 'blur(4px)' }}
-                      animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95, filter: 'blur(4px)' }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute top-full left-0 mt-2 w-60 glass shadow-xl rounded-xl border border-gray-100 overflow-hidden"
-                    >
-                      <div className="py-2">
-                        {item.children.map((child) => (
-                          child.external ? (
-                            <a
-                              key={child.href}
-                              href={child.href}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="block px-4 py-2.5 text-gray-700 hover:bg-primary-50/50 hover:text-primary-700 font-medium transition-colors"
-                            >
-                              {child.text}
-                            </a>
-                          ) : (
-                            <Link
-                              key={child.href}
-                              href={child.href}
-                              className="block px-4 py-2.5 text-gray-700 hover:bg-primary-50/50 hover:text-primary-700 font-medium transition-colors"
-                            >
-                              {child.text}
-                            </Link>
-                          )
-                        ))}
-                      </div>
-                      <div className="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-transparent pointer-events-none" />
-                    </m.div>
-                  )}
-                </AnimatePresence>
-              </m.div>
-            ))}
-          </m.div>
-
-          {/* CTA Button */}
-          <div className="hidden lg:block">
-            <m.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Link
-                href="/admission"
-                className="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-7 py-2.5 rounded-full font-medium hover:shadow-glow transition-all duration-300"
-              >
-                Apply Now
-              </Link>
-            </m.div>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <m.button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors relative z-50"
-            whileTap={{ scale: 0.95 }}
-            aria-label="Toggle menu"
-          >
-            <m.div
-              animate={{ rotate: isMenuOpen ? 90 : 0, scale: isMenuOpen ? 1.1 : 1 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-            >
-              {isMenuOpen ? (
-                <X size={24} className="text-gray-700" />
-              ) : (
-                <Menu size={24} className="text-gray-700" />
-              )}
-            </m.div>
-          </m.button>
-        </div>
-
-        {/* Mobile Navigation */}
-        <AnimatePresence>
-          {isMenuOpen && (
-            <>
-              {/* Backdrop Overlay */}
-              <m.div
-                variants={overlayVariants}
-                initial="closed"
-                animate="open"
-                exit="closed"
-                className="fixed inset-0 bg-primary-900/20 backdrop-blur-sm lg:hidden z-40"
-                onClick={closeMenu}
-              />
-              
-              {/* Mobile Menu Panel */}
-              <m.div
-                initial="closed"
-                animate="open"
-                exit="closed"
-                variants={menuVariants}
-                className="fixed top-0 left-0 right-0 lg:hidden z-50 overflow-hidden"
-              >
-                {/* Decorative background orbs */}
-                <div className="absolute inset-0 bg-white" />
-                <div className="absolute top-0 right-0 w-64 h-64 bg-primary-400/10 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-48 h-48 bg-secondary-300/15 rounded-full blur-3xl pointer-events-none" />
-                <div className="noise-overlay opacity-30" />
-                
-                <div className="relative z-10 max-h-[85vh] overflow-y-auto bg-gradient-to-b from-white to-gray-50">
-                  {/* Header with logo and close */}
-                  <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 py-3 flex items-center justify-between">
-                    <Link href="/" onClick={closeMenu} className="flex items-center gap-3">
-                      <div className="w-9 h-9 relative">
-                        <img src="/images/logo_batch.png" alt="Logo" className="w-full h-full object-contain" />
-                      </div>
-                      <div>
-                        <h1 className="font-display text-sm font-semibold text-gray-800 leading-tight">
-                          {schoolInfo.name}
-                        </h1>
-                        <p className="text-[9px] text-gray-500">{schoolInfo.address.tehsil}, {schoolInfo.address.district}</p>
-                      </div>
-                    </Link>
-                    <m.button
-                      onClick={closeMenu}
-                      className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <X size={18} className="text-gray-600" />
-                    </m.button>
-                  </div>
-
-                  {/* Menu Items */}
-                  <div className="px-3 py-4 space-y-0.5">
-                    {navigation.map((item, index) => {
-                      const IconComponent = iconMap[item.href] || ChevronDown
-                      return (
-                        <m.div key={item.href} variants={itemVariants} custom={index}>
-                          {item.children ? (
-                            <div className="rounded-xl overflow-hidden">
-                              <div className="flex items-center justify-between py-3.5 px-4 bg-gray-50/50 hover:bg-gray-100/50 transition-colors">
-                                <div className="flex items-center gap-3">
-                                  <div className="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center">
-                                    <IconComponent size={16} className="text-primary-600" strokeWidth={1.5} />
-                                  </div>
-                                  <span className="text-sm font-medium text-gray-700">{item.text}</span>
-                                </div>
-                                <m.button
-                                  onClick={() => toggleSubMenu(item.href)}
-                                  className="w-7 h-7 rounded-full bg-white flex items-center justify-center shadow-sm"
-                                  whileTap={{ scale: 0.9 }}
-                                >
-                                  <m.div
-                                    animate={{ rotate: expandedItem === item.href ? 180 : 0 }}
-                                    transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                                  >
-                                    <ChevronDown size={14} className="text-gray-500" />
-                                  </m.div>
-                                </m.button>
-                              </div>
-                              
-                              <AnimatePresence>
-                                {expandedItem === item.href && (
-                                  <m.div
-                                    variants={subMenuVariants}
-                                    initial="closed"
-                                    animate="open"
-                                    exit="closed"
-                                  >
-                                    <div className="py-1.5 bg-white">
-                                      {item.children.map((child) => (
-                                        child.external ? (
-                                          <a
-                                            key={child.href}
-                                            href={child.href}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex items-center gap-3 py-2.5 px-4 pl-12 text-gray-600 hover:bg-primary-50 hover:text-primary-700 text-sm transition-colors"
-                                            onClick={closeMenu}
-                                          >
-                                            {child.text}
-                                          </a>
-                                        ) : (
-                                          <Link
-                                            key={child.href}
-                                            href={child.href}
-                                            className="flex items-center gap-3 py-2.5 px-4 pl-12 text-gray-600 hover:bg-primary-50 hover:text-primary-700 text-sm transition-colors"
-                                            onClick={closeMenu}
-                                          >
-                                            {child.text}
-                                          </Link>
-                                        )
-                                      ))}
-                                    </div>
-                                  </m.div>
-                                )}
-                              </AnimatePresence>
-                            </div>
-                          ) : (
-                            <Link
-                              href={item.href}
-                              className="flex items-center gap-3 py-3.5 px-4 bg-gray-50/50 hover:bg-gray-100/50 rounded-xl transition-colors"
-                              onClick={closeMenu}
-                            >
-                              <div className="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center">
-                                <IconComponent size={16} className="text-primary-600" strokeWidth={1.5} />
-                              </div>
-                              <span className="text-sm font-medium text-gray-700">{item.text}</span>
-                            </Link>
-                          )}
-                        </m.div>
-                      )
-                    })}
-                  </div>
-
-                  {/* CTA */}
-                  <div className="px-4 pb-6 pt-2">
+                  <div
+                    className={`flex items-center rounded-md transition-colors ${
+                      open ? 'bg-primary-50' : 'hover:bg-primary-50'
+                    }`}
+                  >
                     <Link
-                      href="/admission"
-                      onClick={closeMenu}
-                      className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-primary-600 to-primary-700 text-white py-3.5 rounded-xl font-medium shadow-glow hover:shadow-lg transition-all"
+                      href={item.href}
+                      aria-current={pathname === item.href ? 'page' : undefined}
+                      className={`flex items-center h-10 text-[15px] font-medium whitespace-nowrap transition-colors ${
+                        item.children ? 'pl-2.5 2xl:pl-3 pr-1' : 'px-2.5 2xl:px-3'
+                      } ${active ? 'text-primary-800' : 'text-gray-700 hover:text-primary-800'}`}
                     >
-                      Apply for Admission
+                      {item.text}
                     </Link>
+                    {item.children && (
+                      <button
+                        type="button"
+                        ref={el => {
+                          triggerRefs.current[item.href] = el
+                        }}
+                        aria-expanded={open}
+                        aria-controls={id}
+                        aria-label={`${item.text} pages`}
+                        onClick={() => toggleDropdown(item.href)}
+                        className={`flex items-center justify-center h-10 w-7 pr-1 transition-colors ${
+                          active || open ? 'text-primary-800' : 'text-gray-500 hover:text-primary-800'
+                        }`}
+                      >
+                        <ChevronDown
+                          aria-hidden
+                          size={16}
+                          className={`transition-transform duration-200 motion-reduce:transition-none ${open ? 'rotate-180' : ''}`}
+                        />
+                      </button>
+                    )}
                   </div>
+
+                  {/* Current section marker, sitting on the bar's bottom edge */}
+                  {active && (
+                    <span aria-hidden className="pointer-events-none absolute inset-x-2 -bottom-4 h-[3px] rounded-t-full bg-secondary-500" />
+                  )}
+
+                  <AnimatePresence>
+                    {item.children && open && (
+                      <m.div
+                        id={id}
+                        initial={{ opacity: 0, y: reduceMotion ? 0 : 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: reduceMotion ? 0 : 4 }}
+                        transition={{ duration: reduceMotion ? 0 : 0.18, ease: EASE }}
+                        // Top padding bridges the gap to the bar so the pointer can travel into the panel
+                        className="absolute left-0 top-full pt-5 w-[22rem]"
+                      >
+                        <div className="rounded-xl bg-white border border-gray-200 shadow-[0_16px_40px_-16px_rgba(20,83,45,0.35)] overflow-hidden">
+                          <Link
+                            href={item.href}
+                            aria-current={pathname === item.href ? 'page' : undefined}
+                            className="block px-5 py-4 bg-primary-50/70 border-b border-primary-100 hover:bg-primary-50 transition-colors"
+                          >
+                            <span className="block font-heading text-base font-semibold text-primary-900">{item.text}</span>
+                            {sectionSummaries[item.href] && (
+                              <span className="block mt-0.5 text-sm leading-snug text-gray-600">
+                                {sectionSummaries[item.href]}
+                              </span>
+                            )}
+                          </Link>
+                          <ul className="p-2">
+                            {item.children.map(child => {
+                              const childActive = !child.external && pathname === child.href
+                              return (
+                                <li key={child.href}>
+                                  <ChildLink
+                                    item={child}
+                                    active={childActive}
+                                    className={`flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-[15px] transition-colors ${
+                                      childActive
+                                        ? 'bg-primary-50 text-primary-800 font-medium'
+                                        : 'text-gray-700 hover:bg-gray-50 hover:text-primary-800'
+                                    }`}
+                                  />
+                                </li>
+                              )
+                            })}
+                          </ul>
+                        </div>
+                      </m.div>
+                    )}
+                  </AnimatePresence>
+                </li>
+              )
+            })}
+          </ul>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <Link
+              href="/admission"
+              className="hidden md:inline-flex items-center h-10 px-5 xl:px-4 2xl:px-5 rounded-full bg-primary-700 text-white text-[15px] font-semibold whitespace-nowrap hover:bg-primary-800 transition-colors"
+            >
+              Apply now
+            </Link>
+
+            <button
+              ref={menuButtonRef}
+              type="button"
+              onClick={() => (isMenuOpen ? closeMenu() : openMenu())}
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-menu"
+              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+              className="xl:hidden -mr-2 flex items-center justify-center h-11 w-11 rounded-lg text-gray-800 hover:bg-gray-100 transition-colors"
+            >
+              {isMenuOpen ? <X aria-hidden size={24} /> : <Menu aria-hidden size={24} />}
+            </button>
+          </div>
+        </nav>
+      </header>
+
+      {/* Mobile and tablet menu. Lives outside <header> so its fixed position isn't
+          trapped by the header's transform. */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <m.div
+            key="mobile-menu"
+            id="mobile-menu"
+            ref={sheetRef}
+            initial={{ opacity: 0, y: reduceMotion ? 0 : -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: reduceMotion ? 0 : -8 }}
+            transition={{ duration: reduceMotion ? 0 : 0.22, ease: EASE }}
+            className="xl:hidden fixed inset-x-0 top-[72px] bottom-0 z-40 overflow-y-auto overscroll-contain bg-primary-900 text-white"
+          >
+            <nav aria-label="Site menu" className="container mx-auto max-w-2xl min-h-full px-5 pt-3 pb-10 flex flex-col">
+              <ul className="divide-y divide-white/10">
+                {navigation.map(item => {
+                  const active = isActive(pathname, item.href)
+                  const expanded = expandedItem === item.href
+                  const id = panelId('menu-panel', item.href)
+
+                  return (
+                    <li key={item.href}>
+                      <div className="flex items-center gap-2">
+                        <Link
+                          href={item.href}
+                          onClick={closeMenu}
+                          aria-current={pathname === item.href ? 'page' : undefined}
+                          className={`flex-1 py-3.5 font-heading text-[22px] leading-tight transition-colors focus-visible:outline-secondary-300 ${
+                            active ? 'text-secondary-300' : 'text-white hover:text-secondary-200'
+                          }`}
+                        >
+                          {item.text}
+                        </Link>
+                        {item.children && (
+                          <button
+                            type="button"
+                            onClick={() => toggleSubMenu(item.href)}
+                            aria-expanded={expanded}
+                            aria-controls={id}
+                            aria-label={`${item.text} pages`}
+                            className="-mr-2 flex items-center justify-center h-11 w-11 rounded-full text-white/80 hover:bg-white/10 hover:text-white transition-colors focus-visible:outline-secondary-300"
+                          >
+                            <ChevronDown
+                              aria-hidden
+                              size={22}
+                              className={`transition-transform duration-200 motion-reduce:transition-none ${expanded ? 'rotate-180' : ''}`}
+                            />
+                          </button>
+                        )}
+                      </div>
+
+                      <AnimatePresence initial={false}>
+                        {item.children && expanded && (
+                          <m.div
+                            id={id}
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: reduceMotion ? 0 : 0.22, ease: EASE }}
+                            className="overflow-hidden"
+                          >
+                            <ul className="mb-4 ml-0.5 pl-4 border-l border-white/20 grid sm:grid-cols-2 sm:gap-x-6">
+                              {item.children.map(child => {
+                                const childActive = !child.external && pathname === child.href
+                                return (
+                                  <li key={child.href}>
+                                    <ChildLink
+                                      item={child}
+                                      active={childActive}
+                                      onClick={closeMenu}
+                                      className={`flex items-center gap-2 py-2.5 text-base transition-colors focus-visible:outline-secondary-300 ${
+                                        childActive ? 'text-secondary-300 font-medium' : 'text-white/75 hover:text-white'
+                                      }`}
+                                    />
+                                  </li>
+                                )
+                              })}
+                            </ul>
+                          </m.div>
+                        )}
+                      </AnimatePresence>
+                    </li>
+                  )
+                })}
+              </ul>
+
+              <div className="mt-auto pt-8">
+                <div className="border-t border-white/15 pt-6 space-y-3">
+                  <Link
+                    href="/admission"
+                    onClick={closeMenu}
+                    className="flex items-center justify-center h-12 rounded-full bg-secondary-400 text-primary-950 font-semibold hover:bg-secondary-300 transition-colors focus-visible:outline-secondary-300"
+                  >
+                    Apply for admission
+                  </Link>
+                  <div className="grid grid-cols-2 gap-3">
+                    {phone && (
+                      <a
+                        href={`tel:${phone.replace(/[^\d+]/g, '')}`}
+                        className="flex items-center justify-center gap-2 h-12 rounded-full border border-white/25 hover:bg-white/10 transition-colors focus-visible:outline-secondary-300"
+                      >
+                        <Phone aria-hidden size={18} />
+                        Call
+                      </a>
+                    )}
+                    {email && (
+                      <a
+                        href={`mailto:${email}`}
+                        className="flex items-center justify-center gap-2 h-12 rounded-full border border-white/25 hover:bg-white/10 transition-colors focus-visible:outline-secondary-300"
+                      >
+                        <Mail aria-hidden size={18} />
+                        Email
+                      </a>
+                    )}
+                  </div>
+                  <p className="pt-2 text-center text-sm text-white/60">
+                    {schoolInfo.address.street}, {schoolInfo.address.tehsil}, {schoolInfo.address.district}
+                  </p>
                 </div>
-              </m.div>
-            </>
-          )}
-        </AnimatePresence>
-      </nav>
-    </header>
+              </div>
+            </nav>
+          </m.div>
+        )}
+      </AnimatePresence>
+    </>
   )
 }

@@ -169,7 +169,7 @@ export default function OfficeBearersPage() {
                         whileHover={{ scale: 1.02 }}
                       >
                         <Image
-                          src="/images/Students/HeadGirl.jpg"
+                          src="/images/Students/HeadGirl.webp"
                           alt="Head Girl"
                           fill
                           className="object-contain bg-primary-800"
@@ -202,7 +202,7 @@ export default function OfficeBearersPage() {
                         whileHover={{ scale: 1.02 }}
                       >
                         <Image
-                          src="/images/Students/HeadBoy.jpg"
+                          src="/images/Students/HeadBoy.webp"
                           alt="Head Boy"
                           fill
                           className="object-contain bg-primary-800"

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { m, AnimatePresence, useInView } from 'framer-motion'
 import { useRef } from 'react'
+import Image from 'next/image'
 
 interface HeroSlideshowProps {
   images: string[]
@@ -56,10 +57,13 @@ export default function HeroSlideshow({ images, interval = 5000 }: HeroSlideshow
             }}
             className="absolute inset-0"
           >
-            <img
+            <Image
               src={images[currentIndex]}
               alt={`School photo ${currentIndex + 1}`}
-              className="w-full h-full object-cover"
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover"
+              priority={currentIndex === 0}
             />
           </m.div>
         </AnimatePresence>

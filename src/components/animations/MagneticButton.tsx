@@ -32,10 +32,10 @@ export default function MagneticButton({
 
       const { clientX, clientY } = e
       const { left, top, width, height } = ref.current.getBoundingClientRect()
-      
+
       const middleX = clientX - (left + width / 2)
       const middleY = clientY - (top + height / 2)
-      
+
       x.set(middleX * intensity)
       y.set(middleY * intensity)
     }
