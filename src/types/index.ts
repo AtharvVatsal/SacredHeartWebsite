@@ -6,6 +6,7 @@ export interface SchoolInfo {
   affiliation: string
   established: number
   management: string
+  principal: string
   address: Address
   contact: ContactInfo
 }
@@ -74,13 +75,17 @@ export interface OfficeBearerSession {
   year: string
   headGirl: string
   headBoy: string
+  // Photos only for sessions that have them
+  headGirlImage?: string
+  headBoyImage?: string
   gamesCaptainGirls: string
   gamesViceCaptainGirls: string
   gamesCaptainBoys: string
   gamesViceCaptainBoys: string
   editorsInChief: string
+  editorialMembers?: string
   houseCaptains: HouseCaptain[]
-  prefects: { names: string; house: string }[]
+  prefects: { names: string; house?: string }[]
   juniorCaptains?: { captain: string; viceCaptain: string; house: string }[]
 }
 

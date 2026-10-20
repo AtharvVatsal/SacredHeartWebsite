@@ -1,9 +1,7 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Admission',
-  description: 'How to apply for admission and the documents you need.',
-}
+export const metadata: Metadata = pageMeta('/admission')
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children

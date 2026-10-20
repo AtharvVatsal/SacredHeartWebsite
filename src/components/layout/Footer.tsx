@@ -3,9 +3,9 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
-import { MapPin, Phone, Mail, ArrowRight, ExternalLink } from 'lucide-react'
+import { MapPin, Phone, Mail, ArrowRight, ExternalLink, CreditCard, UserPlus, Smartphone, GraduationCap } from 'lucide-react'
 import { m } from 'framer-motion'
-import { schoolInfo, navigation, quickLinks } from '@/data/school'
+import { schoolInfo, navigation, quickLinks, onlineServices } from '@/data/school'
 import { ParallaxSection } from '@/components/animations'
 import { schoolEmail, telHref } from '@/lib/contact'
 
@@ -193,6 +193,36 @@ export default function Footer() {
         </div>
       </div>
 
+      {/* Online services */}
+      <div className="border-t border-white/10 relative z-10">
+        <div className="container mx-auto px-4 py-6 flex flex-col lg:flex-row lg:items-center gap-4">
+          <h2 className="font-display text-base font-semibold text-white shrink-0">Online services</h2>
+          <ul className="flex flex-wrap gap-2.5">
+            {[
+              { label: 'Pay school fee', href: onlineServices.feePortal, icon: CreditCard },
+              { label: 'Online registration', href: onlineServices.registrationPortal, icon: UserPlus },
+              { label: 'School app (Android)', href: onlineServices.androidApp, icon: Smartphone },
+              { label: 'School app (iOS)', href: onlineServices.iosApp, icon: Smartphone },
+              { label: 'Alumni registration', href: onlineServices.alumniRegistration, icon: GraduationCap },
+            ].map(service => (
+              <li key={service.label}>
+                <a
+                  href={service.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-gray-200 hover:bg-white/15 hover:text-white transition-colors"
+                >
+                  <service.icon aria-hidden size={15} className="text-secondary-400" />
+                  {service.label}
+                  <ExternalLink aria-hidden size={12} className="opacity-70" />
+                  <span className="sr-only">(opens in a new tab)</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
       {/* Bottom Bar */}
       <div className="border-t border-white/10 relative z-10">
         <div className="container mx-auto px-4 py-5">
@@ -205,6 +235,19 @@ export default function Footer() {
               <Link href="/terms" className="text-gray-400 hover:text-white text-sm transition-colors">Terms of Use</Link>
             </div>
           </div>
+          {/* Site credit */}
+          <p className="mt-4 text-center md:text-right text-xs text-gray-400">
+            Made by SHS Alumni – Atharv Vatsal ·{' '}
+            <a
+              href="https://www.atharvvatsal.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-300 underline underline-offset-2 decoration-white/30 hover:text-white hover:decoration-white transition-colors"
+            >
+              www.atharvvatsal.com
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          </p>
         </div>
       </div>
     </footer>

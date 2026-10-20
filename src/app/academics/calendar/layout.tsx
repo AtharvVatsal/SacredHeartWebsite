@@ -1,9 +1,7 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Academic Calendar',
-  description: 'School holidays, exams and events.',
-}
+export const metadata: Metadata = pageMeta('/academics/calendar')
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children

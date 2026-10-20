@@ -6,6 +6,9 @@ import Footer from '@/components/layout/Footer'
 import SmoothScrollProvider from '@/components/layout/SmoothScrollProvider'
 import GradualBlur from '@/components/animations/GradualBlur'
 import { schoolInfo } from '@/data/school'
+import { pageMeta, routes, SITE_URL } from '@/lib/seo'
+import StructuredData from '@/components/seo/StructuredData'
+import BreadcrumbJsonLd from '@/components/seo/BreadcrumbJsonLd'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -25,16 +28,35 @@ const jakarta = Plus_Jakarta_Sans({
   display: 'swap',
 })
 
+// The home page has no layout of its own, so its title, description, canonical URL and social card live here;
+// every other page overrides them from its own layout (see src/lib/seo.ts).
+const home = pageMeta('/')
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  ...home,
   title: {
-    default: `${schoolInfo.name} | ${schoolInfo.tagline}`,
+    default: routes['/'].title,
     template: `%s | ${schoolInfo.name}`,
   },
-  description: `${schoolInfo.fullName}, ${schoolInfo.address.tehsil}, ${schoolInfo.address.district}. ${schoolInfo.affiliation} affiliated school run by ${schoolInfo.management}.`,
-  keywords: ['school', 'education', 'sacred heart', 'dharmashala', 'himachal pradesh', 'CISCE'],
-  authors: [{ name: schoolInfo.name }],
+  applicationName: schoolInfo.fullName,
+  keywords: ['Sacred Heart School Sidhpur', 'Sacred Heart Senior Secondary School', 'school in Dharamshala', 'CISCE school Himachal Pradesh', 'ICSE ISC school Kangra', 'Sidhpur', 'Dharamshala'],
+  authors: [{ name: schoolInfo.fullName, url: SITE_URL }],
+  creator: 'Atharv Vatsal',
+  publisher: schoolInfo.fullName,
+  category: 'education',
   icons: {
-    icon: '/images/logo_batch.png',
+    icon: [{ url: '/images/logo_batch.png', type: 'image/png', sizes: '183x182' }],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180' }],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 },
+  },
+  alternates: {
+    ...home.alternates,
+    types: { 'application/rss+xml': [{ url: '/notifications.rss', title: `${schoolInfo.name} notifications` }] },
   },
 }
 
@@ -44,7 +66,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${outfit.variable} ${jakarta.variable}`}>
+    <html lang="en-IN" className={`${inter.variable} ${outfit.variable} ${jakarta.variable}`}>
       <head>
         {/* Entrance animations start hidden and are revealed by JavaScript; without it, show everything */}
         <noscript>
@@ -57,6 +79,9 @@ export default function RootLayout({
         </noscript>
       </head>
       <body className="min-h-screen flex flex-col font-body">
+        {/* Structured data for search engines: the school, the website and this page's breadcrumb trail */}
+        <StructuredData />
+        <BreadcrumbJsonLd />
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-primary-800 focus:px-5 focus:py-3 focus:text-white focus:shadow-lg"
@@ -71,11 +96,9 @@ export default function RootLayout({
           <GradualBlur
             target="page"
             position="bottom"
-            height="3.5rem"
-            strength={1.25}
-            layers={6}
-            curve="bezier"
-            exponential
+            height="4rem"
+            strength={0.5}
+            layers={8}
             autoHide
             zIndex={30}
             className="print:hidden"

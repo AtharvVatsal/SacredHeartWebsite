@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { MapPin, Phone, Mail, Send, CheckCircle, MessageCircle, Clock, User, Calendar, Building, Heart, Star, ArrowRight, BookOpen, GraduationCap, Users, Loader2 } from 'lucide-react'
-import { schoolInfo, statistics } from '@/data/school'
+import { MapPin, Phone, Mail, Send, CheckCircle, MessageCircle, Clock, User, Calendar, Building, Heart, Star, ArrowRight, BookOpen, GraduationCap, Users, Loader2, Briefcase } from 'lucide-react'
+import { schoolInfo, statistics, schoolLocation } from '@/data/school'
 import { m, AnimatePresence, useInView } from 'framer-motion'
 import Field, { fieldA11y } from '@/components/forms/Field'
 import SubmissionNotice from '@/components/forms/SubmissionNotice'
@@ -137,7 +137,7 @@ export default function ContactPage() {
     {
       icon: Clock,
       title: 'Office Hours',
-      content: 'Monday - Saturday: 8:00 AM - 4:00 PM\nSunday: Closed',
+      content: 'Monday – Saturday: 8:00 AM – 2:30 PM\nSunday: Holiday\nThe office is closed on non-working days, including national and state holidays.',
       color: 'from-emerald-500 to-emerald-700'
     }
   ]
@@ -599,6 +599,38 @@ export default function ContactPage() {
         </div>
       </section>
 
+      {/* Careers */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <m.div
+            className="max-w-5xl mx-auto rounded-3xl border border-primary-100 bg-gradient-to-br from-primary-50 via-white to-secondary-50 p-8 md:p-10 grid md:grid-cols-5 gap-8 items-center"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="md:col-span-3">
+              <p className="text-sm font-semibold text-secondary-800 tracking-wider uppercase mb-2 inline-flex items-center gap-2">
+                <Briefcase aria-hidden className="w-4 h-4" /> Join Our Team
+              </p>
+              <h2 className="text-2xl md:text-3xl font-display font-bold text-primary-900 mb-3">Career Opportunities</h2>
+              <p className="text-gray-700 leading-relaxed">
+                Be a part of our dedicated team and help inspire, educate and shape the future of young minds. To apply, email your resume to the school with the post you are applying for in the subject line.
+              </p>
+              <p className="text-sm text-gray-600 mt-3">Send your resume as a .doc or .pdf file, up to 5 MB. If it is larger, please compress it.</p>
+            </div>
+            <div className="md:col-span-2 flex md:justify-end">
+              <a
+                href={mailtoHref('Job application: [post you are applying for]', 'Name:\nContact number:\nPost applied for:\n\nPlease attach your resume.')}
+                className="active:scale-95 inline-flex items-center gap-2 bg-primary-700 text-white px-7 py-4 rounded-full font-semibold hover:bg-primary-800 transition-colors shadow-lg"
+              >
+                <Mail aria-hidden className="w-5 h-5" /> Email your resume
+              </a>
+            </div>
+          </m.div>
+        </div>
+      </section>
+
       <section className="bg-gradient-to-br from-primary-900 via-primary-800 to-primary-900 py-16 relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-secondary-500/5 rounded-full blur-3xl" />
@@ -633,7 +665,7 @@ export default function ContactPage() {
               Experience the warmth and excellence of Sacred Heart Senior Secondary School in person
             </m.p>
             <m.a
-              href={`https://maps.google.com/?q=${encodeURIComponent(schoolInfo.address.street + ', ' + schoolInfo.address.tehsil)}`}
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(schoolLocation.plusCode)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-3 bg-gradient-to-r from-secondary-400 to-secondary-500 text-primary-900 px-10 py-4 rounded-full font-bold text-lg hover:from-secondary-300 hover:to-secondary-400 transition-all duration-300 shadow-xl group"

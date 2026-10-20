@@ -1,9 +1,7 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Leave & Absence',
-  description: 'School rules for leave, absence and attendance.',
-}
+export const metadata: Metadata = pageMeta('/academics/leave-absence')
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children

@@ -382,7 +382,7 @@ export default function AcademicsPage() {
             </FadeInItem>
 
             <FadeInItem direction="left" blur>
-              <a href="https://shsdharamshala.com/wp-content/uploads/2025/05/CISE-DOC.pdf" target="_blank" rel="noopener noreferrer">
+              <a href="/documents/cisce-rules-for-documents.pdf" target="_blank" rel="noopener noreferrer">
                 <m.div
                   whileHover={{ x: 10, scale: 1.02 }}
                   className="bg-gradient-to-r from-secondary-50 to-white p-8 rounded-2xl border border-secondary-100 hover:shadow-xl hover:border-secondary-300 transition-all duration-300 group"

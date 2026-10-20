@@ -348,22 +348,39 @@ export default function ToppersPage({ params }: PageProps) {
 }
 ```
 
-### Page with Metadata
+### Page with Metadata (SEO)
+
+Every page's title, description, canonical URL, social card, breadcrumb and sitemap entry come from one registry in `src/lib/seo.ts`. To add a page:
+
+1. Add an entry to `routes` in `src/lib/seo.ts`. Keep the title under about 30 characters (the site name is appended, so the full title stays under 60) and the description between 110 and 160 characters, mentioning Sidhpur or Dharamshala where it fits.
+2. Give the route a `layout.tsx` that uses it:
 
 ```typescript
-// src/app/about/page.tsx
-import { Metadata } from 'next'
+// src/app/about/new-page/layout.tsx
+import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'About Us - Sacred Heart School',
-  description: 'Learn about our school history, mission, and values.',
-  openGraph: {
-    title: 'About Us',
-    description: 'Learn about our school',
-    images: ['/images/about-og.jpg'],
-  },
+export const metadata: Metadata = pageMeta('/about/new-page')
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return children
 }
 ```
+
+That is all: the page then appears in `/sitemap.xml` and gets breadcrumb structured data automatically.
+
+Other SEO pieces:
+
+| File | What it does |
+|---|---|
+| `src/app/layout.tsx` | Site-wide metadata (`metadataBase`, home page title and description, icons, robots, RSS link) |
+| `src/components/seo/StructuredData.tsx` | schema.org `School` and `WebSite` JSON-LD (address, phones, office hours, map) |
+| `src/components/seo/BreadcrumbJsonLd.tsx` | `BreadcrumbList` JSON-LD for the current page |
+| `src/app/sitemap.xml/route.ts` | Sitemap of every page, with the gallery, topper, pass-out and leader photos for Google Images |
+| `src/app/robots.ts` | `robots.txt` (keep `/_next/` crawlable: search engines need it to render pages) |
+| `src/middleware.ts` | 301 redirects from the old WordPress addresses (`/?page_id=…`, `/?faculty=…`) |
+| `next.config.js` | Redirects for the old WordPress PDF links, and security headers |
+| `public/og-image.jpg` | 1200×630 image shown when a page is shared |
 
 ---
 

@@ -23,9 +23,12 @@ const itemVariants = {
 }
 
 export default function OfficeBearersPage() {
-  const [selectedYear, setSelectedYear] = useState('2025')
+  // Newest session first in the data
+  const [selectedYear, setSelectedYear] = useState(officeBearers[0].year)
 
   const currentData = officeBearers.find(o => o.year === selectedYear) || officeBearers[0]
+  // The messages page carries the current Head Boy and Head Girl only
+  const isCurrentSession = currentData.year === officeBearers[0].year
 
   // House colours, dark enough for readable text on top (fg)
   const houseColors: Record<string, { bg: string; fg: string; text: string; border: string }> = {
@@ -174,24 +177,33 @@ export default function OfficeBearersPage() {
                         className="relative w-40 h-56 mb-4 rounded-xl overflow-hidden shadow-lg border-4 border-white/20"
                         whileHover={{ scale: 1.02 }}
                       >
-                        <Image
-                          src="/images/Students/HeadGirl.webp"
-                          alt="Head Girl"
-                          fill
-                          className="object-contain bg-primary-800"
-                        />
+                        {currentData.headGirlImage ? (
+                          <Image
+                            src={currentData.headGirlImage}
+                            alt={`Head Girl ${currentData.headGirl}`}
+                            fill
+                            sizes="160px"
+                            className="object-contain bg-primary-800"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 bg-primary-800 flex items-center justify-center">
+                            <User aria-hidden className="w-14 h-14 text-white/40" />
+                          </div>
+                        )}
                       </m.div>
                       <div className="flex items-center gap-2 mb-1">
                         <Crown className="w-5 h-5 text-secondary-400" />
                         <p className="text-secondary-300 text-sm font-medium">Head Girl</p>
                       </div>
                       <p className="text-xl font-display font-bold text-center mb-3">{currentData.headGirl}</p>
-                      <Link
-                        href="/about/office-bearers/messages"
-                        className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-sm font-medium text-white transition-all flex items-center gap-2"
-                      >
-                        Read Message <ArrowRight size={14} />
-                      </Link>
+                      {isCurrentSession && (
+                        <Link
+                          href="/about/office-bearers/messages"
+                          className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-sm font-medium text-white transition-all flex items-center gap-2"
+                        >
+                          Read Message <ArrowRight size={14} />
+                        </Link>
+                      )}
                     </div>
                   </m.div>
                   {/* Head Boy */}
@@ -207,24 +219,33 @@ export default function OfficeBearersPage() {
                         className="relative w-40 h-56 mb-4 rounded-xl overflow-hidden shadow-lg border-4 border-white/20"
                         whileHover={{ scale: 1.02 }}
                       >
-                        <Image
-                          src="/images/Students/HeadBoy.webp"
-                          alt="Head Boy"
-                          fill
-                          className="object-contain bg-primary-800"
-                        />
+                        {currentData.headBoyImage ? (
+                          <Image
+                            src={currentData.headBoyImage}
+                            alt={`Head Boy ${currentData.headBoy}`}
+                            fill
+                            sizes="160px"
+                            className="object-contain bg-primary-800"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 bg-primary-800 flex items-center justify-center">
+                            <User aria-hidden className="w-14 h-14 text-white/40" />
+                          </div>
+                        )}
                       </m.div>
                       <div className="flex items-center gap-2 mb-1">
                         <Crown className="w-5 h-5 text-secondary-400" />
                         <p className="text-secondary-300 text-sm font-medium">Head Boy</p>
                       </div>
                       <p className="text-xl font-display font-bold text-center mb-3">{currentData.headBoy}</p>
-                      <Link
-                        href="/about/office-bearers/messages"
-                        className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-sm font-medium text-white transition-all flex items-center gap-2"
-                      >
-                        Read Message <ArrowRight size={14} />
-                      </Link>
+                      {isCurrentSession && (
+                        <Link
+                          href="/about/office-bearers/messages"
+                          className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-sm font-medium text-white transition-all flex items-center gap-2"
+                        >
+                          Read Message <ArrowRight size={14} />
+                        </Link>
+                      )}
                     </div>
                   </m.div>
                 </div>
@@ -290,9 +311,14 @@ export default function OfficeBearersPage() {
               >
                 <h3 className="flex items-center gap-2 text-lg font-display font-bold text-primary-900 mb-4">
                   <BookOpen className="w-5 h-5 text-secondary-500" />
-                  Editors-in-Chief
+                  {currentData.editorialMembers ? 'Editorial Team' : 'Editors-in-Chief'}
                 </h3>
                 <p className="text-gray-700 font-medium">{currentData.editorsInChief}</p>
+                {currentData.editorialMembers && (
+                  <p className="text-gray-600 mt-3">
+                    <span className="font-semibold text-primary-900">Editorial members:</span> {currentData.editorialMembers}
+                  </p>
+                )}
               </m.div>
             )}
 
@@ -369,8 +395,18 @@ export default function OfficeBearersPage() {
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
                   >
-                    <span className="font-display font-bold text-primary-900">{prefect.house}</span>
-                    <span className="text-gray-600">{prefect.names}</span>
+                    {prefect.house ? (
+                      <>
+                        <span className="font-display font-bold text-primary-900">{prefect.house}</span>
+                        <span className="text-gray-600">{prefect.names}</span>
+                      </>
+                    ) : (
+                      <ul className="flex flex-wrap gap-2">
+                        {prefect.names.split(', ').map(name => (
+                          <li key={name} className="px-3 py-1.5 rounded-full bg-white border border-gray-200 text-sm text-gray-700">{name}</li>
+                        ))}
+                      </ul>
+                    )}
                   </m.div>
                 ))}
               </div>

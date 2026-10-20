@@ -2,7 +2,8 @@
 
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useBatchYears } from '@/lib/useCMS'
-import { Image as ImageIcon, Calendar, Users, X, ChevronLeft, ChevronRight, Download, Search, Grid, List, Camera, Sparkles, Trophy, ArrowLeft } from 'lucide-react'
+import { onlineServices } from '@/data/school'
+import { Image as ImageIcon, Calendar, Users, X, ChevronLeft, ChevronRight, Download, Search, Grid, List, Camera, Sparkles, Trophy, ArrowLeft, GraduationCap, ExternalLink } from 'lucide-react'
 import NextImage from 'next/image'
 import { useDialog } from '@/lib/useDialog'
 import Link from 'next/link'
@@ -602,8 +603,8 @@ export default function PassOutBatchesPage() {
               </m.div>
             ))}
           </div>
-          <GradualBlur position="left" height="2rem" strength={1} layers={4} tint="rgba(255,255,255,0.9)" autoHide zIndex={1} className="lg:hidden" />
-          <GradualBlur position="right" height="2.5rem" strength={1} layers={4} tint="rgba(255,255,255,0.9)" autoHide zIndex={1} className="lg:hidden" />
+          <GradualBlur position="left" height="2rem" strength={0.5} layers={5} tint="rgba(255,255,255,0.9)" autoHide zIndex={1} className="lg:hidden" />
+          <GradualBlur position="right" height="2.5rem" strength={0.5} layers={5} tint="rgba(255,255,255,0.9)" autoHide zIndex={1} className="lg:hidden" />
           </div>
         </div>
       </div>
@@ -638,6 +639,30 @@ export default function PassOutBatchesPage() {
                 </div>
               </FadeIn>
             )}
+          </div>
+        </div>
+      </section>
+
+      {/* Alumni */}
+      <section className="pb-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto rounded-3xl bg-gradient-to-br from-primary-800 via-primary-700 to-primary-900 text-white p-8 md:p-10 flex flex-col md:flex-row items-start md:items-center gap-6 shadow-xl">
+            <div className="w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center shrink-0">
+              <GraduationCap aria-hidden className="w-7 h-7 text-secondary-300" />
+            </div>
+            <div className="flex-1">
+              <h2 className="font-display font-bold text-2xl md:text-3xl">Are you a Sacred Heart alumnus?</h2>
+              <p className="text-primary-100 mt-2">Stay connected with your school. Register on the school&apos;s alumni registration form.</p>
+            </div>
+            <a
+              href={onlineServices.alumniRegistration}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="active:scale-95 inline-flex items-center gap-2 bg-secondary-400 text-primary-900 px-7 py-3.5 rounded-full font-semibold hover:bg-secondary-300 transition-colors whitespace-nowrap"
+            >
+              Alumni registration <ExternalLink aria-hidden size={16} />
+              <span className="sr-only">(opens in a new tab)</span>
+            </a>
           </div>
         </div>
       </section>

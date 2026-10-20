@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { Menu, X, ChevronDown, ExternalLink, Phone, Mail } from 'lucide-react'
 import { m, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { navigation, schoolInfo } from '@/data/school'
+import { navigation, schoolInfo, onlineServices } from '@/data/school'
 import type { NavigationItem } from '@/types'
 
 // One-line summaries shown at the top of each desktop dropdown
@@ -481,6 +481,25 @@ export default function Header() {
                   >
                     Apply for admission
                   </Link>
+                  <div className="grid grid-cols-2 gap-3">
+                    <a
+                      href={onlineServices.feePortal}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 h-12 rounded-full bg-white/10 hover:bg-white/20 transition-colors focus-visible:outline-secondary-300"
+                    >
+                      Pay fee online
+                      <ExternalLink aria-hidden size={16} />
+                      <span className="sr-only">(opens in a new tab)</span>
+                    </a>
+                    <Link
+                      href="/admission/online-registration"
+                      onClick={closeMenu}
+                      className="flex items-center justify-center h-12 rounded-full bg-white/10 hover:bg-white/20 transition-colors focus-visible:outline-secondary-300"
+                    >
+                      Online registration
+                    </Link>
+                  </div>
                   <div className="grid grid-cols-2 gap-3">
                     {phone && (
                       <a

@@ -24,6 +24,7 @@ export const schoolInfo: SchoolInfo = {
   affiliation: 'CISCE, New Delhi',
   established: 1969,
   management: 'Sisters of Charity of Jesus and Mary',
+  principal: 'Sr. Gracy M.D',
   address: {
     street: 'P.O. Sidhpur',
     tehsil: 'Dharamshala',
@@ -37,6 +38,20 @@ export const schoolInfo: SchoolInfo = {
     phones: ['01892-222428', '86290-99633'],
     addresses: []
   }
+}
+
+// Google Maps plus code for the campus, as used by the school for directions
+export const schoolLocation = {
+  plusCode: '59R3+G4 Sidhpur, Himachal Pradesh',
+}
+
+// The school's online services (run by its software provider, IQdigit)
+export const onlineServices = {
+  feePortal: 'https://shsd.iqdigit.com/',
+  registrationPortal: 'https://shsd.iqdigit.com/2025_stud_reg_form/auth.php',
+  alumniRegistration: 'https://shsd.iqdigit.com/2025_alumni_reg_form/alumni_reg_form.php',
+  androidApp: 'https://play.google.com/store/apps/details?id=com.school.iqdigit_flutter',
+  iosApp: 'https://apps.apple.com/in/app/iqdigit/id1617528225',
 }
 
 // Navigation Structure
@@ -64,15 +79,19 @@ export const navigation: NavigationItem[] = [
       { text: 'Syllabus & Homework', href: '/academics/syllabus-homework' },
       { text: 'Leave & Absence', href: '/academics/leave-absence' },
       { text: 'Academic Calendar', href: '/academics/calendar' },
-      { text: 'CISCE (Rules for Documents)', href: 'https://shsdharamshala.com/wp-content/uploads/2025/05/CISE-DOC.pdf', external: true },
+      { text: 'CISCE (Rules for Documents)', href: '/documents/cisce-rules-for-documents.pdf', external: true },
+      { text: 'School App (Android)', href: 'https://play.google.com/store/apps/details?id=com.school.iqdigit_flutter', external: true },
+      { text: 'School App (iOS)', href: 'https://apps.apple.com/in/app/iqdigit/id1617528225', external: true },
     ]
   },
   {
     text: 'Admission',
     href: '/admission',
     children: [
-      { text: 'Register', href: '/admission/register' },
+      { text: 'Online Registration', href: '/admission/online-registration' },
+      { text: 'Register Interest', href: '/admission/register' },
       { text: 'Fee Structure', href: '/admission/fee-structure' },
+      { text: 'Pay Fee Online', href: '/admission/online-fee' },
       { text: 'Uniform', href: '/admission/uniform' },
       { text: 'Rules & Regulations', href: '/admission/rules' },
     ]
@@ -123,9 +142,9 @@ export const heroImages = [
 // Homepage Statistics
 export const statistics: Stat[] = [
   { label: 'Glorious Years', value: '56', suffix: '+' },
-  { label: 'Teacher Strength', value: '112', suffix: '+' },
+  { label: 'Staff Strength', value: '100', suffix: '+' },
   { label: 'Students Strength', value: '2.6K', suffix: '+' },
-  { label: 'Library Books', value: '9K', suffix: '+' },
+  { label: 'Library Books', value: '24K', suffix: '+' },
 ]
 
 // Quick Links
@@ -137,7 +156,7 @@ export const quickLinks: QuickLink[] = [
 
 // Staff Directory
 export const staffMembers: StaffMember[] = [
-  { id: '1', name: 'Sr. Archana', role: 'Principal', department: 'Administration', qualifications: '' },
+  { id: '1', name: 'Sr. Gracy M.D', role: 'Principal', department: 'Administration', qualifications: '' },
   { id: '2', name: 'POOJA SONI', role: 'Teacher', department: 'English', qualifications: 'MA ENGLISH, B.ED' },
   { id: '3', name: 'ANSHU SHAROTRI', role: 'Teacher', department: 'Science', qualifications: 'M.SC CHEMISTRY, B.ED' },
   { id: '4', name: 'RANJAN DIXIT', role: 'Teacher', department: '', qualifications: 'M.PHIL' },
@@ -191,8 +210,8 @@ export const staffMembers: StaffMember[] = [
   { id: '52', name: 'JYOTI BHARDWAJ', role: 'Teacher', department: '', qualifications: 'M.A, B.ED' },
   { id: '53', name: 'NAGESH THAKUR', role: 'Teacher', department: 'Science', qualifications: 'M.SC, M.ED' },
   { id: '54', name: 'SHANTIRANI HASDA', role: 'Teacher (Dance)', department: 'Cultural', qualifications: 'M.A, DANCE' },
-  { id: '55', name: 'AMIT KUMAR', role: 'Librarian', department: 'Library', qualifications: 'POST GRADUATION (DIPLOMA IN LIBRARY SCIENCE)' },
-  { id: '56', name: 'GULSHAN KUMAR', role: 'IT Staff', department: 'Office Staff', qualifications: 'BCA, (PROGRAMMING LANGUAGES)' },
+  { id: '55', name: 'AMIT KUMAR', role: 'Librarian', department: 'Library', qualifications: 'POST GRADUATION, DIPLOMA IN LIBRARY SCIENCE' },
+  { id: '56', name: 'GULSHAN KUMAR', role: 'IT Staff', department: 'Office Staff', qualifications: 'BCA (WEB DEVELOPER, IT)' },
   { id: '57', name: 'RUCHIKA SHARMA', role: 'Teacher', department: '', qualifications: 'M.A, M.ED' },
   { id: '58', name: 'ANNU GULERIA', role: 'Teacher', department: 'Science', qualifications: 'B.SC, B.ED' },
   { id: '59', name: 'ABKASHIKA SHARMA', role: 'Teacher', department: '', qualifications: 'M.A, B.ED' },
@@ -205,9 +224,9 @@ export const staffMembers: StaffMember[] = [
   { id: '66', name: 'PRASHANT SHARMA', role: 'Teacher', department: 'Science', qualifications: 'B.SC, M.SC, B.ED' },
   { id: '67', name: 'SHILPA', role: 'Teacher', department: 'Science', qualifications: 'M.SC, B.ED' },
   { id: '68', name: 'VARSHA GURUNG', role: 'Teacher', department: '', qualifications: 'M.A, B.ED' },
+  { id: '93', name: 'SONIKA SHARMA', role: 'Teacher', department: '', qualifications: 'M.A, B.ED' },
   { id: '69', name: 'RASHIM', role: 'Teacher', department: '', qualifications: 'M.A, B.ED' },
   { id: '70', name: 'AKRITI SHARMA', role: 'Teacher', department: 'Science', qualifications: 'B.SC, M.SC, B.ED' },
-  { id: '71', name: 'POOJA VASHISHT', role: 'Teacher', department: '', qualifications: 'B.A, M.A, B.ED' },
   { id: '72', name: 'RISHTA GURUNG', role: 'Teacher', department: '', qualifications: 'B.A, B.ED, H.P TET' },
   { id: '73', name: 'DALJIT KAUR', role: 'Teacher', department: 'English', qualifications: 'M.A ENGLIS, B.ED' },
   { id: '74', name: 'KOMAL GULERIA', role: 'Teacher', department: 'Commerce', qualifications: 'M.COM, B.ED' },
@@ -229,50 +248,78 @@ export const staffMembers: StaffMember[] = [
   { id: '90', name: 'BHARTI ATTRI', role: 'Teacher', department: '', qualifications: 'B.SC, M.A, B.ED' },
   { id: '91', name: 'JAGTAR SINGH', role: 'Teacher (Sports)', department: 'Physical Education', qualifications: 'B.PE, M.PED' },
   { id: '92', name: 'SHIVANI KUMARI', role: 'Teacher (Art & Craft)', department: 'Art', qualifications: 'B.A, M.A' },
+  { id: '94', name: 'SHOBHA', role: 'Teacher', department: 'Science', qualifications: 'B.SC, M.SC, B.ED' },
+  { id: '95', name: 'NANDNA', role: 'Teacher', department: '', qualifications: 'B.A, M.A, B.ED' },
+  { id: '96', name: 'KANCHAN KUMARI', role: 'Counsellor', department: 'Counselling', qualifications: 'B.SC, M.SC, M.A PSYCHOLOGY, B.ED' },
 ]
 
 // Student Leaders
 export const studentLeaders: StudentLeader[] = [
   {
     id: '1',
-    name: 'Vijit Veer Chaudhary',
+    name: 'Udit Thakur',
     role: 'Head Boy',
     initials: 'HB',
-    year: '2025-26',
-    message: 'I am honored to serve as the Head Boy of this outstanding institution. This school has gifted me joyful and unforgettable memories.',
+    year: '2026-27',
+    message: 'As Head Boy, I am committed to serving with diligence, integrity, and fairness.',
+    image: '/images/Students/HeadBoy.webp',
   },
   {
     id: '2',
-    name: 'Gurnoor Kaur',
+    name: 'Mehul Dhiman',
     role: 'Head Girl',
     initials: 'HG',
-    year: '2025-26',
-    message: 'Sacred Heart is a place where my heart grew roots, my spirit took flight.',
+    year: '2026-27',
+    message: 'This school has been more than just a place of learning for me – it has been a second home where I have grown, discovered myself, and built dreams for the future.',
+    image: '/images/Students/HeadGirl.webp',
   },
 ]
 
 // Office Bearers
 export const officeBearers: OfficeBearerSession[] = [
   {
+    year: '2026',
+    headGirl: 'Mehul Dhiman XII C',
+    headBoy: 'Udit Thakur XII B',
+    headGirlImage: '/images/Students/HeadGirl.webp',
+    headBoyImage: '/images/Students/HeadBoy.webp',
+    gamesCaptainGirls: 'Deepshikha XII C',
+    gamesViceCaptainGirls: 'Samridhi Guleria XI C',
+    gamesCaptainBoys: 'Akshaj Datta XII B',
+    gamesViceCaptainBoys: 'Prabh Simran Singh XI A',
+    editorsInChief: 'Aahana Chauhan XII A, Harsh Vardhan XII C',
+    editorialMembers: 'Aanandi Nag XII A, Twisha Rana XII B, Abhinandan Nehria XII A',
+    houseCaptains: [
+      { house: 'Eagles', captain: 'Arshiya Thakur X C', viceCaptain: 'Aarav Vasisht IX A' },
+      { house: 'Pelicans', captain: 'Shauryamann Rana X C', viceCaptain: 'Anahita IX B' },
+      { house: 'Pioneers', captain: 'Manasvi Dhiman X A', viceCaptain: 'Varidi Singh Rana IX D' },
+      { house: 'Trekkers', captain: 'Siddharth Vinayaka Singh X B', viceCaptain: 'Daniel I IX C' },
+    ],
+    // Published without house assignments
+    prefects: [
+      { names: 'Garvita Gupta X D, Yashovardhan Singh Patial X B, Saaisha Chauhan X A, Preesha Barall X D, Anwita IX A, Rimsha Thapa IX B, Rishima IX C, Aarav IX D' },
+    ],
+  },
+  {
     year: '2025',
-    headGirl: 'Gurnoor Kaur XII A',
+    headGirl: 'Gurnoor Kaur Chhina XII A',
     headBoy: 'Vijit Veer Chaudhary XII A',
+    headGirlImage: '/images/Students/HeadGirl-2025.webp',
+    headBoyImage: '/images/Students/HeadBoy-2025.webp',
     gamesCaptainGirls: 'Astha Sharma XII B',
     gamesViceCaptainGirls: 'Aanandi Nag XI A',
-    gamesCaptainBoys: 'Rishit Sapahiya XII A',
-    gamesViceCaptainBoys: 'Varnika Thakur X C',
-    editorsInChief: 'Aditi Awasthi XII A, Gurnoor Kaur XI A',
+    gamesCaptainBoys: 'Atishwar Walia XII A',
+    gamesViceCaptainBoys: 'Rishit Sapahiya XI A',
+    editorsInChief: 'Mehul Dhiman XI C, Sagarika Singh XII B',
     houseCaptains: [
-      { house: 'Eagles', captain: 'Agrani Sharma IX C', viceCaptain: 'Nandini Thakur X B' },
-      { house: 'Pelicans', captain: 'Arshia Singh X C', viceCaptain: 'Samiya Pathania X D' },
-      { house: 'Pioneers', captain: 'Nadav Mishra IX B', viceCaptain: 'Sharanya Gautam IX C' },
-      { house: 'Trekkers', captain: 'Mudit Thakur X A', viceCaptain: 'Mehul Dhiman XI C' },
+      { house: 'Eagles', captain: 'Varnika Thakur X C', viceCaptain: 'Agrani Sharma IX C' },
+      { house: 'Pelicans', captain: 'Nandini Thakur X B', viceCaptain: 'Arshia Singh IX C' },
+      { house: 'Pioneers', captain: 'Samiya Pathania X D', viceCaptain: 'Nadav Mishra IX B' },
+      { house: 'Trekkers', captain: 'Mudit Thakur X A', viceCaptain: 'Sharanya Gautam IX C' },
     ],
+    // Published without house assignments
     prefects: [
-      { names: 'Varada Sharma X D, Kayna Gupta X A', house: 'Eagles' },
-      { names: 'Amaira Chopra X B, Shreyan Anand X B', house: 'Pelicans' },
-      { names: 'Nishkarsh Mahajan X D, Akshaj Sharma X D', house: 'Pioneers' },
-      { names: 'Gurnoor Kaur Chhina X A, Soham Sharma X C', house: 'Trekkers' },
+      { names: 'Naman Sanghai X A, Aadarya Sethi X B, Saina Bhatt X C, Shivansh X D, Aayan Dubey IX A, Adwaita Guleria IX A, Aahana Dhuria IX B, Rishikesh Kaushal IX D' },
     ],
   },
   {
@@ -385,6 +432,7 @@ export const notifications: Notification[] = [
     description: 'Rules for issuing duplicate documents, correction of name, date of birth, verification of documents, and other relevant procedures.',
     date: '2025-05',
     important: true,
+    attachment: '/documents/cisce-rules-for-documents.pdf',
   },
   {
     id: '2',
@@ -392,6 +440,7 @@ export const notifications: Notification[] = [
     description: 'Introducing ACTIVE CISCE - A holistic initiative for student health, fitness, and talent nurturing.',
     date: '2025-04',
     important: true,
+    attachment: '/documents/introducing-active-cisce.pdf',
   },
   {
     id: '3',
@@ -463,8 +512,9 @@ export const batchPhotos: BatchYear[] = [
   { year: 2002, photos: [{ id: '2002-1', year: 2002, title: 'Class of 2002', image: '/images/Students/Pass Out Batches/2002.webp' }] },
   { year: 2003, photos: [{ id: '2003-1', year: 2003, title: 'Class of 2003', image: '/images/Students/Pass Out Batches/2003.webp' }] },
   { year: 2004, photos: [
-    { id: '2004-1', year: 2004, title: 'Class of 2004 - Part I', image: '/images/Students/Pass Out Batches/2004-i.webp' },
-    { id: '2004-2', year: 2004, title: 'Class of 2004 - Part II', image: '/images/Students/Pass Out Batches/2004-ii.webp' },
+    { id: '2004-1', year: 2004, title: 'Class of 2004 (ICSE)', image: '/images/Students/Pass Out Batches/2004-i.webp' },
+    { id: '2004-3', year: 2004, title: 'Class X - Section A (2004-05)', image: '/images/Students/Pass Out Batches/2004 X-A.webp' },
+    { id: '2004-2', year: 2004, title: 'Class X - Section B (2004-05)', image: '/images/Students/Pass Out Batches/2004-ii.webp' },
   ]},
   { year: 2005, photos: [
     { id: '2005-1', year: 2005, title: 'Class X - Section A (2005)', image: '/images/Students/Pass Out Batches/2005 X-A.webp' },
@@ -492,6 +542,7 @@ export const batchPhotos: BatchYear[] = [
     { id: '2020-2', year: 2020, title: 'Class X - Section B (2020)', image: '/images/Students/Pass Out Batches/2020 X-B.webp' },
     { id: '2020-3', year: 2020, title: 'Class X - Section C (2020)', image: '/images/Students/Pass Out Batches/2020 X-C.webp' },
     { id: '2020-4', year: 2020, title: 'Class X - Section D (2020)', image: '/images/Students/Pass Out Batches/2020 X-D.webp' },
+    { id: '2020-5', year: 2020, title: 'Class XII (2020)', image: '/images/Students/Pass Out Batches/2020 XII.webp' },
   ]},
   { year: 2021, photos: [
     { id: '2021-1', year: 2021, title: 'Class X - Section A (2021)', image: '/images/Students/Pass Out Batches/2021 X-A.webp' },
@@ -511,7 +562,7 @@ export const batchPhotos: BatchYear[] = [
     { id: '2023-2', year: 2023, title: 'Class X - Sections C & D (2023)', image: '/images/Students/Pass Out Batches/2023 X - C and D.webp' },
   ]},
   { year: 2024, photos: [
-    { id: '2024-1', year: 2024, title: 'Class X - Sections A & B (2024)', image: '/images/Students/Pass Out Batches/2024 X-A and B.webp' },
+    { id: '2024-1', year: 2024, title: 'Class XII - Sections A & B (2024)', image: '/images/Students/Pass Out Batches/2024 X-A and B.webp' },
     { id: '2024-2', year: 2024, title: 'Class X - Section A (2024)', image: '/images/Students/Pass Out Batches/2024 X-A.webp' },
     { id: '2024-3', year: 2024, title: 'Class X - Section B (2024)', image: '/images/Students/Pass Out Batches/2024 X-B.webp' },
     { id: '2024-4', year: 2024, title: 'Class X - Section C (2024)', image: '/images/Students/Pass Out Batches/2024 X-C.webp' },

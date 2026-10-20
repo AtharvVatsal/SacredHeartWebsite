@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { staffMembers as defaultStaffMembers, statistics } from '@/data/school'
+import { staffMembers as defaultStaffMembers, statistics, schoolInfo } from '@/data/school'
 import { formatStat } from '@/lib/stats'
 import { Search, Users, BookOpen, Monitor, Clipboard, ArrowLeft, Sparkles, Award, Heart, GraduationCap, Mail, User } from 'lucide-react'
 import { m } from 'framer-motion'
@@ -62,7 +62,7 @@ function getStaffImage(name: string, qualifications: string = ''): string {
   }
   
   const nameMap: Record<string, string> = {
-    'SR. ARCHANA': '/images/principal.webp',
+    'SR. GRACY M.D': '/images/principal.webp',
     'POOJA SONI': '/images/Staff/Pooja Soni.webp',
     'ANSHU SHAROTRI': '/images/Staff/Anshu Sharotari.webp',
     'RANJAN DIXIT': '/images/Staff/Rajan Dixit.webp',
@@ -96,7 +96,7 @@ function getStaffImage(name: string, qualifications: string = ''): string {
     'SANGEETA SHARMA': '/images/Staff/Sangeeta Sharma.webp',
     'RITU BALA': '/images/Staff/Ritu Bala.webp',
     'MANISHA GURUNG': '/images/Staff/Manisha Gurung.webp',
-    'AMITA MISHRA': '/images/Staff/Amita Mishra.png',
+    'AMITA MISHRA': '/images/Staff/Amita Mishra.webp',
     'ANITA KUMARI': '/images/Staff/Anita Kumari.webp',
     'SUNITA DEVI': '/images/Staff/Sunita Devi.webp',
     'KAVITA SHARMA': '/images/Staff/Kavita Sharma.webp',
@@ -112,7 +112,7 @@ function getStaffImage(name: string, qualifications: string = ''): string {
     'SHILPA': '/images/Staff/Shilpa.webp',
     'MONIKA RANI': '/images/Staff/Monika Rani.webp',
     'RENU MANHAS': '/images/Staff/Renu Manhas.webp',
-    'POOJA VASHISTH': '/images/Staff/Pooja Vashisth.webp',
+    'POOJA VASHISTH': '/images/Staff/Pooja Vashisht.webp',
     'JYOTI BHARDWAJ': '/images/Staff/Jyoti Bhardwaj.webp',
     'NAGESH THAKUR': '/images/Staff/Nagesh Thakur.webp',
     'SHANTIRANI HASDA': '/images/Staff/Shantirani Hasda.webp',
@@ -130,7 +130,6 @@ function getStaffImage(name: string, qualifications: string = ''): string {
     'VARSHA GURUNG': '/images/Staff/Varsha Gurung.webp',
     'RASHIM': '/images/Staff/Rashmi.webp',
     'AKRITI SHARMA': '/images/Staff/Akriti Sharma.webp',
-    'POOJA VASHISHT': '/images/Staff/Pooja Vashisht.webp',
     'RISHTA GURUNG': '/images/Staff/Rishta Gurung.webp',
     'DALJIT KAUR': '/images/Staff/Daljit Kaur.webp',
     'KOMAL GULERIA': '/images/Staff/Komal Guleria.webp',
@@ -142,16 +141,20 @@ function getStaffImage(name: string, qualifications: string = ''): string {
     'KAVESH CHAUHAN': '/images/Staff/Kavesh Chauhan.webp',
     'RISHI KUMSR': '/images/Staff/Rishi Kumar.webp',
     'MAHINDER SINGH CHOUDHARY': '/images/Staff/Mahinder Singh Choudhary.webp',
-    'MEENAKSHI SHARMA': '/images/Staff/dummy_female.webp',
-    'SWATI RANA': '/images/Staff/dummy_female.webp',
-    'DR. JYOTI BHARDWAJ': '/images/Staff/Jyoti Bhardwaj.webp',
-    'ARCHITA MEHTA': '/images/Staff/dummy_female.webp',
-    'ABHINANDAN SHARMA': '/images/Staff/dummy_male.webp',
-    'DEEPIKA SHARMA': '/images/Staff/dummy_female.webp',
-    'DEEPALI KATOCH': '/images/Staff/dummy_female.webp',
-    'BHARTI ATTRI': '/images/Staff/dummy_female.webp',
-    'JAGTAR SINGH': '/images/Staff/dummy_male.webp',
-    'SHIVANI KUMARI': '/images/Staff/dummy_female.webp',
+    'MEENAKSHI SHARMA': '/images/Staff/Meenakshi Sharma.webp',
+    'SWATI RANA': '/images/Staff/Swati Rana.webp',
+    'DR. JYOTI BHARDWAJ': '/images/Staff/Dr. Jyoti Bhardwaj.webp',
+    'ARCHITA MEHTA': '/images/Staff/Archita Mehta.webp',
+    'ABHINANDAN SHARMA': '/images/Staff/Abhinandan Sharma.webp',
+    'DEEPIKA SHARMA': '/images/Staff/Deepika Sharma.webp',
+    'DEEPALI KATOCH': '/images/Staff/Deepali Katoch.webp',
+    'BHARTI ATTRI': '/images/Staff/Bharti Attri.webp',
+    'JAGTAR SINGH': '/images/Staff/Jagtar Singh.webp',
+    'SHIVANI KUMARI': '/images/Staff/Shivani Kumari.webp',
+    'SONIKA SHARMA': '/images/Staff/Sonika Sharma.webp',
+    'SHOBHA': '/images/Staff/Shobha.webp',
+    'NANDNA': '/images/Staff/Nandna.webp',
+    'KANCHAN KUMARI': '/images/Staff/Kanchan Kumari.webp',
   }
   return nameMap[name.toUpperCase()] || ''
 }
@@ -321,7 +324,7 @@ export default function StaffPage() {
                     <div className="relative w-52 h-64 md:w-64 md:h-80 rounded-[1.5rem] overflow-hidden shadow-2xl border-4 border-white/20">
                       <Image
                         src="/images/principal.webp"
-                        alt="Principal Sr. Archana"
+                        alt={`Principal ${schoolInfo.principal}`}
                         fill
                         className="object-cover"
                       />
@@ -340,7 +343,7 @@ export default function StaffPage() {
                     </m.div>
                     
                     <h2 className="text-4xl md:text-5xl font-display font-bold text-white mb-4">
-                      Sr. Archana
+                      {schoolInfo.principal}
                     </h2>
                     
                     <p className="text-primary-100 text-lg leading-relaxed max-w-2xl mb-8">
@@ -420,8 +423,8 @@ export default function StaffPage() {
                 )
               })}
             </div>
-            <GradualBlur position="left" height="2rem" strength={1} layers={4} tint="rgba(255,255,255,0.9)" autoHide zIndex={1} className="lg:hidden" />
-            <GradualBlur position="right" height="2.5rem" strength={1} layers={4} tint="rgba(255,255,255,0.9)" autoHide zIndex={1} className="lg:hidden" />
+            <GradualBlur position="left" height="2rem" strength={0.5} layers={5} tint="rgba(255,255,255,0.9)" autoHide zIndex={1} className="lg:hidden" />
+            <GradualBlur position="right" height="2.5rem" strength={0.5} layers={5} tint="rgba(255,255,255,0.9)" autoHide zIndex={1} className="lg:hidden" />
             </div>
           </div>
         </div>
@@ -474,7 +477,7 @@ export default function StaffPage() {
           >
             {[
               // Shared figures + the count of the list above, so nothing contradicts another page
-              { icon: GraduationCap, value: formatStat(statistics.find(s => s.label === 'Teacher Strength')!), label: 'Teacher Strength' },
+              { icon: GraduationCap, value: formatStat(statistics.find(s => s.label === 'Staff Strength')!), label: 'Staff Strength' },
               { icon: Users, value: String(staff.length), label: 'Staff Listed' },
               { icon: Award, value: formatStat(statistics.find(s => s.label === 'Glorious Years')!), label: 'Glorious Years' },
               { icon: Heart, value: '100%', label: 'Dedication' },
@@ -486,7 +489,7 @@ export default function StaffPage() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, type: 'spring' }}
               >
-              <m.div
+              <m.div
                 whileHover={{ y: -8, transition: { duration: 0.2, delay: 0 } }}
                 className="text-center"
               >

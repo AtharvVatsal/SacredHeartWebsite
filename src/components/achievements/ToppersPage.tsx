@@ -58,6 +58,22 @@ function TopperCard({ topper, session }: { topper: RankedTopper; session: string
   )
 }
 
+// Compact entry for sessions the school published without photos
+function TopperRow({ topper }: { topper: RankedTopper }) {
+  const medal = topper.rank === 1 ? 'bg-secondary-400 text-primary-900' : topper.rank === 2 ? 'bg-gray-200 text-gray-800' : topper.rank === 3 ? 'bg-amber-700 text-white' : 'bg-primary-50 text-primary-800'
+  return (
+    <FadeInItem direction="up">
+      <div className={`flex items-center gap-3 sm:gap-4 bg-white rounded-xl p-3 sm:p-4 shadow-sm border h-full hover:shadow-md hover:border-primary-200 transition-all duration-300 ${topper.rank === 1 ? 'border-secondary-300 ring-1 ring-secondary-300' : 'border-gray-100'}`}>
+        <span className={`w-11 h-11 shrink-0 rounded-full flex items-center justify-center text-sm font-bold tabular-nums ${medal}`}>
+          {ordinal(topper.rank)}
+        </span>
+        <h3 className="flex-1 min-w-0 font-display font-bold text-sm sm:text-base text-primary-900 break-words hyphens-auto">{topper.name}</h3>
+        <span className="shrink-0 font-bold tabular-nums text-primary-800">{topper.percentage}%</span>
+      </div>
+    </FadeInItem>
+  )
+}
+
 function SessionSection({ classLabel, sessions }: { classLabel: string; sessions: TopperSession[] }) {
   const [activeSession, setActiveSession] = useState(0)
   const session = sessions[activeSession]
@@ -91,11 +107,19 @@ function SessionSection({ classLabel, sessions }: { classLabel: string; sessions
       </div>
 
       <ScaleIn key={activeSession}>
-        <StaggerContainer className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {rankToppers(session.toppers).map(topper => (
-            <TopperCard key={topper.id} topper={topper} session={session.year} />
-          ))}
-        </StaggerContainer>
+        {session.toppers.some(t => t.image) ? (
+          <StaggerContainer className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            {rankToppers(session.toppers).map(topper => (
+              <TopperCard key={topper.id} topper={topper} session={session.year} />
+            ))}
+          </StaggerContainer>
+        ) : (
+          <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            {rankToppers(session.toppers).map(topper => (
+              <TopperRow key={topper.id} topper={topper} />
+            ))}
+          </StaggerContainer>
+        )}
       </ScaleIn>
     </div>
   )

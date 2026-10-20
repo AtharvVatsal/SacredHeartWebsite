@@ -59,3 +59,6 @@ logs/
 *.db-journal
 /.claude
 /issues.md
+/comparison_before_fixes.md
+/live-site-port.md
+/design-review.md

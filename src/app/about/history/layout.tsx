@@ -1,9 +1,7 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Our History',
-  description: 'How Sacred Heart Senior Secondary School grew from the Garrison School at Yol Camp to its campus in Sidhpur.',
-}
+export const metadata: Metadata = pageMeta('/about/history')
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children

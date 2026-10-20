@@ -125,7 +125,9 @@ export default function AcademicCalendarPage() {
   const upcomingEvents = today
     ? events.filter(e => e.date >= today).sort((a, b) => a.date.localeCompare(b.date)).slice(0, 5)
     : []
-  const calendarIsOutOfDate = today !== null && today > lastEventDate
+  // Decided on the first render too (at build time on the server), so the notice is already in place and nothing moves when the page loads.
+  // A calendar that has run out stays out of date, so the build-time answer only errs towards showing the notice late, never wrongly.
+  const calendarIsOutOfDate = (today ?? toDateStr(new Date())) > lastEventDate
 
   const selectedEvents = selectedDate ? events.filter(e => e.date === selectedDate) : []
 
@@ -278,8 +280,14 @@ export default function AcademicCalendarPage() {
                       ))}
                     </div>
 
+                    {/* Until today's date is known, hold the month's exact space (always 6 weeks) so nothing moves when it fills in */}
                     {!view && (
-                      <p className="py-16 text-center text-gray-600">Loading calendar…</p>
+                      <div className="grid grid-cols-7 gap-1" role="status">
+                        <span className="sr-only">Loading calendar…</span>
+                        {Array.from({ length: 42 }, (_, i) => (
+                          <div key={i} aria-hidden="true" className="aspect-square rounded-lg bg-gray-50 motion-safe:animate-pulse" />
+                        ))}
+                      </div>
                     )}
 
                     <div className="grid grid-cols-7 gap-1">

@@ -1,9 +1,7 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Office Bearers',
-  description: 'Head boy, head girl, captains and prefects of the student council, session by session.',
-}
+export const metadata: Metadata = pageMeta('/about/office-bearers')
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children

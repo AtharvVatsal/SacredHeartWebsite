@@ -1,6 +1,6 @@
 'use client'
 
-import { BookOpen, Clipboard, Lightbulb, Pen, Calendar, Award, GraduationCap, Brain, Sparkles, ArrowLeft, Target, Clock, Heart, Star } from 'lucide-react'
+import { BookOpen, Clipboard, Lightbulb, Pen, Calendar, Award, GraduationCap, Brain, Sparkles, ArrowLeft, Target, Clock, Heart, Star, Repeat, NotebookPen, CalendarCheck } from 'lucide-react'
 import Link from 'next/link'
 import { m } from 'framer-motion'
 import HeroDecor from '@/components/layout/HeroDecor'
@@ -55,6 +55,9 @@ const suggestions = [
   { icon: Award, title: 'Exercise & Yoga', description: 'Get enough exercise and yoga every day, it keeps the mind fresh and focused.', color: 'from-emerald-400 to-green-500' },
   { icon: Clock, title: 'Practice Meditation', description: 'Practice meditation to improve focus, concentration and mental clarity.', color: 'from-blue-400 to-indigo-500' },
   { icon: Heart, title: 'Pray for Guidance', description: 'Pray often to God to help you make progress in your studies and life.', color: 'from-pink-400 to-rose-500' },
+  { icon: Repeat, title: 'Learn Overnight, Revise at Dawn', description: 'If memory work is assigned, learn it overnight and repeat it in the morning.', color: 'from-cyan-400 to-sky-500' },
+  { icon: NotebookPen, title: 'Use Your Diary', description: 'Always note down in your diary the work that is assigned for the next day.', color: 'from-lime-400 to-green-500' },
+  { icon: CalendarCheck, title: 'Make a Timetable', description: 'As you grow up, make a daily timetable for study, rest and recreation. Regular habits are a most valuable asset in later life.', color: 'from-fuchsia-400 to-purple-500' },
 ]
 
 export default function SyllabusHomeworkPage() {

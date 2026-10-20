@@ -4,56 +4,46 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowLeft, Crown, Sparkles, Quote } from 'lucide-react'
 import { m } from 'framer-motion'
+import { studentLeaders } from '@/data/school'
 import HeroDecor from '@/components/layout/HeroDecor'
 import { MessageSquareQuote as HeroMotif, Heart as HeroMotifSmall } from 'lucide-react'
 
-const headBoyMessage = `Greetings, cherished readers,
+const headBoy = studentLeaders.find(l => l.role === 'Head Boy')!
+const headGirl = studentLeaders.find(l => l.role === 'Head Girl')!
 
-I am Vijit Veer Chaudhary, honoured to serve as the Head Boy of this outstanding institution for the academic year 2025-26. Having been a part of this school for the past fourteen years, I can wholeheartedly say that each day here has gifted me joyful and unforgettable memories. It is both a privilege and a responsibility to hold this esteemed position. Ever since I was a young student, I had the dream to become a part of the student council and now, I am not only a part but the head of the student council for which I am extremely grateful to everyone who supported me and trusted in me for this esteemed post.
+const headBoyMessage = `Respected Members of the School Community,
 
-From the very beginning, I have deeply admired this institution. My love and respect for our school continues to grow with each passing day. Be it group projects, sports, or extracurricular activities, this school has helped me forge lifelong friendships and create bonds that I will always cherish.
+I am Udit Thakur, privileged to serve as the Head Boy of this esteemed institution for the academic year 2026-27.
 
-One of the many remarkable aspects of our school is the wide array of facilities it offers, helping us grow not just academically, but as well-rounded individuals. From our well-maintained classrooms and fully equipped science and computer labs, to a library that nurtures a love for reading—every corner of our campus reflects a commitment to excellence.
+Having been a part of this school for many years, I have witnessed its legacy of academic excellence, co-curricular achievements, and strong values. It is with gratitude that I accept this responsibility, aware of both the honour it brings and the duties it demands.
 
-I feel immense pride in saying that our school places equal emphasis on academics as well as sports. We are fortunate to have access to a wide range of sports facilities, including spacious playgrounds, well maintained courts and trained coaches who guide us with dedication and passion. Every student is given the chance to discover and develop their talents through the medium of inter-house and inter-school meets.
+The opportunity to lead the student council, a role I have aspired to, is a milestone made possible through the trust and encouragement of my principal, mentors, peers, and the school administration.
 
-As a Head Boy, I aspire to be a leader who listens, supports, and inspires. I wish to be a true representative of the student body voicing their ideas and concerns with honesty, and working to foster a school environment that is inclusive, positive, and full of opportunity.
+As Head Boy, I am committed to serving with diligence, integrity, and fairness. I will strive to be an approachable leader, representing students with honesty while upholding the values of our institution.
 
-I take this responsibility with utmost sincerity. I pledge to lead by example, uphold the discipline and values of our institution, and collaborate with our teachers, council members, and every student to make this academic year one of the most memorable and successful yet. I will do my best to ensure that every student in our school has the chance to shine in whatever field they are passionate about.
+I pledge to lead by example and foster an environment that is inclusive and respectful. Together, I hope to make this academic year one of achievement and meaningful experiences for all.
 
-With warm regards,
-Vijit Veer Chaudhary`
+With highest regards,
+Udit Thakur`
 
-const headGirlMessage = `Greetings, Dear Readers,
+const headGirlMessage = `Greetings to all our Readers,
 
-I am Gurnoor Kaur, the head girl of Sacred Heart Senior Secondary School, Sidhpur, a place where my heart grew roots, my spirit took flight.
+I am Mehul Dhiman, honored to serve as the Head Girl of Sacred Heart Senior Secondary School, Sidhpur.
 
-My 9-year journey in this esteemed institution has been a transformative odyssey, shaping me from a curious Grade 3 student to a confident Grade 12 leader.
+This school has been more than just a place of learning for me – it has been a second home where I have grown, discovered myself, and built dreams for the future.
 
-I vividly recall nervous smiles on my first day, gradually blossoming into lasting friendships and unforgettable memories. Through academics, extracurricular activities, and mentorship, this school has nurtured my growth—fostering creativity, kindness, and perseverance.
+My journey here, which began 7 years ago as a young and curious student, has gradually shaped me into the person I am today. From the nervous excitement of my early days to the confidence I carry now as a senior student, every moment has contributed to my growth.
 
-As I navigated grades, I discovered my passions – debating, writing, and volunteering – and was encouraged to pursue them. Teachers became mentors, guiding me through challenges and celebrating triumphs.
+The memories I have created here – whether in classrooms, during school events, or through meaningful friendships – will always hold a special place in my heart.
 
-As I stand here today, honoured to serve as Head Girl, I reflect on the values ingrained in me: empathy, integrity, passion, and responsibility. My journey is a testament to the school's dedication to shaping compassionate leaders.
+Our school has not only focused on academics but has also encouraged us to explore our talents, develop values, and become confident and responsible individuals.
 
-I am grateful for the trust placed in me and committed to:
-• Inspire positive change through inclusive initiatives
-• Uphold school spirit and traditions
-• Foster open communication between students, teachers, and administration
-• Empower my peers to embrace their potential
+I am deeply grateful to our principal, mentors, teachers, and the entire school community for their constant guidance, encouragement, and support.
 
-As Head Girl, I promise to listen, to lead with humility, and to make our community proud. This institution has given me so much; now, it's my turn to give back.
+As I take on this responsibility, I will carry out my duties with honesty and dedication. And I look forward to contributing positively and upholding the values our school stands for.
 
-I look forward to serve and make this year unforgettable for everyone! I envision a year filled with laughter, learning, and lasting impacts. A year where every student feels heard, valued, and empowered to thrive.
-
-Together, let's create a legacy of kindness, compassion, and excellence. Let's make this year a masterpiece of memories, a testament to the power of collaboration and friendship.
-
-Thank you for entrusting me with this privilege.
-
-I am excited to work alongside our dedicated teachers, passionate students, and supportive parents. Together, we'll address challenges, celebrate successes, and make our school an even better place. My door is always open – please share your ideas, concerns, and dreams with me. Let's achieve greatness together, as one united community!
-
-Regards,
-Gurnoor Kaur`
+With gratitude and pride,
+Mehul Dhiman`
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -169,8 +159,8 @@ export default function MessagesPage() {
                     whileHover={{ scale: 1.02 }}
                   >
                     <Image
-                      src="/images/Students/HeadBoy.webp"
-                      alt="Vijit Veer Chaudhary - Head Boy"
+                      src={headBoy.image!}
+                      alt={`${headBoy.name}, Head Boy`}
                       fill
                       className="object-contain bg-primary-800"
                     />
@@ -183,10 +173,10 @@ export default function MessagesPage() {
                       Head Boy
                     </div>
                     <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-2">
-                      Vijit Veer Chaudhary
+                      {headBoy.name}
                     </h2>
                     <p className="text-primary-200 text-lg">
-                      Academic Year 2025-26
+                      Academic Year {headBoy.year}
                     </p>
                   </div>
                 </div>
@@ -202,16 +192,15 @@ export default function MessagesPage() {
                     <h3 className="font-display font-bold text-xl text-primary-900 mb-2">
                       A Message to the Sacred Heart Family
                     </h3>
-                    <p className="text-gray-500 text-sm">Published: April 2025</p>
                   </div>
                 </div>
                 
                 <div className="prose prose-lg max-w-none text-gray-600">
-                  {headBoyMessage.split('\n\n').map((paragraph, index) => (
+                  {headBoyMessage.split('\n\n').map((paragraph, index, paragraphs) => (
                     <m.p 
                       key={index}
                       className={`mb-6 leading-relaxed ${
-                        paragraph.startsWith('With warm regards') ? 'mt-8 pt-4 border-t border-gray-100 font-medium text-primary-800' : ''
+                        index === paragraphs.length - 1 ? 'mt-8 pt-4 border-t border-gray-100 font-medium text-primary-800 whitespace-pre-line' : ''
                       }`}
                       initial={{ opacity: 0 }}
                       whileInView={{ opacity: 1 }}
@@ -245,8 +234,8 @@ export default function MessagesPage() {
                     whileHover={{ scale: 1.02 }}
                   >
                     <Image
-                      src="/images/Students/HeadGirl.webp"
-                      alt="Gurnoor Kaur - Head Girl"
+                      src={headGirl.image!}
+                      alt={`${headGirl.name}, Head Girl`}
                       fill
                       className="object-contain bg-secondary-700"
                     />
@@ -259,10 +248,10 @@ export default function MessagesPage() {
                       Head Girl
                     </div>
                     <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-2">
-                      Gurnoor Kaur
+                      {headGirl.name}
                     </h2>
                     <p className="text-secondary-100 text-lg">
-                      Academic Year 2025-26
+                      Academic Year {headGirl.year}
                     </p>
                   </div>
                 </div>
@@ -278,16 +267,15 @@ export default function MessagesPage() {
                     <h3 className="font-display font-bold text-xl text-primary-900 mb-2">
                       A Message to the Sacred Heart Family
                     </h3>
-                    <p className="text-gray-500 text-sm">Published: April 2025</p>
                   </div>
                 </div>
                 
                 <div className="prose prose-lg max-w-none text-gray-600">
-                  {headGirlMessage.split('\n\n').map((paragraph, index) => (
+                  {headGirlMessage.split('\n\n').map((paragraph, index, paragraphs) => (
                     <m.p 
                       key={index}
                       className={`mb-6 leading-relaxed ${
-                        paragraph.startsWith('Regards') ? 'mt-8 pt-4 border-t border-gray-100 font-medium text-primary-800' : ''
+                        index === paragraphs.length - 1 ? 'mt-8 pt-4 border-t border-gray-100 font-medium text-primary-800 whitespace-pre-line' : ''
                       }`}
                       initial={{ opacity: 0 }}
                       whileInView={{ opacity: 1 }}

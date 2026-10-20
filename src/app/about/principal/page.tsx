@@ -3,11 +3,14 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, Award, GraduationCap, Sparkles, Quote, BookOpen, Users, Heart, Star, Mail } from 'lucide-react'
-import { principalMessage, schoolInfo, statistics } from '@/data/school'
+import { schoolInfo, statistics } from '@/data/school'
+import { StaggerContainer, FadeInItem } from '@/components/animations'
 import { formatStat } from '@/lib/stats'
 import { m } from 'framer-motion'
 import HeroDecor from '@/components/layout/HeroDecor'
 import { Quote as HeroMotif, BookOpen as HeroMotifSmall } from 'lucide-react'
+
+const principal = schoolInfo.principal
 
 const messageParagraphs = [
   {
@@ -18,10 +21,20 @@ const messageParagraphs = [
     icon: Users,
     text: "Sacred Heart school is a great place to teach and learn. Our teachers are committed to a high-quality learning experience focused on the individual needs of each child. We are striving to be creative and innovative in our instruction to engage students in their learning through a variety of activities, applications of technology and 21st century skills.",
   },
-  {
-    icon: Heart,
-    text: "Education aims at a holistic and integral development of a student/person. It is a collective responsibility based on a deep and healthy relationship between teachers, students, parents and among students themselves. We try to connect our deep relationship with the creator, God almighty to achieve our dreams and goals.",
-  },
+]
+
+// The principal's message in full, worded as the school published it
+const deskThemes = [
+  { title: 'Holistic Education', text: "Education aims at a holistic and integral development of a student/person. It is a collective responsibility based on a deep and healthy relationship between teachers, students, parents and among students themselves. We strive to connect this deep relationship with the Creator, God Almighty, to help us achieve our dreams and goals. Such relationships build strength in the heart and at the core of one's being." },
+  { title: 'Spiritual & Moral Values', text: 'Contemporary youth experience increasing pressure from the value systems developing in society. Therefore, they need to imbibe spiritual and moral values to withstand confusion and the erosion of sound values and to become genuine human beings.' },
+  { title: 'Creative & Innovative Learning', text: 'Creative and innovative education is very important. The essence of creative teaching is openness, flexibility and respect for the uniqueness of every human being. The school provides a healthy, vibrant and holistic education that aims at excellence in every sphere of human endeavour.' },
+  { title: 'Every Child is Unique', text: 'Every child is unique and a masterpiece. Each one is taken care of and given a conducive ambience for their learning and developing.' },
+  { title: 'Education Without Fear', text: 'The goal of education must be freedom from fear. The only sufficient basis for fearlessness is knowledge of the self. The foundation of education is this self-knowledge and awareness.' },
+  { title: 'Creating a Better World', text: 'Man alone has been bestowed with capacities with which he can make this world a better place to live in. Every person has a responsibility to ask: “What can I do to this world that did not exist when I was born?” Every human life has the power to lift not only itself, but also the collective consciousness of humanity.' },
+  { title: 'Discover Your Potential', text: 'The tragedy of life is not ultimate death, but the resources and potential that die within a person while he or she is still alive. We must use the resources with which we have been bestowed, or we may lose them. Let us think positively, because positive thought patterns create positive vibes in life.' },
+  { title: 'The Power of Right Thoughts', text: 'Anything is possible only with the right thoughts in mind. As parents and teachers, it is our commitment to channelize the talents and energy of our students into creative community building.' },
+  { title: 'Together Towards Greater Heights', text: 'With this noble sense of purpose, I request all staff, parents and well-wishers to join hands with us as we take Sacred Heart School to greater heights. Together, let us nurture talent, strengthen character and build a better and more compassionate community.' },
+  { title: 'Our Students', text: 'I am very proud of my students. They are intelligent, resilient, creative, imaginative, disciplined and dedicated to lifelong learning. They are respectful and ethical, and they are the future leaders and role models of society.' },
 ]
 
 // Figures come from the shared statistics so every page shows the same numbers
@@ -29,7 +42,7 @@ const statFor = (label: string) => statistics.find(s => s.label === label)
 const highlights = [
   { icon: GraduationCap, label: 'CISCE Affiliated', value: `Since ${schoolInfo.established}` },
   { icon: Users, label: 'Students Strength', value: formatStat(statFor('Students Strength')!) },
-  { icon: Award, label: 'Teacher Strength', value: formatStat(statFor('Teacher Strength')!) },
+  { icon: Award, label: 'Staff Strength', value: formatStat(statFor('Staff Strength')!) },
   { icon: Star, label: 'Glorious Years', value: formatStat(statFor('Glorious Years')!) },
 ]
 
@@ -138,7 +151,7 @@ export default function PrincipalPage() {
                   <div className="relative overflow-hidden rounded-[2rem] aspect-[4/5]">
                     <Image 
                       src="/images/principal.webp" 
-                      alt="Sr. Archana - Principal" 
+                      alt={`${principal}, Principal`}
                       fill
                       className="object-cover"
                     />
@@ -175,8 +188,8 @@ export default function PrincipalPage() {
                       <Award className="w-6 h-6 text-white" />
                     </m.div>
                     <div>
-                      <p className="text-xs text-gray-500 font-medium">Experience</p>
-                      <p className="text-lg font-bold text-primary-900">15+ Years</p>
+                      <p className="text-xs text-gray-600 font-medium">Guided by</p>
+                      <p className="text-lg font-bold text-primary-900">Faith · Knowledge · Service</p>
                     </div>
                   </div>
                 </m.div>
@@ -218,7 +231,7 @@ export default function PrincipalPage() {
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
               >
-                Sr. Archana
+                {principal}
               </m.h2>
               <p className="text-xl text-secondary-600 font-medium mb-8">Principal, {schoolInfo.name}</p>
 
@@ -232,7 +245,7 @@ export default function PrincipalPage() {
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.15 }}
                   >
-                  <m.div
+                  <m.div
                     whileHover={{ x: 10, transition: { duration: 0.2, delay: 0 } }}
                     className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl hover:border-primary-200 transition-all cursor-pointer"
                   >
@@ -258,13 +271,13 @@ export default function PrincipalPage() {
                 <div className="relative">
                   <Quote className="w-12 h-12 text-secondary-300 mb-4" />
                   <p className="text-xl md:text-2xl font-medium leading-relaxed mb-6">
-                    Education aims at a holistic and integral development of a student.
+                    Anything is possible only with the right thoughts in mind.
                   </p>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
                       <Heart className="w-5 h-5 text-white" />
                     </div>
-                    <span className="text-white/80 font-medium">Sr. Archana</span>
+                    <span className="text-white/80 font-medium">{principal}</span>
                   </div>
                 </div>
               </m.div>
@@ -287,6 +300,55 @@ export default function PrincipalPage() {
               </m.div>
             </m.div>
           </div>
+        </div>
+      </section>
+
+      {/* From the Principal's Desk */}
+      <section className="py-20 bg-white relative overflow-hidden">
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-primary-100/40 rounded-full blur-[120px] pointer-events-none" />
+        <div className="container mx-auto px-4 relative z-10">
+          <m.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-sm font-semibold text-secondary-800 tracking-wider uppercase mb-3">From the Principal&apos;s Desk</h2>
+            <h3 className="text-3xl md:text-4xl font-display font-bold text-primary-900 mb-4">What We Believe</h3>
+            <div className="w-20 h-1 bg-secondary-400 rounded-full mx-auto" />
+          </m.div>
+
+          <StaggerContainer className="grid md:grid-cols-2 gap-5 max-w-5xl mx-auto" stagger={0.06}>
+            {deskThemes.map((theme, index) => (
+              <FadeInItem key={theme.title} direction="up">
+                <div className="h-full bg-white rounded-2xl p-6 shadow-md border border-gray-100 hover:shadow-xl hover:border-primary-200 transition-all duration-300">
+                  <div className="flex items-start gap-4">
+                    <span className="w-11 h-11 shrink-0 rounded-xl bg-gradient-to-br from-primary-600 to-primary-700 text-white font-display font-bold flex items-center justify-center shadow-md" aria-hidden>
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <div>
+                      <h4 className="font-display font-bold text-lg text-primary-900 mb-2">{theme.title}</h4>
+                      <p className="text-gray-600 leading-relaxed">{theme.text}</p>
+                    </div>
+                  </div>
+                </div>
+              </FadeInItem>
+            ))}
+          </StaggerContainer>
+
+          <m.div
+            className="max-w-3xl mx-auto mt-12 text-center bg-gradient-to-br from-primary-50 via-white to-secondary-50 rounded-3xl p-8 md:p-10 border border-primary-100"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <p className="text-gray-700 text-lg leading-relaxed mb-6">
+              As parents and teachers, it is our commitment to adopt ways and means to channelize the talents and energy of our students into creative community building. With this noble sense of purpose, may I request all staff, parents and well-wishers to join hands as we take Sacred Heart to greater heights.
+            </p>
+            <p className="font-display text-xl text-primary-900">God Bless</p>
+            <p className="font-display font-bold text-2xl text-primary-900 mt-1">{principal}</p>
+            <p className="text-secondary-800 font-medium text-sm mt-1">Principal, {schoolInfo.fullName}, Sidhpur</p>
+          </m.div>
         </div>
       </section>
 
@@ -315,7 +377,7 @@ export default function PrincipalPage() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, type: 'spring' }}
               >
-              <m.div
+              <m.div
                 whileHover={{ y: -10, transition: { duration: 0.2, delay: 0 } }}
                 className="text-center"
               >
@@ -345,7 +407,7 @@ export default function PrincipalPage() {
               Experience Our Leadership
             </h2>
             <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-              Under Sr. Archana&apos;s guidance, Sacred Heart continues to nurture young minds with values and excellence.
+              Under {principal}&apos;s guidance, Sacred Heart continues to nurture young minds with values and excellence.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <m.div whileHover={{ scale: 1.05 }} className="inline-flex">

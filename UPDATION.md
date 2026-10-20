@@ -606,11 +606,6 @@ export const facilities: Facility[] = [
 
 import { m } from 'framer-motion'
 
-export const metadata = {
-  title: 'Page Title',
-  description: 'Page description',
-}
-
 export default function PageName() {
   return (
     <>
@@ -630,7 +625,21 @@ export default function PageName() {
 }
 ```
 
-### Step 3: Add to Navigation
+### Step 3: Register the page for search engines
+Add an entry for the page to `routes` in `src/lib/seo.ts` (title, description, breadcrumb label, sitemap hints), then create `src/app/[section]/[page-name]/layout.tsx`:
+```typescript
+import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
+
+export const metadata: Metadata = pageMeta('/section/page-name')
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return children
+}
+```
+This gives the page its title, description, canonical URL and sharing card, and adds it to `/sitemap.xml` and the breadcrumb data. Pages marked `'use client'` cannot export `metadata` themselves, which is why it lives in the layout.
+
+### Step 4: Add to Navigation
 In `src/data/school.ts`:
 ```typescript
 { text: 'Page Name', href: '/section/page-name' },

@@ -129,7 +129,7 @@ export default function UniformPage() {
                 <div>
                   <h2 className="font-display font-bold text-2xl text-primary-900 mb-2">Where to Buy</h2>
                   <p className="text-gray-700 leading-relaxed text-lg">
-                    School uniforms are to be bought from <strong className="text-secondary-600">DCM Shop in Dharamshala</strong>. The colour, material and pattern must be approved by the school only.
+                    School uniforms are to be bought from <strong className="text-secondary-600">DCN shop in Dharamshala</strong>. The colour, material and pattern must be approved by the school only.
                   </p>
                 </div>
               </div>
@@ -366,6 +366,14 @@ export default function UniformPage() {
                 <p className="text-gray-700 text-lg">
                   School Badges, belts and ties will be available in the school office.
                 </p>
+                <ul className="mt-6 grid sm:grid-cols-3 gap-3 text-left">
+                  {['Identity cards are mandatory with the uniform.', 'The uniform must be neat, clean and well ironed.', 'Follow the pattern and guidelines given by the school.'].map(rule => (
+                    <li key={rule} className="flex items-start gap-2 rounded-xl bg-primary-50 p-4 text-sm text-gray-700">
+                      <CheckCircle aria-hidden className="w-4 h-4 text-primary-600 shrink-0 mt-0.5" />
+                      {rule}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>

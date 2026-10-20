@@ -1,44 +1,54 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, FileText, CreditCard, Shield, Calendar, UserPlus, GraduationCap, CheckCircle, BookOpen, Clipboard, Sparkles, Phone, Mail } from 'lucide-react'
+import { ArrowRight, FileText, CreditCard, Calendar, UserPlus, GraduationCap, CheckCircle, BookOpen, Clipboard, Sparkles, Phone, Mail, Globe, Building, Wallet, Scale } from 'lucide-react'
 import { schoolEmail, schoolPhones, telHref } from '@/lib/contact'
 import { m } from 'framer-motion'
 import { FadeIn, StaggerContainer, FadeInItem, ParallaxSection } from '@/components/animations'
 
+// The school's registration process (every step is on /admission/online-registration)
 const steps = [
-  { 
-    title: 'Register Interest', 
-    description: 'Fill in the registration form', 
-    icon: FileText,
+  {
+    title: 'Register Online',
+    description: 'Create an account and fill in the form on the school portal',
+    icon: Globe,
     color: 'from-blue-500 to-indigo-600'
   },
-  { 
-    title: 'Bring Documents', 
-    description: 'Bring the documents listed below to the school', 
-    icon: Clipboard,
+  {
+    title: 'Pay Registration Fee',
+    description: 'Pay online and save the receipt',
+    icon: CreditCard,
     color: 'from-purple-500 to-pink-600'
   },
-  { 
-    title: 'Assessment', 
-    description: 'Student assessment/test', 
-    icon: Shield,
+  {
+    title: 'Print & Attach',
+    description: 'Print the form and attach the documents listed below',
+    icon: Clipboard,
     color: 'from-emerald-500 to-teal-600'
   },
-  { 
-    title: 'Confirmation', 
-    description: 'Pay fees to confirm admission', 
-    icon: CheckCircle,
+  {
+    title: 'Submit at School',
+    description: 'Hand everything in at the school office on the announced date',
+    icon: Building,
     color: 'from-amber-500 to-orange-600'
   },
 ]
 
 const requirements = [
-  'Birth Certificate',
-  'Previous School TC',
-  'Passport Size Photos',
-  'Aadhar Card (if available)',
-  'Parent ID Proof',
+  'Birth Certificate (photocopy)',
+  'Aadhaar Card (photocopy)',
+  'Previous Class Final Report Card',
+  'Address Proof (photocopy)',
+  'Transfer Certificate from the previous school',
+  'Passport Size Photograph',
+]
+
+const admissionRules = [
+  'Admission to Lower K.G. is given after an interactive session with the parents.',
+  'A birth certificate with a registration number from the Municipal Corporation or State Government, stating the date of birth, must be produced at the time of admission.',
+  'For other classes, where only vacant seats are filled, the student must be of the corresponding age. Admission stands cancelled if the transfer certificate from the previous school is not produced within a week.',
+  'The date of birth and name, once entered in the school record, will not be changed under any circumstances.',
+  'Admission to Class XI (+1) takes place in the first week of April.',
 ]
 
 const quickLinks = [
@@ -48,6 +58,13 @@ const quickLinks = [
     icon: CreditCard,
     href: '/admission/fee-structure',
     color: 'from-green-500 to-emerald-600'
+  },
+  {
+    title: 'Pay Fee Online',
+    description: 'Step-by-step online payment guide',
+    icon: Wallet,
+    href: '/admission/online-fee',
+    color: 'from-sky-500 to-blue-600'
   },
   { 
     title: 'Uniform', 
@@ -204,11 +221,15 @@ export default function AdmissionPage() {
           <FadeIn blur>
             <div className="text-center mt-12">
               <m.div whileHover={{ scale: 1.05 }} className="inline-flex">
-                <Link href="/admission/register" className="active:scale-[0.98] inline-flex items-center gap-3 bg-gradient-to-r from-primary-700 to-primary-800 text-white px-10 py-5 rounded-full font-semibold hover:from-primary-600 hover:to-primary-700 transition-all shadow-xl hover:shadow-2xl">
-                  Register Now
+                <Link href="/admission/online-registration" className="active:scale-[0.98] inline-flex items-center gap-3 bg-gradient-to-r from-primary-700 to-primary-800 text-white px-10 py-5 rounded-full font-semibold hover:from-primary-600 hover:to-primary-700 transition-all shadow-xl hover:shadow-2xl">
+                  Register Online
                   <ArrowRight size={20} />
                 </Link>
               </m.div>
+              <p className="mt-5 text-gray-600">
+                Have a question first?{' '}
+                <Link href="/admission/register" className="font-semibold text-primary-800 underline hover:text-primary-900">Send an admission enquiry</Link>
+              </p>
             </div>
           </FadeIn>
         </div>
@@ -230,7 +251,7 @@ export default function AdmissionPage() {
                     </div>
                     <div>
                       <h3 className="text-2xl md:text-3xl font-display font-bold text-primary-900">Documents Required</h3>
-                      <p className="text-gray-500">Please bring these during admission</p>
+                      <p className="text-gray-600">Attach these to the printed registration form</p>
                     </div>
                   </div>
                   
@@ -256,6 +277,36 @@ export default function AdmissionPage() {
         </div>
       </section>
 
+      {/* Admission Rules */}
+      <section className="py-20 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
+        <div className="container mx-auto px-4 relative z-10">
+          <FadeIn blur>
+            <div className="text-center mb-12">
+              <h2 className="text-sm font-semibold text-secondary-800 tracking-wider uppercase mb-3">Please Note</h2>
+              <h3 className="text-3xl md:text-4xl font-display font-bold text-primary-900 mb-4">
+                Admission Rules
+              </h3>
+            </div>
+          </FadeIn>
+          <StaggerContainer className="max-w-4xl mx-auto grid gap-4" stagger={0.06}>
+            {admissionRules.map((rule, index) => (
+              <FadeInItem key={rule} direction="up">
+                <div className="flex items-start gap-4 bg-white rounded-2xl p-5 md:p-6 shadow-sm border border-gray-100 hover:border-primary-200 hover:shadow-md transition-all">
+                  <span className="w-10 h-10 shrink-0 rounded-xl bg-primary-50 text-primary-800 font-display font-bold flex items-center justify-center" aria-hidden>
+                    {index + 1}
+                  </span>
+                  <p className="text-gray-700 leading-relaxed pt-1.5">{rule}</p>
+                </div>
+              </FadeInItem>
+            ))}
+          </StaggerContainer>
+          <p className="max-w-4xl mx-auto mt-6 text-sm text-gray-600 flex items-start gap-2">
+            <Scale aria-hidden className="w-4 h-4 shrink-0 mt-0.5 text-primary-700" />
+            <span>Rules for students once they join are on the <Link href="/admission/rules" className="font-semibold text-primary-800 underline">Rules &amp; Regulations</Link> page.</span>
+          </p>
+        </div>
+      </section>
+
       {/* Quick Links */}
       <section className="py-20 bg-gradient-to-br from-gray-50 via-white to-primary-50 relative overflow-hidden">
         <div className="absolute -top-32 -left-32 w-96 h-96 bg-secondary-400/10 rounded-full blur-[120px] pointer-events-none" />
@@ -270,7 +321,7 @@ export default function AdmissionPage() {
             </div>
           </FadeIn>
           
-          <StaggerContainer className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto" stagger={0.1}>
+          <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto" stagger={0.1}>
             {quickLinks.map((link, index) => (
               <FadeInItem key={index} direction="up" blur>
                 <Link href={link.href}>
@@ -334,7 +385,8 @@ export default function AdmissionPage() {
           <div className="max-w-3xl mx-auto rounded-2xl border border-primary-100 bg-primary-50 p-6 md:p-8 text-center">
             <Calendar aria-hidden className="w-10 h-10 text-primary-700 mx-auto mb-4" />
             <p className="font-display font-bold text-xl text-primary-900 mb-2">Dates for the next admission cycle have not been announced here yet</p>
-            <p className="text-gray-700 mb-6">Please call or email the school office for registration and assessment dates.</p>
+            <p className="text-gray-700 mb-2">Registration and document submission dates are announced in the official school notification. Please call or email the school office for them.</p>
+            <p className="text-gray-700 mb-6">Admission to Class XI takes place in the first week of April.</p>
             <div className="flex flex-wrap justify-center gap-3">
               {schoolPhones.map(phone => (
                 <a key={phone} href={telHref(phone)} className="inline-flex items-center gap-2 rounded-full bg-primary-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-800 transition-colors">
@@ -376,7 +428,7 @@ export default function AdmissionPage() {
             transition={{ delay: 0.2 }}
           >
             <m.div whileHover={{ scale: 1.05, y: -2 }} className="inline-flex">
-              <Link href="/admission/register" className="active:scale-[0.98] inline-flex items-center gap-3 bg-secondary-400 text-primary-900 px-10 py-5 rounded-full font-semibold hover:bg-secondary-300 transition-all shadow-xl hover:shadow-2xl">
+              <Link href="/admission/online-registration" className="active:scale-[0.98] inline-flex items-center gap-3 bg-secondary-400 text-primary-900 px-10 py-5 rounded-full font-semibold hover:bg-secondary-300 transition-all shadow-xl hover:shadow-2xl">
                 Apply Now
                 <ArrowRight size={20} />
               </Link>

@@ -140,7 +140,7 @@ export default function Home() {
                     href="/about"
                     className="inline-flex items-center gap-2 glass text-primary-900 px-8 py-4 rounded-full font-semibold hover:bg-white/80 transition-all"
                   >
-                    Learn More
+                    About Our School
                   </Link>
                 </MagneticButton>
               </m.div>
@@ -225,8 +225,11 @@ export default function Home() {
               <CreditCard size={16} />
               Fee Structure
             </Link>
-            <Link href="/admission/register" className="inline-flex items-center gap-2 bg-white/10 text-white px-5 py-2.5 rounded-full font-medium hover:bg-white/20 transition-all text-sm border border-white/20">
-              Register Interest in Admission
+            <Link href="/admission/online-fee" className="inline-flex items-center gap-2 bg-white/10 text-white px-5 py-2.5 rounded-full font-medium hover:bg-white/20 transition-all text-sm border border-white/20">
+              Pay Fee Online
+            </Link>
+            <Link href="/admission/online-registration" className="inline-flex items-center gap-2 bg-white/10 text-white px-5 py-2.5 rounded-full font-medium hover:bg-white/20 transition-all text-sm border border-white/20">
+              Online Registration
             </Link>
           </div>
         </div>
@@ -445,17 +448,17 @@ export default function Home() {
                     <div className="absolute inset-0 rounded-full border-2 border-primary-200 opacity-50 scale-110 animate-ping" style={{ animationDuration: '3s' }}></div>
                     <Image
                       src="/images/principal.webp"
-                      alt="Sr. Archana - Principal"
+                      alt={`${schoolInfo.principal}, Principal`}
                       fill
                       className="object-cover rounded-full"
                     />
                   </m.div>
                   <div className="text-center md:text-left">
                     <p className="text-gray-700 italic mb-8 leading-relaxed text-xl md:text-2xl font-body">
-                      &quot;Welcome to Sacred Heart Senior Secondary School, where we nurture young minds with values, faith, and academic excellence.&quot;
+                      &quot;Sacred Heart school is a great place to teach and learn. Our teachers are committed to a high-quality learning experience focused on the individual needs of each child.&quot;
                     </p>
                     <div className="inline-block">
-                      <h4 className="font-display font-bold text-xl md:text-2xl text-primary-900 mb-1">Sr. Archana</h4>
+                      <h4 className="font-display font-bold text-xl md:text-2xl text-primary-900 mb-1">{schoolInfo.principal}</h4>
                       <p className="text-secondary-800 font-medium tracking-wide uppercase text-sm">Principal, {schoolInfo.fullName}</p>
                     </div>
                   </div>
@@ -695,6 +698,17 @@ export default function Home() {
                         {notification.title}
                       </h4>
                       <p className="text-gray-600 leading-relaxed text-sm md:text-base">{notification.description}</p>
+                      {notification.attachment && (
+                        <a
+                          href={notification.attachment}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-primary-800 hover:text-primary-900 hover:underline"
+                        >
+                          <FileText aria-hidden size={15} /> Read the notice (PDF)
+                          <span className="sr-only">(opens in a new tab)</span>
+                        </a>
+                      )}
                     </div>
                   </div>
                 </m.div>

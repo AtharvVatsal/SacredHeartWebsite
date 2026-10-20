@@ -1,6 +1,6 @@
 'use client'
 
-import { Bell, Download, ExternalLink, Calendar, AlertCircle } from 'lucide-react'
+import { Bell, Download, ExternalLink, Calendar, AlertCircle, FileText } from 'lucide-react'
 import { notifications as defaultNotifications } from '@/data/school'
 import { useNotifications } from '@/lib/useCMS'
 import type { Notification } from '@/types'
@@ -159,6 +159,17 @@ export default function NotificationsPage() {
                             {notification.title}
                           </h2>
                           <p className="text-gray-600 leading-relaxed">{notification.description}</p>
+                          {notification.attachment && (
+                            <a
+                              href={notification.attachment}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="mt-4 inline-flex items-center gap-2 rounded-full bg-primary-700 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-800 transition-colors"
+                            >
+                              <FileText aria-hidden size={16} /> Read the notice (PDF)
+                              <span className="sr-only">(opens in a new tab)</span>
+                            </a>
+                          )}
                         </div>
                         
                       </div>

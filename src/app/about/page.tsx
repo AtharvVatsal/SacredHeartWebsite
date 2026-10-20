@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, History, Target, Users, Award, BookOpen, Music, Sparkles, Heart, Building, GraduationCap, Star } from 'lucide-react'
+import { ArrowRight, History, Target, Users, Award, BookOpen, Music, Sparkles, Heart, Building, GraduationCap, Star, Palette, Flower2, Monitor, Dumbbell, Compass } from 'lucide-react'
 import { schoolInfo as defaultSchoolInfo, principalMessage as defaultPrincipalMessage, staffMembers } from '@/data/school'
 import { useSchoolInfo, usePrincipalMessage, useSchoolHistory, useSchoolAnthem } from '@/lib/useCMS'
 import { m } from 'framer-motion'
@@ -15,6 +15,16 @@ const aboutNav = [
   { href: '/about/staff', label: 'Staff', icon: BookOpen, color: 'from-purple-500 to-pink-600' },
   { href: '/about/office-bearers', label: 'Office Bearers', icon: Award, color: 'from-rose-500 to-red-600' },
   { href: '/about/pass-out-batches', label: 'Pass Out Batches', icon: GraduationCap, color: 'from-cyan-500 to-blue-600' },
+]
+
+// What the school sets out to build in every student
+const growthAreas = [
+  { label: 'Indian art & culture', icon: Palette },
+  { label: 'Music, theatre & dance', icon: Music },
+  { label: 'Yoga', icon: Flower2 },
+  { label: 'Computer literacy', icon: Monitor },
+  { label: 'Physical fitness', icon: Dumbbell },
+  { label: 'Leadership', icon: Compass },
 ]
 
 const stats = [
@@ -173,6 +183,41 @@ export default function AboutPage() {
               </FadeInItem>
             ))}
           </StaggerContainer>
+        </div>
+      </section>
+
+      {/* Who We Are */}
+      <section className="py-20 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+        <div className="absolute -top-24 -right-24 w-80 h-80 bg-secondary-400/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-6xl mx-auto grid lg:grid-cols-5 gap-10 lg:gap-14 items-center">
+            <FadeIn blur className="lg:col-span-3">
+              <span className="text-sm font-semibold text-secondary-800 tracking-wider uppercase">Who We Are</span>
+              <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-900 mt-3 mb-6 leading-tight">
+                We don&apos;t only teach our students. We help them grow.
+              </h2>
+              <div className="space-y-5 text-gray-700 text-lg leading-relaxed">
+                <p>
+                  The school aims at the holistic growth of every student, nurturing a positive and healthy physical, emotional and intellectual attitude. We build an awareness of social responsibility and an appreciation of Indian art, culture, music, theatre, dance and yoga, alongside computer literacy and an understanding of physical fitness. Together, these form the core of a well-balanced personality.
+                </p>
+                <p>
+                  Our objective is to equip students mentally, morally, physically and culturally to become worthy global citizens, who guard the noble traditions they inherit while making progress in a modern, scientific way. We develop initiative and leadership in students who are disciplined and educated in mind and spirit, ready to serve their country, to lead others and to fulfil their own dreams and aspirations.
+                </p>
+              </div>
+            </FadeIn>
+            <StaggerContainer className="lg:col-span-2 grid grid-cols-2 gap-3 sm:gap-4" stagger={0.06}>
+              {growthAreas.map(area => (
+                <FadeInItem key={area.label} direction="up">
+                  <div className="h-full bg-white rounded-2xl p-4 sm:p-5 shadow-md border border-gray-100 hover:shadow-lg hover:border-primary-200 transition-all duration-300">
+                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary-100 to-primary-50 flex items-center justify-center mb-3">
+                      <area.icon aria-hidden className="w-5 h-5 text-primary-700" />
+                    </div>
+                    <p className="font-semibold text-primary-900 text-sm sm:text-base leading-snug">{area.label}</p>
+                  </div>
+                </FadeInItem>
+              ))}
+            </StaggerContainer>
+          </div>
         </div>
       </section>
 
@@ -359,7 +404,7 @@ export default function AboutPage() {
                       <div className="absolute inset-2 bg-gradient-to-br from-primary-600 to-primary-800 rounded-full flex items-center justify-center overflow-hidden">
                         <Image
                           src="/images/principal.webp"
-                          alt="Sr. Archana"
+                          alt={info.principal}
                           fill
                           className="object-cover rounded-full"
                         />
@@ -377,7 +422,7 @@ export default function AboutPage() {
                       <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-900 mb-2">
                         Principal&apos;s Message
                       </h2>
-                      <p className="text-xl text-secondary-800 font-medium mb-6">Sr. Archana</p>
+                      <p className="text-xl text-secondary-800 font-medium mb-6">{info.principal}</p>
                       <p className="text-gray-600 leading-relaxed mb-8 text-lg italic">
                         &quot;{principal.split('.')[0]}...&quot;
                       </p>

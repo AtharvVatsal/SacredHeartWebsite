@@ -1,9 +1,11 @@
 'use client'
 
-import { Banknote, Calendar, AlertCircle, CheckCircle, Clock, Building, GraduationCap, Sparkles, ArrowLeft, Info, ShieldCheck } from 'lucide-react'
+import { Banknote, Calendar, AlertCircle, CheckCircle, Clock, Building, GraduationCap, Sparkles, ArrowLeft, ArrowRight, Info, ShieldCheck, CreditCard } from 'lucide-react'
 import Link from 'next/link'
 import { m } from 'framer-motion'
 import HeroDecor from '@/components/layout/HeroDecor'
+import FeeStructure from '@/components/admission/FeeStructure'
+import { FadeIn } from '@/components/animations'
 import { Wallet as HeroMotif, Receipt as HeroMotifSmall } from 'lucide-react'
 
 const feeInfo = [
@@ -94,8 +96,33 @@ export default function FeeStructurePage() {
         </div>
       </section>
 
-      {/* Fee Information Cards */}
+      {/* Class-wise fees for the current session */}
       <section className="py-16 bg-gradient-to-b from-primary-50 to-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <FadeIn blur>
+              <FeeStructure />
+            </FadeIn>
+
+            {/* Paying online */}
+            <div className="mt-10 flex flex-col md:flex-row items-start md:items-center gap-5 rounded-3xl bg-gradient-to-br from-primary-800 via-primary-700 to-primary-900 p-6 md:p-8 text-white shadow-xl">
+              <div className="w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center shrink-0">
+                <CreditCard aria-hidden className="w-7 h-7 text-secondary-300" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-display font-bold text-xl md:text-2xl">Pay your fee online</h3>
+                <p className="text-primary-100 mt-1">The online portal is open from the 1st to the 25th of every month. Read the step-by-step guide before you pay.</p>
+              </div>
+              <Link href="/admission/online-fee" className="inline-flex items-center gap-2 bg-secondary-400 text-primary-900 px-6 py-3 rounded-full font-semibold hover:bg-secondary-300 transition-colors whitespace-nowrap">
+                Online fee guide <ArrowRight aria-hidden size={18} />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Fee Information Cards */}
+      <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
@@ -209,7 +236,7 @@ export default function FeeStructurePage() {
               Need More Information?
             </h2>
             <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-              For detailed fee structure per class, please contact the school office or refer to the fee book provided at the time of admission.
+              For the fees of Classes IX, X and XII, or any question about your dues, please contact the school office.
             </p>
             <Link 
               href="/contact"
