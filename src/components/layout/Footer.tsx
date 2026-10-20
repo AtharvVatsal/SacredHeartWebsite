@@ -237,7 +237,7 @@ export default function Footer() {
           </div>
           {/* Site credit */}
           <p className="mt-4 text-center md:text-right text-xs text-gray-400">
-            Made by SHS Alumni – Atharv Vatsal ·{' '}
+            Design, Developed and Deployed by SHSSS Alumni – Atharv Vatsal ·{' '}
             <a
               href="https://www.atharvvatsal.com"
               target="_blank"
