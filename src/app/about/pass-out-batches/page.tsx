@@ -6,9 +6,11 @@ import { Image as ImageIcon, Calendar, Users, X, ChevronLeft, ChevronRight, Down
 import NextImage from 'next/image'
 import { useDialog } from '@/lib/useDialog'
 import Link from 'next/link'
-import { FadeIn, StaggerContainer, FadeInItem, ParallaxSection } from '@/components/animations'
+import { FadeIn, StaggerContainer, FadeInItem, ParallaxSection, GradualBlur } from '@/components/animations'
 import { m, useInView, AnimatePresence } from 'framer-motion'
 import type { BatchYear, BatchPhoto } from '@/types'
+import HeroDecor from '@/components/layout/HeroDecor'
+import { GraduationCap as HeroMotif, Camera as HeroMotifSmall } from 'lucide-react'
 
 interface LightboxProps {
   photo: BatchPhoto
@@ -285,8 +287,8 @@ function BatchCard({ batch, allPhotos, onPhotoClick }: {
               key={photo.id}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-              whileHover={{ y: -8, scale: 1.02 }}
+              transition={{ duration: 0.4, delay: Math.min(index, 4) * 0.08 }}
+              whileHover={{ y: -8, scale: 1.02, transition: { duration: 0.25, delay: 0 } }}
             >
               <button
                 type="button"
@@ -305,7 +307,7 @@ function BatchCard({ batch, allPhotos, onPhotoClick }: {
                 )}
                 
                 {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover/photo:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover/photo:opacity-100 group-focus-visible/photo:opacity-100 [@media(hover:none)]:opacity-100 transition-opacity duration-300">
                   <div className="absolute bottom-0 left-0 right-0 p-3">
                     <p className="text-white text-sm font-medium line-clamp-2">{photo.title}</p>
                   </div>
@@ -345,39 +347,7 @@ export default function PassOutBatchesPage() {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [selectedPhoto, setSelectedPhoto] = useState<BatchPhoto | null>(null)
   const [selectedBatchIndex, setSelectedBatchIndex] = useState(0)
-  const [filterVisible, setFilterVisible] = useState(true)
-  const [isPastHero, setIsPastHero] = useState(false)
-  const lastScrollY = useRef(0)
-  const heroRef = useRef<HTMLDivElement>(null)
   const { data: batchData } = useBatchYears()
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      const scrollDelta = currentScrollY - lastScrollY.current
-      
-      if (heroRef.current) {
-        const heroBottom = heroRef.current.offsetTop + heroRef.current.offsetHeight
-        
-        if (currentScrollY < heroBottom - 100) {
-          setIsPastHero(false)
-          setFilterVisible(true)
-        } else {
-          setIsPastHero(true)
-          if (scrollDelta > 10) {
-            setFilterVisible(false)
-          } else if (scrollDelta < -10) {
-            setFilterVisible(true)
-          }
-        }
-      }
-      
-      lastScrollY.current = currentScrollY
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
   
   const batches: BatchYear[] = useMemo(() => batchData || [], [batchData])
   const allPhotos = useMemo(() => batches.flatMap(b => b.photos || []), [batches])
@@ -431,10 +401,9 @@ export default function PassOutBatchesPage() {
 
   return (
     <>
-      {/* Hero + Filter Container */}
-      <div ref={heroRef}>
         {/* Hero Section */}
         <section className="relative bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white pt-32 pb-20 overflow-hidden">
+          <HeroDecor icon={HeroMotif} secondaryIcon={HeroMotifSmall} />
         {/* Animated background blobs */}
         <div className="absolute inset-0 overflow-hidden">
           <ParallaxSection offset={-100} className="absolute -top-40 -left-40 w-96 h-96">
@@ -536,19 +505,22 @@ export default function PassOutBatchesPage() {
                 { label: 'Photos', value: stats.totalPhotos, icon: Camera },
                 { label: 'Year Range', value: `${stats.oldestYear}-${stats.latestYear}`, icon: Trophy },
               ].map((stat, i) => (
-                <m.div 
+                <m.div
                   key={stat.label}
-                  className="bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 flex items-center gap-3"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.6 + i * 0.1 }}
-                  whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.15)' }}
+                >
+                <m.div 
+                  className="bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 flex items-center gap-3"
+                  whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.15)', transition: { duration: 0.2, delay: 0 } }}
                 >
                   <stat.icon className="w-5 h-5 text-secondary-400" />
                   <div>
                     <p className="text-2xl font-bold">{stat.value}</p>
                     <p className="text-xs text-primary-200">{stat.label}</p>
                   </div>
+                </m.div>
                 </m.div>
               ))}
             </m.div>
@@ -564,12 +536,7 @@ export default function PassOutBatchesPage() {
       </section>
 
       {/* Filters Section */}
-      <m.div
-        className="sticky top-16 z-30 bg-white/95 backdrop-blur-md shadow-md border-b border-gray-100"
-        initial={{ y: isPastHero && !filterVisible ? 200 : 0, opacity: isPastHero && !filterVisible ? 0 : 1 }}
-        animate={{ y: filterVisible || !isPastHero ? 0 : 200, opacity: filterVisible || !isPastHero ? 1 : 0 }}
-        transition={{ duration: 0.3, ease: 'easeInOut' }}
-      >
+      <div className="sticky-under-header z-30 bg-white/95 backdrop-blur-md shadow-md border-b border-gray-100">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
             {/* Search */}
@@ -592,7 +559,8 @@ export default function PassOutBatchesPage() {
           </div>
 
           {/* Year Pills */}
-          <div className="mt-4 flex gap-2 items-center overflow-x-auto lg:flex-wrap pb-1 lg:pb-0" role="group" aria-label="Filter by year">
+          <div className="relative mt-4">
+          <div className="flex gap-2 items-center overflow-x-auto lg:overflow-visible lg:flex-wrap pb-1 lg:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="group" aria-label="Filter by year">
             <m.button
               type="button"
               aria-pressed={selectedYear === 'All'}
@@ -608,9 +576,15 @@ export default function PassOutBatchesPage() {
               All
             </m.button>
             {allYears.map((year, i) => (
+              <m.div
+                key={`year-${year}-${i}`}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: Math.min(i, 12) * 0.02 }}
+                className="shrink-0"
+              >
               <m.button
                 type="button"
-                key={`year-${year}-${i}`}
                 aria-pressed={selectedYear === year}
                 onClick={() => setSelectedYear(year)}
                 className={`shrink-0 px-4 py-2 rounded-full font-medium transition-all text-sm ${
@@ -620,18 +594,18 @@ export default function PassOutBatchesPage() {
                       ? 'bg-primary-50 text-primary-700 hover:bg-primary-100'
                       : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
                 }`}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.02 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.05, transition: { duration: 0.2, delay: 0 } }}
+                whileTap={{ scale: 0.95, transition: { duration: 0.1, delay: 0 } }}
               >
                 {year}
               </m.button>
+              </m.div>
             ))}
           </div>
+          <GradualBlur position="left" height="2rem" strength={1} layers={4} tint="rgba(255,255,255,0.9)" autoHide zIndex={1} className="lg:hidden" />
+          <GradualBlur position="right" height="2.5rem" strength={1} layers={4} tint="rgba(255,255,255,0.9)" autoHide zIndex={1} className="lg:hidden" />
+          </div>
         </div>
-      </m.div>
       </div>
 
       {/* Main Content */}

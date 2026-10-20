@@ -35,13 +35,14 @@ export default function Footer() {
       
       {/* Main Footer */}
       <div className="container mx-auto px-4 py-16 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
           {/* About */}
           <m.div 
             initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
             whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             viewport={{ once: true, margin: '-50px' }}
+            className="lg:col-span-3"
           >
             <div className="flex items-center gap-3 mb-5">
               <div className="w-12 h-12 relative">
@@ -55,7 +56,7 @@ export default function Footer() {
               </div>
               <div>
                 <h2 className="font-display text-lg font-semibold">{schoolInfo.name}</h2>
-                <p className="text-xs text-gray-400">Since {schoolInfo.established}</p>
+                <p className="text-xs text-gray-300">Since {schoolInfo.established}</p>
               </div>
             </div>
             <p className="text-gray-300 text-sm leading-relaxed">
@@ -69,6 +70,7 @@ export default function Footer() {
             whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             viewport={{ once: true, margin: '-50px' }}
+            className="lg:col-span-2"
           >
             <h2 className="font-display text-lg font-semibold mb-5 flex items-center gap-2">
               <span className="w-1 h-5 bg-secondary-400 rounded-full"></span>
@@ -98,14 +100,15 @@ export default function Footer() {
             whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             viewport={{ once: true, margin: '-50px' }}
+            className="lg:col-span-4"
           >
             <h2 className="font-display text-lg font-semibold mb-5 flex items-center gap-2">
               <span className="w-1 h-5 bg-secondary-400 rounded-full"></span>
               Navigate
             </h2>
-            <ul className="space-y-3">
+            <ul className="sm:columns-2 sm:gap-8">
               {navigation.map((item) => (
-                <li key={item.href}>
+                <li key={item.href} className="mb-3 break-inside-avoid">
                   <Link 
                     href={item.href} 
                     className="text-gray-300 hover:text-white hover:translate-x-1 transition-all duration-200 flex items-center gap-2 text-sm group"
@@ -122,7 +125,7 @@ export default function Footer() {
                               href={child.href}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-gray-400 hover:text-gray-300 text-sm transition-colors inline-flex items-center gap-1.5 py-0.5"
+                              className="text-gray-300 hover:text-white text-sm transition-colors inline-flex items-center gap-1.5 py-0.5"
                             >
                               {child.text}
                               <ExternalLink aria-hidden size={12} />
@@ -131,7 +134,7 @@ export default function Footer() {
                           ) : (
                             <Link
                               href={child.href}
-                              className="text-gray-400 hover:text-gray-300 text-sm transition-colors block py-0.5 relative overflow-hidden group/link"
+                              className="text-gray-300 hover:text-white text-sm transition-colors block py-0.5 relative overflow-hidden group/link"
                             >
                               <span className="relative z-10">{child.text}</span>
                               <span className="absolute bottom-0 left-0 w-full h-[1px] bg-primary-500 transform scale-x-0 origin-left transition-transform duration-300 group-hover/link:scale-x-100" />
@@ -152,6 +155,7 @@ export default function Footer() {
             whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
             viewport={{ once: true, margin: '-50px' }}
+            className="lg:col-span-3"
           >
             <h2 className="font-display text-lg font-semibold mb-5 flex items-center gap-2">
               <span className="w-1 h-5 bg-secondary-400 rounded-full"></span>

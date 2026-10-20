@@ -1,0 +1,9 @@
+# security.txt — https://shsdharamshala.com
+# Describes how to report security issues for this website.
+# See https://securitytxt.org/ for the specification.
+
+Contact: mailto:scjmshs.sidhpur@gmail.com
+Expires: 2027-12-31T23:59:59.000Z
+Preferred-Languages: en, hi
+Canonical: https://shsdharamshala.com/.well-known/security.txt
+Policy: https://shsdharamshala.com/privacy

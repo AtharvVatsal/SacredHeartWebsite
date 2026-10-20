@@ -1,0 +1,14 @@
+/* humans.txt — https://humanstxt.org/ */
+
+/* TEAM */
+  Built by: Atharv Vatsal www.atharvvatsal.com
+  Organization: Sacred Heart Senior Secondary School, Sidhpur
+  Management: Sisters of Charity of Jesus and Mary
+  Location: P.O. Sidhpur, Tehsil Dharamshala, District Kangra, Himachal Pradesh, 176057, India
+
+/* SITE */
+  Standards: HTML5, CSS3
+  Components: Next.js, React, Tailwind CSS
+  Language: English
+  Doctype: HTML5
+  Last update: 2026-10-20

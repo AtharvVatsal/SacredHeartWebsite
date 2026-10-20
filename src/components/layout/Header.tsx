@@ -208,6 +208,13 @@ export default function Header() {
 
   const tucked = hidden && !isMenuOpen && !openDropdown
 
+  // Let page-level sticky bars (staff, pass-out and office-bearer filters) move with the header
+  useEffect(() => {
+    document.documentElement.toggleAttribute('data-header-tucked', tucked)
+  }, [tucked])
+
+  useEffect(() => () => document.documentElement.removeAttribute('data-header-tucked'), [])
+
   return (
     <>
       <header

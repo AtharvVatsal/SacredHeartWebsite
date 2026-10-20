@@ -55,7 +55,7 @@ export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center bg-mesh overflow-hidden pt-20 [@media(max-height:760px)]:pt-24 [@media(max-height:760px)]:pb-12">
+      <section className="relative min-h-[90vh] flex items-center bg-mesh overflow-hidden pt-20 pb-20 lg:pb-0 [@media(max-height:760px)]:pt-24 [@media(max-height:760px)]:pb-16">
         <div className="noise-overlay" />
         <div className="geometric-bg absolute inset-0" />
         
@@ -202,7 +202,8 @@ export default function Home() {
 
         {/* Scroll Indicator */}
         <m.div 
-          className="absolute bottom-10 left-1/2 -translate-x-1/2"
+          aria-hidden="true"
+          className="hidden lg:block [@media(max-height:760px)]:hidden absolute bottom-10 left-1/2 -translate-x-1/2"
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
         >
@@ -233,7 +234,7 @@ export default function Home() {
 
       {/* Stats Section */}
       <div className="relative z-20 py-10 bg-gray-50">
-        <Section className="bg-transparent pt-0">
+        <Section className="bg-transparent !py-0">
           <div className="container mx-auto px-4">
             <StaggerContainer className="grid grid-cols-2 md:grid-cols-4 gap-6" delay={0.2}>
               {stats.map((stat: Stat, index: number) => (
@@ -259,7 +260,7 @@ export default function Home() {
       </div>
 
       {/* Quick Links */}
-      <Section className="bg-gradient-to-b from-gray-50 to-white relative overflow-hidden pt-24">
+      <Section className="bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
         {/* Decorative Grid */}
         <div className="absolute inset-0 text-gray-900/[0.02]" style={{ backgroundImage: 'radial-gradient(currentColor 1px, transparent 1px)', backgroundSize: '32px 32px' }}></div>
         <div className="container mx-auto px-4 relative z-10">
@@ -272,7 +273,7 @@ export default function Home() {
               <div className="w-20 pl-2 mx-auto mb-6">
                 <div className="h-1 bg-secondary-400 rounded-full w-full mx-auto" />
               </div>
-              <p className="text-gray-600 max-w-xl mx-auto text-lg pt-4 shrink-0 mt-2">
+              <p className="text-gray-600 max-w-xl mx-auto text-lg">
                 Access important information and resources
               </p>
             </div>

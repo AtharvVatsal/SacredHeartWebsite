@@ -3,6 +3,8 @@
 import { BookOpen, Clipboard, Lightbulb, Pen, Calendar, Award, GraduationCap, Brain, Sparkles, ArrowLeft, Target, Clock, Heart, Star } from 'lucide-react'
 import Link from 'next/link'
 import { m } from 'framer-motion'
+import HeroDecor from '@/components/layout/HeroDecor'
+import { BookOpen as HeroMotif, PenLine as HeroMotifSmall } from 'lucide-react'
 
 const subjects = [
   { 
@@ -60,6 +62,7 @@ export default function SyllabusHomeworkPage() {
     <>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white pt-32 pb-24 overflow-hidden">
+        <HeroDecor icon={HeroMotif} secondaryIcon={HeroMotifSmall} />
         <div className="absolute inset-0 overflow-hidden">
           <m.div
             className="absolute top-20 left-10 w-72 h-72 bg-secondary-500/20 rounded-full blur-[100px]"

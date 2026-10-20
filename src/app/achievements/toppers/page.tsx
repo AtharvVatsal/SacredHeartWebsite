@@ -7,12 +7,15 @@ import { FadeIn } from '@/components/animations'
 import Section from '@/components/ui/Section'
 import { schoolInfo } from '@/data/school'
 import { class10Sessions, class12Sessions } from '@/data/toppers'
+import HeroDecor from '@/components/layout/HeroDecor'
+import { Trophy as HeroMotif, Star as HeroMotifSmall } from 'lucide-react'
 
 export default function ToppersPage() {
   return (
     <>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white pt-32 pb-24 overflow-hidden">
+        <HeroDecor icon={HeroMotif} secondaryIcon={HeroMotifSmall} />
         <div className="absolute inset-0 overflow-hidden">
           <m.div
             className="absolute top-20 left-10 w-72 h-72 bg-secondary-500/20 rounded-full blur-[100px]"

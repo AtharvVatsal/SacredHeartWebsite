@@ -1,0 +1,10 @@
+home https://shsdharamshala.com/ /
+about https://shsdharamshala.com/?page_id=83 /about
+staff https://shsdharamshala.com/?page_id=6424 /about/staff
+passout https://shsdharamshala.com/?page_id=718 /about/pass-out-batches
+admission https://shsdharamshala.com/?page_id=702 /admission
+calendar https://shsdharamshala.com/?page_id=780 /academics/calendar
+toppers10 https://shsdharamshala.com/?page_id=2097 /achievements/toppers/10th
+gallery https://shsdharamshala.com/?page_id=756 /gallery
+notifications https://shsdharamshala.com/?page_id=648 /notifications
+contact https://shsdharamshala.com/?page_id=84 /contact

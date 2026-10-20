@@ -4,6 +4,8 @@ import { Target, Heart, Lightbulb, Users, Globe, Leaf, Star, Sparkles, Quote, Bo
 import { m } from 'framer-motion'
 import Link from 'next/link'
 import { useState } from 'react'
+import HeroDecor from '@/components/layout/HeroDecor'
+import { Target as HeroMotif, Compass as HeroMotifSmall } from 'lucide-react'
 
 const scjmVision = [
   {
@@ -91,6 +93,7 @@ export default function AimsPage() {
     <div>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white pt-32 pb-28 overflow-hidden">
+        <HeroDecor icon={HeroMotif} secondaryIcon={HeroMotifSmall} />
         <div className="absolute inset-0 overflow-hidden">
           <m.div 
             className="absolute top-20 left-10 w-64 h-64 bg-secondary-500/20 rounded-full blur-[100px]"
@@ -201,17 +204,19 @@ export default function AimsPage() {
               {/* Navigation Tabs */}
               <div className="space-y-3">
                 {scjmVision.map((item, index) => (
-                  <m.button
-                    type="button"
+                  <m.div
                     key={index}
-                    aria-pressed={activeVisionIndex === index}
-                    onClick={() => setActiveVisionIndex(index)}
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                  >
+                  <m.button
+                    type="button"
+                    aria-pressed={activeVisionIndex === index}
+                    onClick={() => setActiveVisionIndex(index)}
+                    whileHover={{ scale: 1.02, transition: { duration: 0.2, delay: 0 } }}
+                    whileTap={{ scale: 0.98, transition: { duration: 0.1, delay: 0 } }}
                     className={`w-full text-left p-5 rounded-xl border-2 transition-all duration-300 ${
                       activeVisionIndex === index
                         ? 'bg-gradient-to-br from-primary-600 to-primary-700 border-primary-500 shadow-xl text-white'
@@ -231,6 +236,7 @@ export default function AimsPage() {
                       </span>
                     </div>
                   </m.button>
+                  </m.div>
                 ))}
               </div>
 
@@ -352,7 +358,9 @@ export default function AimsPage() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.08, type: 'spring' }}
-                whileHover={{ y: -8 }}
+              >
+              <m.div
+                whileHover={{ y: -8, transition: { duration: 0.2, delay: 0 } }}
                 className="group cursor-pointer"
               >
                 <div className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-2xl p-6 text-center hover:bg-white/20 hover:border-white/30 transition-all duration-300 h-full flex flex-col items-center justify-center">
@@ -365,6 +373,7 @@ export default function AimsPage() {
                   </m.div>
                   <span className="font-bold text-white text-sm md:text-base">{value.name}</span>
                 </div>
+              </m.div>
               </m.div>
             ))}
           </div>
@@ -386,24 +395,16 @@ export default function AimsPage() {
               Join our school community and see how we bring these aims to life every day.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link href="/about">
-                <m.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 bg-primary-700 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2"
-                >
+              <m.div whileHover={{ scale: 1.05 }} className="inline-flex">
+                <Link href="/about" className="active:scale-95 px-8 py-4 bg-primary-700 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2">
                   Learn More About Us <ArrowRight className="w-5 h-5" />
-                </m.button>
-              </Link>
-              <Link href="/admission">
-                <m.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 bg-secondary-400 text-primary-900 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2"
-                >
+                </Link>
+              </m.div>
+              <m.div whileHover={{ scale: 1.05 }} className="inline-flex">
+                <Link href="/admission" className="active:scale-95 px-8 py-4 bg-secondary-400 text-primary-900 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2">
                   Apply for Admission <ArrowRight className="w-5 h-5" />
-                </m.button>
-              </Link>
+                </Link>
+              </m.div>
             </div>
           </m.div>
         </div>

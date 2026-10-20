@@ -4,6 +4,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowLeft, Crown, Sparkles, Quote } from 'lucide-react'
 import { m } from 'framer-motion'
+import HeroDecor from '@/components/layout/HeroDecor'
+import { MessageSquareQuote as HeroMotif, Heart as HeroMotifSmall } from 'lucide-react'
 
 const headBoyMessage = `Greetings, cherished readers,
 
@@ -57,7 +59,7 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.15, delayChildren: 0.2 },
+    transition: { staggerChildren: 0.07, delayChildren: 0.1 },
   },
 }
 
@@ -71,6 +73,7 @@ export default function MessagesPage() {
     <>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white pt-32 pb-20 overflow-hidden">
+        <HeroDecor icon={HeroMotif} secondaryIcon={HeroMotifSmall} />
         <div className="absolute inset-0 overflow-hidden">
           <m.div 
             className="absolute top-20 left-10 w-64 h-64 bg-secondary-500/20 rounded-full blur-[100px]"

@@ -203,16 +203,12 @@ export default function AdmissionPage() {
 
           <FadeIn blur>
             <div className="text-center mt-12">
-              <Link href="/admission/register">
-                <m.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="inline-flex items-center gap-3 bg-gradient-to-r from-primary-700 to-primary-800 text-white px-10 py-5 rounded-full font-semibold hover:from-primary-600 hover:to-primary-700 transition-all shadow-xl hover:shadow-2xl"
-                >
+              <m.div whileHover={{ scale: 1.05 }} className="inline-flex">
+                <Link href="/admission/register" className="active:scale-[0.98] inline-flex items-center gap-3 bg-gradient-to-r from-primary-700 to-primary-800 text-white px-10 py-5 rounded-full font-semibold hover:from-primary-600 hover:to-primary-700 transition-all shadow-xl hover:shadow-2xl">
                   Register Now
                   <ArrowRight size={20} />
-                </m.button>
-              </Link>
+                </Link>
+              </m.div>
             </div>
           </FadeIn>
         </div>
@@ -379,16 +375,12 @@ export default function AdmissionPage() {
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
           >
-            <Link href="/admission/register">
-              <m.button
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center gap-3 bg-secondary-400 text-primary-900 px-10 py-5 rounded-full font-semibold hover:bg-secondary-300 transition-all shadow-xl hover:shadow-2xl"
-              >
+            <m.div whileHover={{ scale: 1.05, y: -2 }} className="inline-flex">
+              <Link href="/admission/register" className="active:scale-[0.98] inline-flex items-center gap-3 bg-secondary-400 text-primary-900 px-10 py-5 rounded-full font-semibold hover:bg-secondary-300 transition-all shadow-xl hover:shadow-2xl">
                 Apply Now
                 <ArrowRight size={20} />
-              </m.button>
-            </Link>
+              </Link>
+            </m.div>
           </m.div>
         </div>
       </section>

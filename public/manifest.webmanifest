@@ -1,0 +1,21 @@
+{
+  "name": "Sacred Heart Senior Secondary School, Sidhpur",
+  "short_name": "Sacred Heart SHS",
+  "description": "Official website of Sacred Heart Senior Secondary School, Sidhpur, Dharamshala — a CISCE affiliated school run by the Sisters of Charity of Jesus and Mary.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#14532d",
+  "lang": "en-IN",
+  "dir": "ltr",
+  "categories": ["education"],
+  "icons": [
+    {
+      "src": "/images/logo_batch.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

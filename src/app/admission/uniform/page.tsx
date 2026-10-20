@@ -3,6 +3,8 @@
 import { Scissors, CheckCircle, AlertCircle, ShoppingBag, Sparkles, ArrowLeft, Shirt, Wind, Trophy } from 'lucide-react'
 import Link from 'next/link'
 import { m } from 'framer-motion'
+import HeroDecor from '@/components/layout/HeroDecor'
+import { Shirt as HeroMotif, Ruler as HeroMotifSmall } from 'lucide-react'
 
 const girlsSummer = [
   { item: 'Pale Green skirt (just below the knees)', note: 'Pattern differs for LKG-VI' },
@@ -68,6 +70,7 @@ export default function UniformPage() {
     <>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white pt-32 pb-28 overflow-hidden">
+        <HeroDecor icon={HeroMotif} secondaryIcon={HeroMotifSmall} />
         <div className="absolute inset-0 overflow-hidden">
           <m.div
             className="absolute top-20 left-10 w-72 h-72 bg-secondary-500/20 rounded-full blur-[100px]"

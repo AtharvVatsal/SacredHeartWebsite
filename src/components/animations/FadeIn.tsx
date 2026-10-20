@@ -1,7 +1,7 @@
 'use client'
 
 import { m, useInView } from 'framer-motion'
-import { useRef, ReactNode } from 'react'
+import { useRef, useState, ReactNode } from 'react'
 
 interface FadeInProps {
   children: ReactNode
@@ -28,6 +28,9 @@ export default function FadeIn({
 }: FadeInProps) {
   const ref = useRef(null)
   const isInView = useInView(ref, { once, margin: '-60px' })
+  // Keyboard focus never lands on something still invisible: reveal straight away
+  const [focused, setFocused] = useState(false)
+  const shown = isInView || focused
 
   const directions = {
     up: { y: distance, x: 0 },
@@ -44,14 +47,15 @@ export default function FadeIn({
     <m.div
       ref={ref}
       initial={{ opacity: 0, ...directions[direction], ...blurInitial }}
-      animate={isInView ? { opacity: 1, x: 0, y: 0, ...blurAnimate } : {}}
+      animate={shown ? { opacity: 1, x: 0, y: 0, ...blurAnimate } : {}}
       transition={{
-        duration,
-        delay,
+        duration: focused && !isInView ? 0.2 : duration,
+        delay: focused && !isInView ? 0 : delay,
         ease: EASE_OUT_EXPO,
       }}
       style={{ willChange: 'transform, opacity, filter' }}
       className={className}
+      onFocusCapture={() => setFocused(true)}
     >
       {children}
     </m.div>

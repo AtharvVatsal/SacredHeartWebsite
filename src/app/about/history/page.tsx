@@ -5,6 +5,8 @@ import { m } from 'framer-motion'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
+import HeroDecor from '@/components/layout/HeroDecor'
+import { History as HeroMotif, Landmark as HeroMotifSmall } from 'lucide-react'
 
 const milestones = [
   {
@@ -62,7 +64,7 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.15, delayChildren: 0.2 },
+    transition: { staggerChildren: 0.07, delayChildren: 0.1 },
   },
 }
 
@@ -161,6 +163,7 @@ export default function HistoryPage() {
     <>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white pt-32 pb-24 overflow-hidden">
+        <HeroDecor icon={HeroMotif} secondaryIcon={HeroMotifSmall} />
         <div className="absolute inset-0 overflow-hidden">
           <m.div 
             className="absolute top-20 left-10 w-64 h-64 bg-secondary-500/20 rounded-full blur-[100px]"
@@ -512,24 +515,16 @@ export default function HistoryPage() {
               Discover our achievements, meet our dedicated staff, and learn about the values that guide our school.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link href="/about">
-                <m.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 bg-primary-700 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all"
-                >
+              <m.div whileHover={{ scale: 1.05 }} className="inline-flex">
+                <Link href="/about" className="active:scale-95 px-8 py-4 bg-primary-700 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all">
                   Back to About
-                </m.button>
-              </Link>
-              <Link href="/admission">
-                <m.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 bg-secondary-400 text-primary-900 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all"
-                >
+                </Link>
+              </m.div>
+              <m.div whileHover={{ scale: 1.05 }} className="inline-flex">
+                <Link href="/admission" className="active:scale-95 px-8 py-4 bg-secondary-400 text-primary-900 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all">
                   Apply for Admission
-                </m.button>
-              </Link>
+                </Link>
+              </m.div>
             </div>
           </m.div>
         </div>

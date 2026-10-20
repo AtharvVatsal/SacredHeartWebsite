@@ -4,6 +4,8 @@ import { FileText, AlertCircle, Calendar, CheckCircle, Clock, Shield, Phone, Arr
 import { m } from 'framer-motion'
 import Link from 'next/link'
 import { schoolPhones, telHref } from '@/lib/contact'
+import HeroDecor from '@/components/layout/HeroDecor'
+import { ClipboardCheck as HeroMotif, CalendarX as HeroMotifSmall } from 'lucide-react'
 
 export default function LeaveAbsencePage() {
   const rules = [
@@ -53,7 +55,7 @@ export default function LeaveAbsencePage() {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+      transition: { staggerChildren: 0.06, delayChildren: 0.1 },
     },
   }
 
@@ -66,6 +68,7 @@ export default function LeaveAbsencePage() {
     <>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white pt-32 pb-20 overflow-hidden">
+        <HeroDecor icon={HeroMotif} secondaryIcon={HeroMotifSmall} />
         <div className="absolute inset-0 overflow-hidden">
           <m.div 
             className="absolute top-20 left-10 w-64 h-64 bg-secondary-500/20 rounded-full blur-[100px]"

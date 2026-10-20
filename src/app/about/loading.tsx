@@ -1,10 +1,9 @@
 'use client'
 
-import { m } from 'framer-motion'
-
 export default function AboutLoading() {
   return (
-    <div className="min-h-screen bg-white pt-24 pb-16 animate-pulse">
+    <div role="status" aria-live="polite" aria-busy="true" className="min-h-screen bg-white pt-24 pb-16 motion-safe:animate-pulse">
+      <span className="sr-only">Loading…</span>
       <div className="container mx-auto px-4">
         {/* Hero skeleton */}
         <div className="grid lg:grid-cols-2 gap-16 mb-16">
@@ -23,11 +22,9 @@ export default function AboutLoading() {
         {/* Cards skeleton */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <m.div
+            <div
               key={i}
               className="h-64 bg-gray-50 rounded-3xl"
-              animate={{ opacity: [0.5, 0.8, 0.5] }}
-              transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.1 }}
             />
           ))}
         </div>

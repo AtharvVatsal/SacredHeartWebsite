@@ -39,19 +39,6 @@ const categories = [
   { id: 'campus', name: 'Campus', icon: BookOpen },
 ]
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
-  },
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } },
-}
-
 function Lightbox({ event, onClose, allEvents, currentIndex, onNavigate }: {
   event: typeof events[0];
   onClose: () => void;
@@ -194,7 +181,7 @@ function EventCard({ event, onClick }: { event: typeof events[0]; onClick: () =>
   const Icon = event.icon
   
   return (
-    <m.div variants={itemVariants}>
+    <FadeInItem direction="up" distance={20} blur={false}>
       <button
         type="button"
         className="group cursor-pointer w-full text-left"
@@ -234,7 +221,7 @@ function EventCard({ event, onClick }: { event: typeof events[0]; onClick: () =>
           </div>
         </m.div>
       </button>
-    </m.div>
+    </FadeInItem>
   )
 }
 
@@ -383,13 +370,7 @@ export default function GalleryPage() {
             </p>
           </div>
 
-          <m.div 
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 min-[440px]:gap-6"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-50px' }}
-          >
+          <StaggerContainer className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 min-[440px]:gap-6" stagger={0.06}>
             {filteredEvents.map((event, index) => (
               <EventCard 
                 key={event.id} 
@@ -400,7 +381,7 @@ export default function GalleryPage() {
                 }} 
               />
             ))}
-          </m.div>
+          </StaggerContainer>
 
           {filteredEvents.length === 0 && (
             <div className="text-center py-20">

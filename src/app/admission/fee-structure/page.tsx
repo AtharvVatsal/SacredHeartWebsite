@@ -3,6 +3,8 @@
 import { Banknote, Calendar, AlertCircle, CheckCircle, Clock, Building, GraduationCap, Sparkles, ArrowLeft, Info, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 import { m } from 'framer-motion'
+import HeroDecor from '@/components/layout/HeroDecor'
+import { Wallet as HeroMotif, Receipt as HeroMotifSmall } from 'lucide-react'
 
 const feeInfo = [
   {
@@ -45,6 +47,7 @@ export default function FeeStructurePage() {
     <>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white pt-32 pb-28 overflow-hidden">
+        <HeroDecor icon={HeroMotif} secondaryIcon={HeroMotifSmall} />
         <div className="absolute inset-0 overflow-hidden">
           <m.div
             className="absolute top-20 left-10 w-72 h-72 bg-secondary-500/20 rounded-full blur-[100px]"

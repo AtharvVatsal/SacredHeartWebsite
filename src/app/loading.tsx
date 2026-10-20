@@ -4,9 +4,8 @@ import { m } from 'framer-motion'
 
 export default function HomeLoading() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header skeleton */}
-      <div className="fixed top-0 left-0 right-0 h-20 bg-white/90 backdrop-blur-md border-b border-gray-100 z-50" />
+    <div role="status" aria-live="polite" aria-busy="true" className="min-h-screen bg-gray-50">
+      <span className="sr-only">Loading…</span>
 
       {/* Hero skeleton */}
       <section className="min-h-[90vh] pt-20 bg-mesh">
@@ -22,11 +21,7 @@ export default function HomeLoading() {
                 <div className="h-14 w-32 bg-white/70 rounded-full shimmer" />
               </div>
             </div>
-            <m.div
-              className="h-[420px] bg-white/60 rounded-[2rem] shimmer"
-              animate={{ y: [0, -6, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            />
+            <div className="h-[420px] bg-white/60 rounded-[2rem] shimmer" />
           </div>
         </div>
       </section>

@@ -337,7 +337,7 @@ export default function OtherAchievementsPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              whileHover={{ boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.15)" }}
+              whileHover={{ boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.15)", transition: { duration: 0.2, delay: 0 } }}
             >
               <div className="bg-gradient-to-r from-primary-800 via-primary-700 to-primary-900 px-8 py-6 relative overflow-hidden">
                 <m.div
@@ -407,15 +407,19 @@ export default function OtherAchievementsPage() {
                       ].map((tag, i) => (
                         <m.span
                           key={i}
-                          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 text-primary-700 text-sm font-medium"
                           initial={{ opacity: 0, scale: 0.8 }}
                           whileInView={{ opacity: 1, scale: 1 }}
                           viewport={{ once: true }}
                           transition={{ delay: 0.5 + i * 0.1 }}
-                          whileHover={{ scale: 1.05, backgroundColor: "rgb(253, 224, 71)" }}
+                          className="inline-flex"
+                        >
+                        <m.span
+                          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 text-primary-700 text-sm font-medium"
+                          whileHover={{ scale: 1.05, backgroundColor: "rgb(253, 224, 71)", transition: { duration: 0.2, delay: 0 } }}
                         >
                           <tag.icon className="w-4 h-4" />
                           {tag.label}
+                        </m.span>
                         </m.span>
                       ))}
                     </m.div>

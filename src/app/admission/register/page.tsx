@@ -7,6 +7,8 @@ import { m } from 'framer-motion'
 import Field, { fieldA11y } from '@/components/forms/Field'
 import SubmissionNotice from '@/components/forms/SubmissionNotice'
 import { mailtoHref } from '@/lib/contact'
+import HeroDecor from '@/components/layout/HeroDecor'
+import { ClipboardList as HeroMotif, PenLine as HeroMotifSmall } from 'lucide-react'
 import {
   type FieldErrors,
   checkDateOfBirth,
@@ -189,6 +191,7 @@ export default function RegisterPage() {
     <>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white pt-32 pb-20 overflow-hidden">
+        <HeroDecor icon={HeroMotif} secondaryIcon={HeroMotifSmall} />
         <div className="absolute inset-0 overflow-hidden">
           <m.div
             className="absolute top-20 left-10 w-64 h-64 bg-secondary-500/20 rounded-full blur-[100px]"

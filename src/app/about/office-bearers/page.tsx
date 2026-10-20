@@ -6,12 +6,14 @@ import { officeBearers } from '@/data/school'
 import { User, Award, Users, Crown, Medal, BookOpen, Star, ArrowLeft, ArrowRight, Sparkles } from 'lucide-react'
 import { m } from 'framer-motion'
 import Link from 'next/link'
+import HeroDecor from '@/components/layout/HeroDecor'
+import { Crown as HeroMotif, Users as HeroMotifSmall } from 'lucide-react'
 
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+    transition: { staggerChildren: 0.06, delayChildren: 0.1 },
   },
 }
 
@@ -46,6 +48,7 @@ export default function OfficeBearersPage() {
     <>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white pt-32 pb-20 overflow-hidden">
+        <HeroDecor icon={HeroMotif} secondaryIcon={HeroMotifSmall} />
         <div className="absolute inset-0 overflow-hidden">
           <m.div 
             className="absolute top-20 left-10 w-64 h-64 bg-secondary-500/20 rounded-full blur-[100px]"
@@ -105,7 +108,7 @@ export default function OfficeBearersPage() {
       </section>
 
       {/* Year Selector */}
-      <div className="bg-gray-50 py-6 sticky top-16 z-40 shadow-sm">
+      <div className="sticky-under-header bg-gray-50 py-4 md:py-6 z-40 shadow-sm">
         <div className="container mx-auto px-4">
           <m.div 
             className="flex flex-wrap justify-center gap-3"

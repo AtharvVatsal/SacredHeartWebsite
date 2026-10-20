@@ -6,6 +6,8 @@ import { ArrowLeft, Calendar, ChevronLeft, ChevronRight, Sparkles, Star, PartyPo
 import { m, AnimatePresence } from 'framer-motion'
 import { useDialog } from '@/lib/useDialog'
 import { schoolPhones, telHref } from '@/lib/contact'
+import HeroDecor from '@/components/layout/HeroDecor'
+import { CalendarDays as HeroMotif, Clock as HeroMotifSmall } from 'lucide-react'
 
 interface CalendarEvent {
   id: string
@@ -130,6 +132,7 @@ export default function AcademicCalendarPage() {
   return (
     <>
       <section className="relative bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white pt-32 pb-24 overflow-hidden">
+        <HeroDecor icon={HeroMotif} secondaryIcon={HeroMotifSmall} />
         <div className="absolute inset-0 overflow-hidden">
           <m.div
             className="absolute top-20 left-10 w-72 h-72 bg-secondary-500/20 rounded-full blur-[100px]"

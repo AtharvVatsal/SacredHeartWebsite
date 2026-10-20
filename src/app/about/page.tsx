@@ -381,18 +381,14 @@ export default function AboutPage() {
                       <p className="text-gray-600 leading-relaxed mb-8 text-lg italic">
                         &quot;{principal.split('.')[0]}...&quot;
                       </p>
-                      <Link href="/about/principal">
-                        <m.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.98 }}
-                          className="inline-flex items-center gap-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white px-8 py-4 rounded-full font-semibold hover:from-primary-500 hover:to-primary-600 transition-all shadow-lg hover:shadow-xl"
-                        >
+                      <m.div whileHover={{ scale: 1.05 }} className="inline-flex">
+                        <Link href="/about/principal" className="active:scale-[0.98] inline-flex items-center gap-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white px-8 py-4 rounded-full font-semibold hover:from-primary-500 hover:to-primary-600 transition-all shadow-lg hover:shadow-xl">
                           Read Full Message
                           <m.div animate={{ x: [0, 5, 0] }} transition={{ duration: 2, repeat: Infinity }}>
                             <ArrowRight size={18} />
                           </m.div>
-                        </m.button>
-                      </Link>
+                        </Link>
+                      </m.div>
                     </div>
                   </div>
                 </div>
@@ -428,16 +424,12 @@ export default function AboutPage() {
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
           >
-            <Link href="/admission">
-              <m.button
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center gap-3 bg-secondary-400 text-primary-900 px-10 py-5 rounded-full font-bold text-lg hover:bg-secondary-300 transition-all shadow-xl hover:shadow-2xl"
-              >
+            <m.div whileHover={{ scale: 1.05, y: -2 }} className="inline-flex">
+              <Link href="/admission" className="active:scale-[0.98] inline-flex items-center gap-3 bg-secondary-400 text-primary-900 px-10 py-5 rounded-full font-bold text-lg hover:bg-secondary-300 transition-all shadow-xl hover:shadow-2xl">
                 Apply Now
                 <ArrowRight size={20} />
-              </m.button>
-            </Link>
+              </Link>
+            </m.div>
           </m.div>
         </div>
       </section>

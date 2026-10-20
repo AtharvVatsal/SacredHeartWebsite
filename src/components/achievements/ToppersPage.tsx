@@ -4,7 +4,8 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, Trophy, Medal, Star, Award, BookOpen } from 'lucide-react'
-import { FadeIn, StaggerContainer, FadeInItem, ParallaxSection, ScaleIn } from '@/components/animations'
+import { FadeIn, StaggerContainer, FadeInItem, ScaleIn } from '@/components/animations'
+import HeroDecor from '@/components/layout/HeroDecor'
 import Section from '@/components/ui/Section'
 import { ordinal, rankToppers, type RankedTopper, type TopperSession } from '@/data/toppers'
 
@@ -44,10 +45,10 @@ function TopperCard({ topper, session }: { topper: RankedTopper; session: string
         </div>
 
         <div className="p-3 sm:p-4 text-center">
-          <div className={`inline-flex items-center justify-center w-14 h-14 rounded-full mb-3 ${
+          <div className={`inline-flex items-center justify-center min-w-[3.5rem] h-14 px-2.5 rounded-full mb-3 ${
             isFirst ? 'bg-gradient-to-br from-secondary-400 to-secondary-500 shadow-glow-secondary' : 'bg-primary-50'
           }`}>
-            <span className={`font-bold text-lg ${isFirst ? 'text-primary-900' : 'text-primary-800'}`}>{topper.percentage}%</span>
+            <span className={`font-bold text-base sm:text-lg tabular-nums ${isFirst ? 'text-primary-900' : 'text-primary-800'}`}>{topper.percentage}%</span>
           </div>
           <h3 className="font-display font-bold text-sm sm:text-base text-primary-900 mb-1 break-words hyphens-auto">{topper.name}</h3>
           <p className="text-xs text-gray-600 mt-2">Session {session}</p>
@@ -109,8 +110,8 @@ interface ToppersPageProps {
 export default function ToppersPage({ classLabel, sessions, otherClass }: ToppersPageProps) {
   return (
     <>
-      <section className="relative bg-gradient-to-br from-primary-800 via-primary-700 to-primary-900 text-white pt-32 pb-20 overflow-hidden">
-        <ParallaxSection offset={-50} className="absolute top-0 right-0 w-[400px] h-[400px] bg-secondary-500/10 rounded-full blur-[100px] pointer-events-none" />
+      <section className="relative bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white pt-32 pb-28 overflow-hidden">
+        <HeroDecor icon={Trophy} secondaryIcon={Medal} orbs />
 
         <div className="container mx-auto px-4 relative z-10">
           <FadeIn blur>
@@ -125,6 +126,13 @@ export default function ToppersPage({ classLabel, sessions, otherClass }: Topper
               </Link>
             </div>
           </FadeIn>
+        </div>
+
+        {/* Wave divider */}
+        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
+          <svg className="relative block w-[calc(130%+1.3px)] h-20" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" className="fill-gray-50"></path>
+          </svg>
         </div>
       </section>
 

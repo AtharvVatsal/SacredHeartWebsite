@@ -6,6 +6,8 @@ import { ArrowRight, Award, GraduationCap, Sparkles, Quote, BookOpen, Users, Hea
 import { principalMessage, schoolInfo, statistics } from '@/data/school'
 import { formatStat } from '@/lib/stats'
 import { m } from 'framer-motion'
+import HeroDecor from '@/components/layout/HeroDecor'
+import { Quote as HeroMotif, BookOpen as HeroMotifSmall } from 'lucide-react'
 
 const messageParagraphs = [
   {
@@ -36,6 +38,7 @@ export default function PrincipalPage() {
     <>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white pt-32 pb-28 overflow-hidden">
+        <HeroDecor icon={HeroMotif} secondaryIcon={HeroMotifSmall} />
         <div className="absolute inset-0 overflow-hidden">
           <m.div 
             className="absolute top-20 left-10 w-64 h-64 bg-secondary-500/20 rounded-full blur-[100px]"
@@ -228,7 +231,9 @@ export default function PrincipalPage() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.15 }}
-                    whileHover={{ x: 10 }}
+                  >
+                  <m.div
+                    whileHover={{ x: 10, transition: { duration: 0.2, delay: 0 } }}
                     className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl hover:border-primary-200 transition-all cursor-pointer"
                   >
                     <div className="flex items-start gap-4">
@@ -237,6 +242,7 @@ export default function PrincipalPage() {
                       </div>
                       <p className="text-gray-600 leading-relaxed">{para.text}</p>
                     </div>
+                  </m.div>
                   </m.div>
                 ))}
               </div>
@@ -308,7 +314,9 @@ export default function PrincipalPage() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, type: 'spring' }}
-                whileHover={{ y: -10 }}
+              >
+              <m.div
+                whileHover={{ y: -10, transition: { duration: 0.2, delay: 0 } }}
                 className="text-center"
               >
                 <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
@@ -318,6 +326,7 @@ export default function PrincipalPage() {
                   {stat.value}
                 </div>
                 <div className="text-primary-200 text-sm font-medium">{stat.label}</div>
+              </m.div>
               </m.div>
             ))}
           </m.div>
@@ -339,24 +348,16 @@ export default function PrincipalPage() {
               Under Sr. Archana&apos;s guidance, Sacred Heart continues to nurture young minds with values and excellence.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link href="/about">
-                <m.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 bg-primary-700 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2"
-                >
+              <m.div whileHover={{ scale: 1.05 }} className="inline-flex">
+                <Link href="/about" className="active:scale-95 px-8 py-4 bg-primary-700 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2">
                   Back to About <ArrowRight className="w-5 h-5" />
-                </m.button>
-              </Link>
-              <Link href="/admission">
-                <m.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 bg-secondary-400 text-primary-900 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2"
-                >
+                </Link>
+              </m.div>
+              <m.div whileHover={{ scale: 1.05 }} className="inline-flex">
+                <Link href="/admission" className="active:scale-95 px-8 py-4 bg-secondary-400 text-primary-900 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2">
                   Apply for Admission <ArrowRight className="w-5 h-5" />
-                </m.button>
-              </Link>
+                </Link>
+              </m.div>
             </div>
           </m.div>
         </div>

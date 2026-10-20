@@ -4,6 +4,7 @@ import './globals.css'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import SmoothScrollProvider from '@/components/layout/SmoothScrollProvider'
+import GradualBlur from '@/components/animations/GradualBlur'
 import { schoolInfo } from '@/data/school'
 
 const inter = Inter({
@@ -66,6 +67,19 @@ export default function RootLayout({
           <Header />
           <main id="main-content" tabIndex={-1} className="flex-grow outline-none">{children}</main>
           <Footer />
+          {/* Soft blur at the bottom edge while there is more page to scroll; fades away at the end of the page */}
+          <GradualBlur
+            target="page"
+            position="bottom"
+            height="3.5rem"
+            strength={1.25}
+            layers={6}
+            curve="bezier"
+            exponential
+            autoHide
+            zIndex={30}
+            className="print:hidden"
+          />
         </SmoothScrollProvider>
       </body>
     </html>

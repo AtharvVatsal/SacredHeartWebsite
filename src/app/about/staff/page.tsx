@@ -1,13 +1,16 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { staffMembers as defaultStaffMembers, statistics } from '@/data/school'
 import { formatStat } from '@/lib/stats'
 import { Search, Users, BookOpen, Monitor, Clipboard, ArrowLeft, Sparkles, Award, Heart, GraduationCap, Mail, User } from 'lucide-react'
 import { m } from 'framer-motion'
+import { StaggerContainer, FadeInItem, GradualBlur } from '@/components/animations'
 import type { StaffMember } from '@/types'
+import HeroDecor from '@/components/layout/HeroDecor'
+import { Users as HeroMotif, GraduationCap as HeroMotifSmall } from 'lucide-react'
 
 const departmentIcons: Record<string, React.ElementType> = {
   'Administration': Users,
@@ -153,20 +156,18 @@ function getStaffImage(name: string, qualifications: string = ''): string {
   return nameMap[name.toUpperCase()] || ''
 }
 
-function StaffCard({ staff, index }: { staff: StaffMember, index: number }) {
+function StaffCard({ staff }: { staff: StaffMember }) {
   const imgSrc = getStaffImage(staff.name, staff.qualifications)
   const Icon = departmentIcons[staff.department] || User
   
   return (
+    <FadeInItem direction="up" distance={30} blur={false}>
     <m.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.03, duration: 0.4 }}
       whileHover={{ y: -8 }}
-      className="group"
+      transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+      className="group h-full"
     >
-      <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden hover:shadow-xl hover:border-primary-200 transition-all duration-300">
+      <div className="h-full bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden hover:shadow-xl hover:border-primary-200 transition-all duration-300">
         <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-primary-50 to-secondary-50">
           {imgSrc ? (
             <Image
@@ -207,26 +208,13 @@ function StaffCard({ staff, index }: { staff: StaffMember, index: number }) {
         </div>
       </div>
     </m.div>
+    </FadeInItem>
   )
 }
 
 export default function StaffPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedDept, setSelectedDept] = useState('All')
-  const [searchVisible, setSearchVisible] = useState(true)
-  const lastScrollY = useRef(0)
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      setSearchVisible(currentScrollY < 200 || currentScrollY <= lastScrollY.current)
-      lastScrollY.current = currentScrollY
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-  
   const staff = defaultStaffMembers
 
   const filteredStaff = staff.filter((staffMember: StaffMember) => {
@@ -241,6 +229,7 @@ export default function StaffPage() {
     <>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white pt-32 pb-28 overflow-hidden">
+        <HeroDecor icon={HeroMotif} secondaryIcon={HeroMotifSmall} />
         <div className="absolute inset-0 overflow-hidden">
           <m.div 
             className="absolute top-20 left-10 w-64 h-64 bg-secondary-500/20 rounded-full blur-[100px]"
@@ -387,19 +376,12 @@ export default function StaffPage() {
       </section>
 
       {/* Search & Filter Section */}
-      <m.div 
-        className="bg-white/95 backdrop-blur-md border-b border-gray-100 sticky top-20 z-40 shadow-sm"
-        animate={{ 
-          y: searchVisible ? 0 : -100,
-          opacity: searchVisible ? 1 : 0,
-          pointerEvents: searchVisible ? 'auto' : 'none'
-        }}
-        transition={{ duration: 0.3, ease: 'easeInOut' }}
-      >
+      <div className="sticky-under-header bg-white/95 backdrop-blur-md border-b border-gray-100 z-40 shadow-sm">
         <div className="container mx-auto px-4 py-3">
-          <div className="flex flex-col md:flex-row items-center gap-3">
-            {/* Search Bar */}
-            <div className="relative flex-1 w-full">
+          <div className="flex flex-col lg:flex-row lg:items-start gap-2.5 lg:gap-5">
+            {/* Search Bar + count */}
+            <div className="flex items-center gap-3 lg:w-72 lg:shrink-0 lg:flex-col lg:items-stretch lg:gap-1.5">
+            <div className="relative flex-1">
               <Search aria-hidden className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
               <input
                 type="search"
@@ -410,9 +392,14 @@ export default function StaffPage() {
                 className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-gray-50 text-sm"
               />
             </div>
-            
-            {/* Department Pills */}
-            <div className="flex gap-1.5 w-full md:w-auto overflow-x-auto md:flex-wrap md:justify-center pb-1 md:pb-0" role="group" aria-label="Filter by department">
+            <p className="text-xs text-gray-600 whitespace-nowrap lg:pl-1" aria-live="polite">
+              {filteredStaff.length} staff members
+            </p>
+            </div>
+
+            {/* Department Pills: one swipeable row on smaller screens (blurred edges show there is more), wrapped on desktop */}
+            <div className="relative min-w-0 lg:flex-1">
+            <div className="flex gap-1.5 overflow-x-auto lg:overflow-visible lg:flex-wrap pb-1 lg:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="group" aria-label="Filter by department">
               {departments.map((dept) => {
                 const Icon = dept === 'All' ? Users : departmentIcons[dept] || BookOpen
                 const isActive = selectedDept === dept
@@ -433,24 +420,23 @@ export default function StaffPage() {
                 )
               })}
             </div>
-
-            <p className="text-xs text-gray-600 text-center md:whitespace-nowrap" aria-live="polite">
-              {filteredStaff.length} staff members
-            </p>
+            <GradualBlur position="left" height="2rem" strength={1} layers={4} tint="rgba(255,255,255,0.9)" autoHide zIndex={1} className="lg:hidden" />
+            <GradualBlur position="right" height="2.5rem" strength={1} layers={4} tint="rgba(255,255,255,0.9)" autoHide zIndex={1} className="lg:hidden" />
+            </div>
           </div>
         </div>
-      </m.div>
+      </div>
 
       {/* Staff Grid */}
       <section className="py-16 bg-gradient-to-b from-white to-gray-50">
         <div className="container mx-auto px-4">
           <div className="max-w-7xl mx-auto">
             {filteredStaff.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                {filteredStaff.map((staff, index) => (
-                  <StaffCard key={staff.id} staff={staff} index={index} />
+              <StaggerContainer key={selectedDept} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6" stagger={0.05}>
+                {filteredStaff.map((staff) => (
+                  <StaffCard key={staff.id} staff={staff} />
                 ))}
-              </div>
+              </StaggerContainer>
             ) : (
               <m.div
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -499,7 +485,9 @@ export default function StaffPage() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, type: 'spring' }}
-                whileHover={{ y: -8 }}
+              >
+              <m.div
+                whileHover={{ y: -8, transition: { duration: 0.2, delay: 0 } }}
                 className="text-center"
               >
                 <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
@@ -509,6 +497,7 @@ export default function StaffPage() {
                   {stat.value}
                 </div>
                 <div className="text-primary-200 text-sm font-medium">{stat.label}</div>
+              </m.div>
               </m.div>
             ))}
           </m.div>
@@ -530,25 +519,17 @@ export default function StaffPage() {
               Explore more about our school, our history, and our achievements.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link href="/about">
-                <m.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 bg-primary-700 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2"
-                >
+              <m.div whileHover={{ scale: 1.05 }} className="inline-flex">
+                <Link href="/about" className="active:scale-95 px-8 py-4 bg-primary-700 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2">
                   Back to About <ArrowLeft className="w-5 h-5" />
-                </m.button>
-              </Link>
-              <Link href="/contact">
-                <m.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 bg-secondary-400 text-primary-900 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2"
-                >
+                </Link>
+              </m.div>
+              <m.div whileHover={{ scale: 1.05 }} className="inline-flex">
+                <Link href="/contact" className="active:scale-95 px-8 py-4 bg-secondary-400 text-primary-900 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2">
                   <Mail className="w-5 h-5" />
                   Contact Us
-                </m.button>
-              </Link>
+                </Link>
+              </m.div>
             </div>
           </m.div>
         </div>

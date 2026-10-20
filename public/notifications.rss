@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Sacred Heart Sr. Sec. School, Sidhpur — Notifications</title>
+    <link>https://shsdharamshala.com/notifications</link>
+    <description>Latest notices, circulars and announcements from Sacred Heart Senior Secondary School, Sidhpur, Dharamshala.</description>
+    <language>en-in</language>
+    <lastBuildDate>Tue, 20 Oct 2026 00:00:00 +0530</lastBuildDate>
+    <atom:link href="https://shsdharamshala.com/notifications.rss" rel="self" type="application/rss+xml" />
+
+    <item>
+      <title>Rules for issuing duplicate documents</title>
+      <link>https://shsdharamshala.com/notifications</link>
+      <guid isPermaLink="false">shs-notification-1</guid>
+      <pubDate>Thu, 01 May 2025 00:00:00 +0530</pubDate>
+      <description>Rules for issuing duplicate documents, correction of name, date of birth, verification of documents, and other relevant procedures.</description>
+    </item>
+
+    <item>
+      <title>ACTIVE CISCE Initiative</title>
+      <link>https://shsdharamshala.com/notifications</link>
+      <guid isPermaLink="false">shs-notification-2</guid>
+      <pubDate>Tue, 01 Apr 2025 00:00:00 +0530</pubDate>
+      <description>Introducing ACTIVE CISCE — a holistic initiative for student health, fitness, and talent nurturing.</description>
+    </item>
+
+    <item>
+      <title>XI Class Admission</title>
+      <link>https://shsdharamshala.com/notifications</link>
+      <guid isPermaLink="false">shs-notification-3</guid>
+      <pubDate>Tue, 01 Apr 2025 00:00:00 +0530</pubDate>
+      <description>Information regarding XI Class Admission at Sacred Heart Senior Secondary School, Sidhpur.</description>
+    </item>
+  </channel>
+</rss>
