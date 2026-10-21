@@ -64,3 +64,8 @@ logs/
 /design-review.md
 /comparison-assets
 /Sacred-Heart-New-Website.pptx
+# CMS local data (development database cluster, uploaded media, test output)
+/.cms/
+/media/
+/test-results/
+/playwright-report/

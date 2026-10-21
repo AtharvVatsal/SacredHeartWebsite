@@ -1,3 +1,12 @@
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { withPayload } from '@payloadcms/next/withPayload'
+
+const dirname = path.dirname(fileURLToPath(import.meta.url))
+
+// Media in S3-compatible storage is served from its public address (see docs/cms-deployment.md)
+const mediaHost = process.env.S3_PUBLIC_HOST
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   compress: true,
@@ -14,9 +23,13 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'images.unsplash.com',
       },
+      ...(mediaHost ? [{ protocol: 'https', hostname: mediaHost }] : []),
     ],
   },
   poweredByHeader: false,
+  // Next 16 dev writes an AGENTS.md into the repository when it detects a coding agent; this project does not want it
+  agentRules: false,
+  turbopack: { root: path.resolve(dirname) },
 
   // Documents the old WordPress site published, now hosted here (old page URLs are handled in src/proxy.ts)
   async redirects() {
@@ -38,8 +51,16 @@ const nextConfig = {
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
         ],
       },
+      {
+        // Editor, preview and admin pages must never be cached by shared caches or indexed
+        source: '/(admin|cms)/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'private, no-store' },
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+        ],
+      },
     ]
   },
 }
 
-module.exports = nextConfig
+export default withPayload(nextConfig, { devBundleServerPackages: false })

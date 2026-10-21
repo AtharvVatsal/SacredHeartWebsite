@@ -6,16 +6,36 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "payload": "payload",
+    "cms:db:init": "node scripts/cms-dev-db.mjs init",
+    "cms:db:start": "node scripts/cms-dev-db.mjs start",
+    "cms:db:stop": "node scripts/cms-dev-db.mjs stop",
+    "cms:migrate": "payload migrate",
+    "cms:migrate:status": "payload migrate:status",
+    "cms:migrate:create": "payload migrate:create",
+    "cms:generate": "payload generate:importmap && payload generate:types",
+    "cms:create-admin": "payload run scripts/cms-create-admin.ts",
+    "cms:seed": "payload run src/cms/seed/run.ts"
   },
   "dependencies": {
+    "@payloadcms/db-postgres": "3.91.0",
+    "@payloadcms/next": "3.91.0",
+    "@payloadcms/storage-s3": "3.91.0",
+    "@payloadcms/ui": "3.91.0",
+    "@puckeditor/core": "0.23.0",
     "framer-motion": "^11.0.0",
+    "graphql": "16.14.2",
     "lucide-react": "0.577.0",
     "next": "16.4.2",
     "next-themes": "^0.4.6",
+    "payload": "3.91.0",
     "react": "19.2.9",
     "react-dom": "19.2.9",
-    "react-is": "^19.2.4"
+    "react-is": "^19.2.4",
+    "sharp": "0.35.5",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -25,9 +45,9 @@
     "eslint": "9.39.5",
     "eslint-config-next": "16.4.2",
     "postcss": "^8.4.38",
-    "sharp": "^0.34.5",
     "tailwindcss": "^3.4.1",
     "tsx": "^4.21.0",
     "typescript": "^5"
-  }
+  },
+  "type": "module"
 }
