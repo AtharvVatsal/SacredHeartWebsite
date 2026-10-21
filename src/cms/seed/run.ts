@@ -13,6 +13,7 @@ import { CURRENT_SCHEMA_VERSION } from '../document/migrations'
 import { validateDocument } from '../document/validate'
 import type { SeedPage } from './builders'
 import { importImages } from './media'
+import { rulesPage } from './pages/admission'
 import { homePage, homeSeo } from './pages/home'
 import { legalSeo, privacyPage, termsPage } from './pages/legal'
 
@@ -20,6 +21,7 @@ const SEEDS: { seed: SeedPage; seo?: { title?: string; description?: string } }[
   { seed: homePage, seo: homeSeo },
   { seed: privacyPage, seo: legalSeo['/privacy'] },
   { seed: termsPage, seo: legalSeo['/terms'] },
+  { seed: rulesPage },
 ]
 
 // payload run passes positional arguments only ("--force" arrives as a plain word)

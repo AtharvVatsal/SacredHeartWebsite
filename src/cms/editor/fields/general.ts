@@ -94,11 +94,13 @@ export const generalFields: Record<string, Fields> = {
           { label: 'None', value: 'none' },
           { label: 'Two', value: 'two' },
           { label: 'Three', value: 'three' },
+          { label: 'Two, larger', value: 'twoLarge' },
         ]),
         backStyle: choose('“Back to” link style', [
           { label: 'Plain', value: 'plain' },
           { label: 'Gently moving arrow', value: 'animated' },
           { label: 'Subtle', value: 'subtle' },
+          { label: 'Grey', value: 'grey' },
         ]),
         stacked: yesNo('Put the back link and badge on separate lines'),
         titleGap: choose('Space under the title', [

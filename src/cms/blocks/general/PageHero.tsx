@@ -30,6 +30,16 @@ function BackLink({ back, style }: { back: P['back']; style: P['design']['backSt
       </m.div>
     )
   }
+  if (style === 'grey') {
+    return (
+      <m.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
+        <Link href={back.href} className="inline-flex items-center gap-2 text-gray-300 hover:text-white mb-6 transition-colors">
+          <ArrowLeft className="w-4 h-4" />
+          {back.label}
+        </Link>
+      </m.div>
+    )
+  }
   if (style === 'subtle') {
     return (
       <Link href={back.href} className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors w-fit">
@@ -71,7 +81,13 @@ export default function PageHero(p: P) {
   return (
     <section className={`relative bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white pt-32 ${PB[d.bottomSpace]} overflow-hidden`}>
       {motif && <HeroDecor icon={motif} secondaryIcon={motifSmall} sparkles={d.sparkles} />}
-      {d.glows !== 'none' && (
+      {d.glows === 'twoLarge' && (
+        <div className="absolute inset-0 overflow-hidden">
+          <m.div className="absolute top-20 left-10 w-72 h-72 bg-secondary-500/20 rounded-full blur-[100px]" animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.35, 0.2] }} transition={{ duration: 4, repeat: Infinity }} />
+          <m.div className="absolute bottom-20 right-10 w-96 h-96 bg-primary-500/20 rounded-full blur-[120px]" animate={{ scale: [1.2, 1, 1.2], opacity: [0.3, 0.2, 0.3] }} transition={{ duration: 5, repeat: Infinity }} />
+        </div>
+      )}
+      {(d.glows === 'two' || d.glows === 'three') && (
         <div className="absolute inset-0 overflow-hidden">
           <m.div className="absolute top-20 left-10 w-64 h-64 bg-secondary-500/20 rounded-full blur-[100px]" animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.3, 0.2] }} transition={{ duration: 4, repeat: Infinity }} />
           <m.div className="absolute bottom-20 right-10 w-80 h-80 bg-primary-500/20 rounded-full blur-[100px]" animate={{ scale: [1.2, 1, 1.2], opacity: [0.3, 0.2, 0.3] }} transition={{ duration: 5, repeat: Infinity }} />

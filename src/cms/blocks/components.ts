@@ -19,6 +19,7 @@ import QuickActionsBar from './home/QuickActionsBar'
 import QuickLinksGrid from './home/QuickLinksGrid'
 import QuoteFeature from './home/QuoteFeature'
 import StatsRow from './home/StatsRow'
+import { RuleCards } from './pages/Admission'
 import { PolicyIntro, PolicySections, SimpleCta } from './pages/Legal'
 
 // Each component takes its own block's validated props
@@ -54,4 +55,5 @@ export const blockComponents: Record<string, ComponentType<any>> = {
   PolicyIntro,
   PolicySections,
   SimpleCta,
+  RuleCards,
 }

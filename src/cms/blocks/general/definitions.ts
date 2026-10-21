@@ -46,8 +46,8 @@ export const PageHero = defineBlock({
       .object({
         titleSize: choice(['large', 'medium'] as const, 'medium'),
         bottomSpace: choice(['small', 'medium', 'large'] as const, 'small'),
-        glows: choice(['none', 'two', 'three'] as const, 'two'),
-        backStyle: choice(['animated', 'subtle', 'plain'] as const, 'plain'),
+        glows: choice(['none', 'two', 'three', 'twoLarge'] as const, 'two'),
+        backStyle: choice(['animated', 'subtle', 'plain', 'grey'] as const, 'plain'),
         stacked: bool(false),
         titleGap: choice(['tight', 'normal'] as const, 'tight'),
         sparkles: bool(true),
