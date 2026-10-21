@@ -1,8 +1,5 @@
 'use client'
 
-// GradualBlur from React Bits (https://reactbits.dev), component added by Ansh - github.com/ansh-dhanani.
-// Ported to TypeScript, with overlapping blur bands so the gradient is smooth rather than stepped.
-
 import { CSSProperties, RefObject, useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
@@ -56,12 +53,12 @@ export interface GradualBlurProps {
   height?: string | number
   /** Top/bottom: a narrower centred band. Left/right: overrides height. */
   width?: string | number
-  /** Blur at the very edge, in steps of 8px (0.5 = 4px) */
+  /** Blur at the very edge; each step adds about 12px */
   strength?: number
   /** Stacked blur layers; more is smoother */
   layers?: number
   curve?: Curve
-  /** Grows the blur by a constant ratio toward the edge so it starts gently */
+  /** Doubles the blur toward the edge so it starts gently */
   exponential?: boolean
   opacity?: number
   saturation?: number
@@ -104,28 +101,28 @@ export default function GradualBlur({
   const vertical = edge === 'top' || edge === 'bottom'
 
   const stack = useMemo(() => {
-    const count = Math.min(Math.max(Math.round(layers) || 1, 2), 16)
+    const count = Math.min(Math.max(Math.round(layers) || 1, 1), 16)
     const shape = CURVES[curve] || CURVES.linear
-    const maxBlur = Math.max(strength, 0) * 8
+    const maxBlur = Math.max(strength, 0) * 12
+    const level = (u: number) => {
+      const t = shape(clamp01(u))
+      return maxBlur * (exponential ? (Math.pow(2, 4 * t) - 1) / 15 : t)
+    }
     const boost = Math.pow(Math.max(saturation, 0), 1 / count)
     const fade = `${toTime(duration)} ${easing}`
     const direction = DIRECTIONS[edge]
-    // Smooth progressive blur: each layer only covers its own soft band (fade in, hold, fade out) and the
-    // bands overlap, so there are no visible steps.
-    const at = (k: number) => `${(shape(clamp01(k / (count + 1))) * 100).toFixed(2)}%`
     const steps: CSSProperties[] = []
     for (let i = 0; i < count; i++) {
-      // Exponential: a constant ratio from 1/16 of the edge blur up to the full edge blur, spread over every band
-      const radius = exponential ? maxBlur * Math.pow(16, -(count - 1 - i) / (count - 1)) : (maxBlur * (i + 1)) / count
+      const from = level(i / count)
+      const to = level((i + 1) / count)
+      const radius = Math.sqrt(Math.max(to * to - from * from, 0))
       const filter = [
         `blur(calc(${radius.toFixed(3)}px * var(--gradual-blur-reveal, 1) * var(--gradual-blur-hover, 1)))`,
         boost !== 1 ? `saturate(calc(1 + ${(boost - 1).toFixed(4)} * var(--gradual-blur-reveal, 1)))` : '',
       ]
         .filter(Boolean)
         .join(' ')
-      // The last band holds to the very edge
-      const tail = i === count - 1 ? '#000 100%' : `#000 ${at(i + 2)}, transparent ${at(i + 3)}`
-      const mask = `linear-gradient(${direction}, transparent ${at(i)}, #000 ${at(i + 1)}, ${tail})`
+      const mask = `linear-gradient(${direction}, transparent ${((i / count) * 100).toFixed(2)}%, #000 ${(((i + 1) / count) * 100).toFixed(2)}%)`
       steps.push({
         position: 'absolute',
         inset: 0,
