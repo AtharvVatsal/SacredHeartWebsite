@@ -19,6 +19,7 @@ import QuickActionsBar from './home/QuickActionsBar'
 import QuickLinksGrid from './home/QuickLinksGrid'
 import QuoteFeature from './home/QuoteFeature'
 import StatsRow from './home/StatsRow'
+import { CallBand, GuidelineCard, NoticeStrip } from './pages/Academics'
 import { RuleCards } from './pages/Admission'
 import { PolicyIntro, PolicySections, SimpleCta } from './pages/Legal'
 
@@ -56,4 +57,7 @@ export const blockComponents: Record<string, ComponentType<any>> = {
   PolicySections,
   SimpleCta,
   RuleCards,
+  NoticeStrip,
+  GuidelineCard,
+  CallBand,
 }

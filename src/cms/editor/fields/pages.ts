@@ -63,3 +63,13 @@ Object.assign(pageFields, {
     closingText: paragraph('Closing box text'),
   },
 } satisfies Record<string, Fields>)
+
+Object.assign(pageFields, {
+  NoticeStrip: { icon: iconChoice(), text: text('Text') },
+  GuidelineCard: {
+    icon: iconChoice('Header icon'),
+    title: text('Title'),
+    items: list('Guidelines', { icon: iconChoice(), title: text('Title'), text: paragraph('Text') }, (i) => str(i.title), 30),
+  },
+  CallBand: { title: text('Title'), text: paragraph('Text (the button calls the first phone number in Site settings)') },
+} satisfies Record<string, Fields>)
