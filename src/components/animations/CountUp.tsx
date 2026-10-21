@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { useInView, useMotionValue, animate, useReducedMotion } from 'framer-motion'
+import { useRevealAll } from './RevealContext'
 
 interface CountUpProps {
   end: number
@@ -23,7 +24,8 @@ export default function CountUp({
   prefix = '',
 }: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null)
-  const isInView = useInView(ref, { once: true, margin: '-50px' })
+  const revealAll = useRevealAll()
+  const isInView = useInView(ref, { once: true, margin: '-50px' }) || revealAll
   const reduceMotion = useReducedMotion()
   const value = useMotionValue(end)
   const animateRef = useRef(false)

@@ -46,10 +46,12 @@ export const image = (fallback: { src?: string; alt?: string } = {}) =>
       mediaId: z.number().int().positive().nullable().default(null),
       src: z.string().max(500).refine((v) => v === '' || IMAGE_SRC.test(v), { message: 'Image address is not allowed' }).default(''),
       alt: z.string().max(300).default(''),
+      /** Which part of the photo stays visible when it is cropped to fit */
+      position: z.enum(['center', 'top', 'bottom', 'left', 'right']).default('center'),
       width: z.number().int().positive().optional(),
       height: z.number().int().positive().optional(),
     })
-    .default({ mediaId: null, src: fallback.src ?? '', alt: fallback.alt ?? '' })
+    .default({ mediaId: null, src: fallback.src ?? '', alt: fallback.alt ?? '', position: 'center' })
 
 export type ImageValue = z.infer<ReturnType<typeof image>>
 

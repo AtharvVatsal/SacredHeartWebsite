@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter, Outfit, Plus_Jakarta_Sans } from 'next/font/google'
+import { fontVariables } from '@/lib/fonts'
 import './globals.css'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
@@ -12,24 +12,6 @@ import BreadcrumbJsonLd from '@/components/seo/BreadcrumbJsonLd'
 import AnnouncementBar from '@/components/layout/AnnouncementBar'
 import { SiteSettingsProvider } from '@/components/providers/SiteSettingsProvider'
 import { getSiteSettings } from '@/cms/render/settings'
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-})
-
-const outfit = Outfit({
-  subsets: ['latin'],
-  variable: '--font-outfit',
-  display: 'swap',
-})
-
-const jakarta = Plus_Jakarta_Sans({
-  subsets: ['latin'],
-  variable: '--font-jakarta',
-  display: 'swap',
-})
 
 // The home page has no layout of its own, so its title, description, canonical URL and social card live here;
 // every other page overrides them from its own layout (see src/lib/seo.ts).
@@ -72,7 +54,7 @@ export default async function RootLayout({
   const settings = await getSiteSettings()
 
   return (
-    <html lang="en-IN" data-scroll-behavior="smooth" className={`${inter.variable} ${outfit.variable} ${jakarta.variable}`}>
+    <html lang="en-IN" data-scroll-behavior="smooth" className={fontVariables}>
       <head>
         {/* Entrance animations start hidden and are revealed by JavaScript; without it, show everything */}
         <noscript>

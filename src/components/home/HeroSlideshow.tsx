@@ -4,22 +4,30 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { m, AnimatePresence, useInView, useReducedMotion } from 'framer-motion'
 import Image from 'next/image'
 import { Pause, Play } from 'lucide-react'
+import { useRevealAll } from '@/components/animations/RevealContext'
 
 interface HeroSlideshowProps {
   images: string[]
+  /** Optional description of each photo for screen readers (defaults to "School photo N of M") */
+  alts?: string[]
   interval?: number
 }
 
-export default function HeroSlideshow({ images, interval = 5000 }: HeroSlideshowProps) {
+export default function HeroSlideshow({ images, alts, interval = 5000 }: HeroSlideshowProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
   const [hasFocus, setHasFocus] = useState(false)
   const reduceMotion = useReducedMotion()
   // Visitors who ask for reduced motion start paused; anyone can pause or resume with the button
   const [userPaused, setUserPaused] = useState<boolean | null>(null)
-  const paused = userPaused ?? !!reduceMotion
+  // The server cannot know the visitor's motion setting, so the first render matches the server (playing)
+  // and the reduced-motion default applies right after hydration. Applying it earlier caused a hydration error.
+  const [hydrated, setHydrated] = useState(false)
+  useEffect(() => setHydrated(true), [])
+  const paused = userPaused ?? (hydrated && !!reduceMotion)
   const ref = useRef<HTMLDivElement>(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const revealAll = useRevealAll()
+  const isInView = useInView(ref, { once: true, margin: '-100px' }) || revealAll
 
   const nextSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % images.length)
@@ -63,7 +71,7 @@ export default function HeroSlideshow({ images, interval = 5000 }: HeroSlideshow
           >
             <Image
               src={images[currentIndex]}
-              alt={`School photo ${currentIndex + 1} of ${images.length}`}
+              alt={alts?.[currentIndex] || `School photo ${currentIndex + 1} of ${images.length}`}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover"

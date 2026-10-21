@@ -2,6 +2,7 @@
 
 import { m, useInView } from 'framer-motion'
 import { useRef, useState, ReactNode } from 'react'
+import { useRevealAll } from './RevealContext'
 
 interface FadeInProps {
   children: ReactNode
@@ -27,7 +28,8 @@ export default function FadeIn({
   distance = 36,
 }: FadeInProps) {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once, margin: '-60px' })
+  const revealAll = useRevealAll()
+  const isInView = useInView(ref, { once, margin: '-60px' }) || revealAll
   // Keyboard focus never lands on something still invisible: reveal straight away
   const [focused, setFocused] = useState(false)
   const shown = isInView || focused

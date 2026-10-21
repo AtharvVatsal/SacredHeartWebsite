@@ -2,6 +2,7 @@
 
 import { m, useInView } from 'framer-motion'
 import { useRef, ReactNode } from 'react'
+import { useRevealAll } from './RevealContext'
 
 interface ScaleInProps {
   children: ReactNode
@@ -21,7 +22,8 @@ export default function ScaleIn({
   from = 0.85,
 }: ScaleInProps) {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-60px' })
+  const revealAll = useRevealAll()
+  const isInView = useInView(ref, { once: true, margin: '-60px' }) || revealAll
 
   return (
     <m.div

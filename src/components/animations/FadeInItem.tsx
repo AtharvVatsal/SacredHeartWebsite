@@ -3,6 +3,7 @@
 import { m, useInView } from 'framer-motion'
 import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 import { StaggerContext } from './StaggerContainer'
+import { useRevealAll } from './RevealContext'
 
 interface FadeInItemProps {
   children: ReactNode
@@ -24,8 +25,9 @@ export default function FadeInItem({
   const stagger = useContext(StaggerContext)
   const once = stagger?.once ?? true
   const ref = useRef<HTMLDivElement>(null)
+  const revealAll = useRevealAll()
   // Each item watches itself, so items deep in a long grid reveal when they are actually reached
-  const isInView = useInView(ref, { once, margin: '0px 0px -40px 0px' })
+  const isInView = useInView(ref, { once, margin: '0px 0px -40px 0px' }) || revealAll
   // null until this item has entered view and been given its place in the stagger
   const [delay, setDelay] = useState<number | null>(null)
 
