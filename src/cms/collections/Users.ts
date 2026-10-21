@@ -1,4 +1,5 @@
-import { APIError, Forbidden, type CollectionBeforeChangeHook, type CollectionBeforeDeleteHook, type CollectionConfig } from 'payload'
+import { Forbidden, type CollectionBeforeChangeHook, type CollectionBeforeDeleteHook, type CollectionConfig } from 'payload'
+import { userError } from '../errors'
 import { adminOrSelf, isAdmin, isAdminField, isAdminUser, ROLE_LABELS, type Role } from '../access'
 
 const production = process.env.NODE_ENV === 'production'
@@ -31,7 +32,7 @@ const guardAccountCreation: CollectionBeforeChangeHook = async ({ data, operatio
 const keepOneAdmin: CollectionBeforeChangeHook = async ({ data, originalDoc, operation, req }) => {
   if (operation === 'update' && originalDoc?.role === 'admin' && data.role && data.role !== 'admin') {
     if ((await countAdmins(req)) <= 1) {
-      throw new APIError('This is the only administrator. Make another person an administrator first.', 400, undefined, true)
+      throw userError('This is the only administrator. Make another person an administrator first.', 400)
     }
   }
   return data
@@ -40,7 +41,7 @@ const keepOneAdmin: CollectionBeforeChangeHook = async ({ data, originalDoc, ope
 const keepOneAdminOnDelete: CollectionBeforeDeleteHook = async ({ id, req }) => {
   const user = await req.payload.findByID({ collection: 'users', id, req, overrideAccess: true, depth: 0 })
   if (user?.role === 'admin' && (await countAdmins(req)) <= 1) {
-    throw new APIError('This is the only administrator and cannot be removed.', 400, undefined, true)
+    throw userError('This is the only administrator and cannot be removed.', 400)
   }
 }
 

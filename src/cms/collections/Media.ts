@@ -1,5 +1,6 @@
 import path from 'node:path'
-import { APIError, type CollectionBeforeDeleteHook, type CollectionConfig } from 'payload'
+import { type CollectionBeforeDeleteHook, type CollectionConfig } from 'payload'
+import { userError } from '../errors'
 import { anyone, isAdmin, isStaff } from '../access'
 
 // Raster images and PDFs only. SVG is deliberately not accepted: it can carry script.
@@ -26,7 +27,7 @@ export async function findMediaReferences(req: Parameters<CollectionBeforeDelete
 const refuseIfUsed: CollectionBeforeDeleteHook = async ({ id, req }) => {
   const used = await findMediaReferences(req, id)
   if (used.length) {
-    throw new APIError(`This file is still used on: ${used.slice(0, 6).join(', ')}${used.length > 6 ? ` and ${used.length - 6} more` : ''}. Replace it there first.`, 409, undefined, true)
+    throw userError(`This file is still used on: ${used.slice(0, 6).join(', ')}${used.length > 6 ? ` and ${used.length - 6} more` : ''}. Replace it there first.`, 409)
   }
 }
 
@@ -51,7 +52,7 @@ export const Media: CollectionConfig = {
   },
   upload: {
     // Ignored when S3-compatible storage is configured (see payload.config.ts)
-    staticDir: path.resolve(process.cwd(), 'media'),
+    staticDir: path.resolve(process.cwd(), process.env.CMS_MEDIA_DIR || 'media'),
     mimeTypes: ACCEPTED_MIME_TYPES,
     adminThumbnail: 'thumbnail',
     focalPoint: true,

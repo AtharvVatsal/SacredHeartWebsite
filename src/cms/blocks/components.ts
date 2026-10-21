@@ -1,6 +1,12 @@
 // How each block renders. Shared by the public renderer and the editor canvas, so what editors see is
 // exactly what visitors get.
 import type { ComponentType } from 'react'
+import CardGrid, { InfoCard } from './general/Cards'
+import Columns from './general/Columns'
+import ImageText from './general/ImageText'
+import { ButtonRow, Callout, ContactCard, Faq, ImageBlock, ImageGallery, Spacer, TextBlock, VideoEmbed } from './general/Misc'
+import PageHero from './general/PageHero'
+import TextSection, { SectionHeading } from './general/TextSection'
 import AboutPreview from './home/AboutPreview'
 import AchievementCards from './home/AchievementCards'
 import CtaBand from './home/CtaBand'
@@ -16,6 +22,22 @@ import StatsRow from './home/StatsRow'
 
 // Each component takes its own block's validated props
 export const blockComponents: Record<string, ComponentType<any>> = {
+  PageHero,
+  SectionHeading,
+  TextSection,
+  ImageText,
+  Columns,
+  CardGrid,
+  Faq,
+  ButtonRow,
+  Callout,
+  InfoCard,
+  ImageBlock,
+  TextBlock,
+  ContactCard,
+  VideoEmbed,
+  ImageGallery,
+  Spacer,
   HomeHero,
   QuickActionsBar,
   StatsRow,

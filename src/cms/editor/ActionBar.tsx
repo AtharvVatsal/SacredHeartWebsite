@@ -42,10 +42,7 @@ export function SectionActionBar({ label, parentAction }: { label?: string; chil
 
   return (
     <ActionBar label={label}>
-      <ActionBar.Group>
-        {parentAction}
-        {label && <ActionBar.Label label={label} />}
-      </ActionBar.Group>
+      <ActionBar.Group>{parentAction}</ActionBar.Group>
       <ActionBar.Group>
         <ActionBar.Action onClick={duplicate} label="Duplicate section">
           <Copy size={16} />

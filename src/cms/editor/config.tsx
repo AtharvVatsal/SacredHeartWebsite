@@ -12,9 +12,10 @@ import { blockComponents } from '../blocks/components'
 import { blockDefinitions, defaultPropsFor } from '../blocks/definitions'
 import { CATEGORIES, type CategoryKey } from '../document/definition'
 import { commonFields } from './fields/helpers'
+import { generalFields } from './fields/general'
 import { homeFields } from './fields/home'
 
-const FIELDS: Record<string, Fields> = { ...homeFields }
+const FIELDS: Record<string, Fields> = { ...generalFields, ...homeFields }
 
 const HIDE_ON_LABEL: Record<string, string> = { mobile: 'Shown on computers and tablets only', desktop: 'Shown on phones only' }
 

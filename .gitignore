@@ -69,3 +69,4 @@ logs/
 /media/
 /test-results/
 /playwright-report/
+/tests/e2e/.auth/

@@ -1,4 +1,5 @@
-import { APIError, Forbidden, type CollectionAfterChangeHook, type CollectionBeforeChangeHook, type CollectionConfig, type PayloadRequest } from 'payload'
+import { Forbidden, type CollectionAfterChangeHook, type CollectionBeforeChangeHook, type CollectionConfig, type PayloadRequest } from 'payload'
+import { userError } from '../errors'
 import { isAdmin, isAdminField, isAdminUser, isStaff, publishedOrStaff } from '../access'
 import { blockRegistry } from '../blocks/definitions'
 import { CURRENT_SCHEMA_VERSION } from '../document/migrations'
@@ -16,8 +17,8 @@ export const describeIssues = (issues: { label: string; message: string }[]) =>
 /** Structure check on every save (drafts included): the content must be a page document of sane size */
 function assertDocumentShape(content: unknown) {
   if (content === undefined || content === null) return
-  if (!isRecord(content) || !Array.isArray(content.content)) throw new APIError('The page content is damaged and was not saved.', 400, undefined, true)
-  if (JSON.stringify(content).length > MAX_DOCUMENT_BYTES) throw new APIError('The page is too large to save. Split it into smaller pages.', 413, undefined, true)
+  if (!isRecord(content) || !Array.isArray(content.content)) throw userError('The page content is damaged and was not saved.', 400)
+  if (JSON.stringify(content).length > MAX_DOCUMENT_BYTES) throw userError('The page is too large to save. Split it into smaller pages.', 413)
 }
 
 const beforeChange: CollectionBeforeChangeHook = async ({ data, originalDoc, req, operation }) => {
@@ -26,9 +27,12 @@ const beforeChange: CollectionBeforeChangeHook = async ({ data, originalDoc, req
   // Only administrators publish. Editors save drafts for an administrator to review.
   if (publishing && !isAdminUser(req.user) && !req.context?.trustedSeed) throw new Forbidden(req.t)
 
+  // A page's kind never changes once created
+  if (operation === 'update' && originalDoc?.kind) data.kind = originalDoc.kind
+
   // Built-in pages keep the address of the route they replace
   if (operation === 'update' && originalDoc?.kind === 'builtIn' && data.path && data.path !== originalDoc.path) {
-    throw new APIError('This is a built-in page, so its address cannot change.', 400, undefined, true)
+    throw userError('This is a built-in page, so its address cannot change.', 400)
   }
 
   assertDocumentShape(data.content)
@@ -37,7 +41,7 @@ const beforeChange: CollectionBeforeChangeHook = async ({ data, originalDoc, req
     const content = data.content ?? originalDoc?.content
     const result = validateDocument(content, blockRegistry, 'strict')
     if (!result.ok) {
-      throw new APIError(`The page was not published because some sections need attention:\n${describeIssues(result.issues)}`, 400, { issues: result.issues }, true)
+      throw userError(`The page was not published because some sections need attention:\n${describeIssues(result.issues)}`, 400, { issues: result.issues })
     }
     data.content = result.document
     data.schemaVersion = CURRENT_SCHEMA_VERSION
@@ -128,7 +132,9 @@ export const Pages: CollectionConfig = {
         { label: 'Built-in page (address fixed)', value: 'builtIn' },
         { label: 'New page', value: 'custom' },
       ],
-      access: { create: isAdminField, update: () => false },
+      // Fixed after creation: the beforeChange hook always keeps the stored value (field access would drop
+      // the value instead, which breaks restoring a version)
+      access: { create: isAdminField },
       admin: { position: 'sidebar', readOnly: true },
     },
     { name: 'editorLink', type: 'ui', admin: { components: { Field: '/cms/admin/PageContentSummary#PageContentSummary' } } },
