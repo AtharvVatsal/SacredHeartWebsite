@@ -21,6 +21,7 @@ import QuoteFeature from './home/QuoteFeature'
 import StatsRow from './home/StatsRow'
 import { CallBand, GuidelineCard, NoticeStrip } from './pages/Academics'
 import { RuleCards } from './pages/Admission'
+import { DressCard, GoldInfoCard } from './pages/Uniform'
 import { PolicyIntro, PolicySections, SimpleCta } from './pages/Legal'
 import { CurriculumCard, HomeworkCard, JoinCta, StreamCards, SubjectGroups, TipsGrid } from './pages/Syllabus'
 
@@ -67,4 +68,6 @@ export const blockComponents: Record<string, ComponentType<any>> = {
   HomeworkCard,
   TipsGrid,
   JoinCta,
+  GoldInfoCard,
+  DressCard,
 }

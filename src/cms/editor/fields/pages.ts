@@ -3,7 +3,7 @@
 // Editor fields for the page-specific sections (see src/cms/blocks/pages)
 import type { Fields } from '@puckeditor/core'
 import { GRADIENTS } from '../../blocks/shared/gradients'
-import { button, choose, FORMAT_HINT, iconChoice, list, paragraph, text } from './helpers'
+import { button, choose, FORMAT_HINT, iconChoice, list, paragraph, text, yesNo } from './helpers'
 
 const str = (v: unknown) => (typeof v === 'string' ? v : '')
 
@@ -108,4 +108,43 @@ Object.assign(pageFields, {
     tips: list('Tips', { icon: iconChoice(), title: text('Title'), text: paragraph('Text'), color: gradientChoice('Icon colour') }, (i) => str(i.title), 24),
   },
   JoinCta: { icon: iconChoice(), title: text('Title'), text: paragraph('Text'), button: button('Button') },
+} satisfies Record<string, Fields>)
+
+Object.assign(pageFields, {
+  GoldInfoCard: { icon: iconChoice(), title: text('Title'), text: paragraph('Text', FORMAT_HINT) },
+  DressCard: {
+    title: text('Title'),
+    subtitle: text('Line under the title'),
+    icon: iconChoice('Header icon'),
+    tone: choose('Header colour', [
+      { label: 'Pink', value: 'pink' },
+      { label: 'Blue', value: 'blue' },
+      { label: 'Slate grey', value: 'slate' },
+      { label: 'Green', value: 'green' },
+      { label: 'School green', value: 'primary' },
+    ]),
+    layout: choose('Layout', [
+      { label: 'One list with notes (first group only)', value: 'list' },
+      { label: 'Groups in tinted boxes, one under another', value: 'groups' },
+      { label: 'Two columns with a shirt icon', value: 'columns' },
+      { label: 'Two tinted boxes side by side', value: 'boxes' },
+      { label: 'Centred text with three points (first group only)', value: 'centred' },
+    ]),
+    background: choose('Section background', [
+      { label: 'White', value: 'white' },
+      { label: 'Light grey fade', value: 'fade' },
+    ]),
+    intro: paragraph('Centred text (Centred layout only)'),
+    groups: list(
+      'Groups',
+      {
+        title: text('Group title'),
+        twoColumns: yesNo('Two columns on computers'),
+        items: list('Items', { text: text('Item'), note: text('Small note (List layout only)') }, (i) => str(i.text), 30),
+      },
+      (i) => str(i.title),
+      6,
+    ),
+    note: paragraph('Blue note under the lists (optional)', FORMAT_HINT),
+  },
 } satisfies Record<string, Fields>)

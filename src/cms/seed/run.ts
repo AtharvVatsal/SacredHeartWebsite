@@ -14,7 +14,7 @@ import { validateDocument } from '../document/validate'
 import type { SeedPage } from './builders'
 import { importImages } from './media'
 import { leavePage, syllabusPage } from './pages/academics'
-import { rulesPage } from './pages/admission'
+import { rulesPage, uniformPage } from './pages/admission'
 import { homePage, homeSeo } from './pages/home'
 import { legalSeo, privacyPage, termsPage } from './pages/legal'
 
@@ -23,6 +23,7 @@ const SEEDS: { seed: SeedPage; seo?: { title?: string; description?: string } }[
   { seed: privacyPage, seo: legalSeo['/privacy'] },
   { seed: termsPage, seo: legalSeo['/terms'] },
   { seed: rulesPage },
+  { seed: uniformPage },
   { seed: leavePage },
   { seed: syllabusPage },
 ]
