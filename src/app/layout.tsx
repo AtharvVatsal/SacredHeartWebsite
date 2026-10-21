@@ -66,7 +66,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en-IN" className={`${inter.variable} ${outfit.variable} ${jakarta.variable}`}>
+    <html lang="en-IN" data-scroll-behavior="smooth" className={`${inter.variable} ${outfit.variable} ${jakarta.variable}`}>
       <head>
         {/* Entrance animations start hidden and are revealed by JavaScript; without it, show everything */}
         <noscript>

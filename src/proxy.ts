@@ -31,7 +31,7 @@ const WORDPRESS_PAGES: Record<string, string> = {
   '10136': '/admission/fee-structure',
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { searchParams } = request.nextUrl
   const pageId = searchParams.get('page_id')
   let destination: string | undefined
@@ -46,5 +46,5 @@ export function middleware(request: NextRequest) {
   return NextResponse.redirect(url, 301)
 }
 
-// Only the home URL carried WordPress query strings, so the middleware runs nowhere else
+// Only the home URL carried WordPress query strings, so the proxy runs nowhere else
 export const config = { matcher: '/' }

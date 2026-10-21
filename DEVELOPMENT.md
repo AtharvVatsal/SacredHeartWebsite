@@ -378,7 +378,7 @@ Other SEO pieces:
 | `src/components/seo/BreadcrumbJsonLd.tsx` | `BreadcrumbList` JSON-LD for the current page |
 | `src/app/sitemap.xml/route.ts` | Sitemap of every page, with the gallery, topper, pass-out and leader photos for Google Images |
 | `src/app/robots.ts` | `robots.txt` (keep `/_next/` crawlable: search engines need it to render pages) |
-| `src/middleware.ts` | 301 redirects from the old WordPress addresses (`/?page_id=…`, `/?faculty=…`) |
+| `src/proxy.ts` | 301 redirects from the old WordPress addresses (`/?page_id=…`, `/?faculty=…`) |
 | `next.config.js` | Redirects for the old WordPress PDF links, and security headers |
 | `public/og-image.jpg` | 1200×630 image shown when a page is shared |
 

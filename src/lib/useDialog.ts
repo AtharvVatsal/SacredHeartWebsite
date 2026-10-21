@@ -5,7 +5,7 @@ const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), selec
 interface UseDialogOptions {
   open: boolean
   onClose: () => void
-  containerRef: RefObject<HTMLElement>
+  containerRef: RefObject<HTMLElement | null>
   // Lock page scroll behind the dialog (default true)
   lockScroll?: boolean
 }

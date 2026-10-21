@@ -18,7 +18,7 @@ const nextConfig = {
   },
   poweredByHeader: false,
 
-  // Documents the old WordPress site published, now hosted here (old page URLs are handled in src/middleware.ts)
+  // Documents the old WordPress site published, now hosted here (old page URLs are handled in src/proxy.ts)
   async redirects() {
     return [
       { source: '/wp-content/uploads/2025/05/CISE-DOC.pdf', destination: '/documents/cisce-rules-for-documents.pdf', permanent: true },
