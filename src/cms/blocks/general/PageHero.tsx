@@ -56,7 +56,7 @@ export default function PageHero(p: P) {
 
   const badge = p.badge ? (
     <m.span
-      className={`inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-medium border border-white/10 ${d.stacked ? 'w-fit' : 'mb-6'}`}
+      className={`inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-medium border ${d.badgeBorder === 'strong' ? 'border-white/20' : 'border-white/10'} ${d.stacked ? 'w-fit' : 'mb-6'}`}
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: 0.2 }}

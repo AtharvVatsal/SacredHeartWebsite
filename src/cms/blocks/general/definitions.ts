@@ -51,8 +51,9 @@ export const PageHero = defineBlock({
         stacked: bool(false),
         titleGap: choice(['tight', 'normal'] as const, 'tight'),
         sparkles: bool(true),
+        badgeBorder: choice(['soft', 'strong'] as const, 'soft'),
       })
-      .default({ titleSize: 'medium', bottomSpace: 'small', glows: 'two', backStyle: 'plain', stacked: false, titleGap: 'tight', sparkles: true }),
+      .default({ titleSize: 'medium', bottomSpace: 'small', glows: 'two', backStyle: 'plain', stacked: false, titleGap: 'tight', sparkles: true, badgeBorder: 'soft' }),
   }),
 })
 

@@ -1,6 +1,8 @@
 // Icons an editor can choose, with plain names. These are the icons the site already uses (Lucide).
 // Server-safe list (no React) so block schemas can validate the choice.
 export const ICONS = {
+  AlertCircle: 'Exclamation in a circle',
+  AlertTriangle: 'Warning triangle',
   Award: 'Award ribbon',
   Backpack: 'School bag',
   Banknote: 'Money',
@@ -23,6 +25,7 @@ export const ICONS = {
   CreditCard: 'Payment card',
   Crown: 'Crown',
   Dumbbell: 'Fitness',
+  Eye: 'Eye',
   FileText: 'Document',
   FlaskConical: 'Science flask',
   Flower2: 'Flower',
@@ -40,6 +43,7 @@ export const ICONS = {
   Leaf: 'Leaf',
   Library: 'Library',
   Lightbulb: 'Light bulb',
+  Lock: 'Padlock',
   Mail: 'Email',
   MapPin: 'Map pin',
   Medal: 'Medal',

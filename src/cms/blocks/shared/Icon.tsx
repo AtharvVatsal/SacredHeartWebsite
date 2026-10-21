@@ -1,16 +1,16 @@
 import {
-  Award, Backpack, Banknote, Bell, BookOpen, Brain, Briefcase, Building, Bus, Calculator, Calendar, CalendarCheck, CalendarDays, Camera,
-  CheckCircle, Clipboard, ClipboardList, Clock, Compass, CreditCard, Crown, Dumbbell, FileText, FlaskConical, Flower2, Globe, GraduationCap,
-  HandHeart, Heart, HeartHandshake, History, Image, Info, Landmark, Languages, Laptop, Leaf, Library, Lightbulb, Mail, MapPin, Medal, Monitor,
+  AlertCircle, AlertTriangle, Award, Backpack, Banknote, Bell, BookOpen, Brain, Briefcase, Building, Bus, Calculator, Calendar, CalendarCheck, CalendarDays, Camera,
+  CheckCircle, Clipboard, ClipboardList, Clock, Compass, CreditCard, Crown, Dumbbell, Eye, FileText, FlaskConical, Flower2, Globe, GraduationCap,
+  HandHeart, Heart, HeartHandshake, History, Image, Info, Landmark, Languages, Laptop, Leaf, Library, Lightbulb, Lock, Mail, MapPin, Medal, Monitor,
   Music, Palette, PartyPopper, PenLine, Phone, Rocket, Scale, ScrollText, Shield, ShieldCheck, Shirt, Smartphone, Sparkles, Star, Stethoscope,
   Target, Trophy, User, UserPlus, Users, Wallet, Zap, type LucideIcon, type LucideProps,
 } from 'lucide-react'
 import type { IconName } from './icon-names'
 
 export const ICON_COMPONENTS: Record<IconName, LucideIcon> = {
-  Award, Backpack, Banknote, Bell, BookOpen, Brain, Briefcase, Building, Bus, Calculator, Calendar, CalendarCheck, CalendarDays, Camera,
-  CheckCircle, Clipboard, ClipboardList, Clock, Compass, CreditCard, Crown, Dumbbell, FileText, FlaskConical, Flower2, Globe, GraduationCap,
-  HandHeart, Heart, HeartHandshake, History, Image, Info, Landmark, Languages, Laptop, Leaf, Library, Lightbulb, Mail, MapPin, Medal, Monitor,
+  AlertCircle, AlertTriangle, Award, Backpack, Banknote, Bell, BookOpen, Brain, Briefcase, Building, Bus, Calculator, Calendar, CalendarCheck, CalendarDays, Camera,
+  CheckCircle, Clipboard, ClipboardList, Clock, Compass, CreditCard, Crown, Dumbbell, Eye, FileText, FlaskConical, Flower2, Globe, GraduationCap,
+  HandHeart, Heart, HeartHandshake, History, Image, Info, Landmark, Languages, Laptop, Leaf, Library, Lightbulb, Lock, Mail, MapPin, Medal, Monitor,
   Music, Palette, PartyPopper, PenLine, Phone, Rocket, Scale, ScrollText, Shield, ShieldCheck, Shirt, Smartphone, Sparkles, Star, Stethoscope,
   Target, Trophy, User, UserPlus, Users, Wallet, Zap,
 }

@@ -106,6 +106,10 @@ export const generalFields: Record<string, Fields> = {
           { label: 'Normal', value: 'normal' },
         ]),
         sparkles: yesNo('Twinkling gold points'),
+        badgeBorder: choose('Badge outline', [
+          { label: 'Soft', value: 'soft' },
+          { label: 'Stronger', value: 'strong' },
+        ]),
       },
     },
   },

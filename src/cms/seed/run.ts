@@ -14,8 +14,13 @@ import { validateDocument } from '../document/validate'
 import type { SeedPage } from './builders'
 import { importImages } from './media'
 import { homePage, homeSeo } from './pages/home'
+import { legalSeo, privacyPage, termsPage } from './pages/legal'
 
-const SEEDS: { seed: SeedPage; seo?: { title?: string; description?: string } }[] = [{ seed: homePage, seo: homeSeo }]
+const SEEDS: { seed: SeedPage; seo?: { title?: string; description?: string } }[] = [
+  { seed: homePage, seo: homeSeo },
+  { seed: privacyPage, seo: legalSeo['/privacy'] },
+  { seed: termsPage, seo: legalSeo['/terms'] },
+]
 
 // payload run passes positional arguments only ("--force" arrives as a plain word)
 const args = process.argv.slice(2)

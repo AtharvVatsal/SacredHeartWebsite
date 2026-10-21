@@ -14,8 +14,9 @@ import { CATEGORIES, type CategoryKey } from '../document/definition'
 import { commonFields } from './fields/helpers'
 import { generalFields } from './fields/general'
 import { homeFields } from './fields/home'
+import { pageFields } from './fields/pages'
 
-const FIELDS: Record<string, Fields> = { ...generalFields, ...homeFields }
+const FIELDS: Record<string, Fields> = { ...generalFields, ...homeFields, ...pageFields }
 
 const HIDE_ON_LABEL: Record<string, string> = { mobile: 'Shown on computers and tablets only', desktop: 'Shown on phones only' }
 
