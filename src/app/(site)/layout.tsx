@@ -9,6 +9,9 @@ import { schoolInfo } from '@/data/school'
 import { pageMeta, routes, SITE_URL } from '@/lib/seo'
 import StructuredData from '@/components/seo/StructuredData'
 import BreadcrumbJsonLd from '@/components/seo/BreadcrumbJsonLd'
+import AnnouncementBar from '@/components/layout/AnnouncementBar'
+import { SiteSettingsProvider } from '@/components/providers/SiteSettingsProvider'
+import { getSiteSettings } from '@/cms/render/settings'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -60,11 +63,14 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  // School details, menu, header and footer from the CMS (built-in values when nothing is saved)
+  const settings = await getSiteSettings()
+
   return (
     <html lang="en-IN" data-scroll-behavior="smooth" className={`${inter.variable} ${outfit.variable} ${jakarta.variable}`}>
       <head>
@@ -80,7 +86,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col font-body">
         {/* Structured data for search engines: the school, the website and this page's breadcrumb trail */}
-        <StructuredData />
+        <StructuredData settings={settings} />
         <BreadcrumbJsonLd />
         <a
           href="#main-content"
@@ -89,20 +95,23 @@ export default function RootLayout({
           Skip to main content
         </a>
         <SmoothScrollProvider>
-          <Header />
-          <main id="main-content" tabIndex={-1} className="flex-grow outline-none">{children}</main>
-          <Footer />
-          {/* Soft blur at the bottom edge while there is more page to scroll; fades away at the end of the page */}
-          <GradualBlur
-            target="page"
-            position="bottom"
-            height="4rem"
-            strength={0.5}
-            layers={8}
-            autoHide
-            zIndex={30}
-            className="print:hidden"
-          />
+          <SiteSettingsProvider settings={settings}>
+            <Header settings={settings} />
+            <main id="main-content" tabIndex={-1} className="flex-grow outline-none">{children}</main>
+            <Footer settings={settings} />
+            <AnnouncementBar announcement={settings.announcement} />
+            {/* Soft blur at the bottom edge while there is more page to scroll; fades away at the end of the page */}
+            <GradualBlur
+              target="page"
+              position="bottom"
+              height="4rem"
+              strength={0.5}
+              layers={8}
+              autoHide
+              zIndex={30}
+              className="print:hidden"
+            />
+          </SiteSettingsProvider>
         </SmoothScrollProvider>
       </body>
     </html>

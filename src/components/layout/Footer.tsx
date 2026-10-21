@@ -5,11 +5,13 @@ import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { MapPin, Phone, Mail, ArrowRight, ExternalLink, CreditCard, UserPlus, Smartphone, GraduationCap } from 'lucide-react'
 import { m } from 'framer-motion'
-import { schoolInfo, navigation, quickLinks, onlineServices } from '@/data/school'
+import type { SiteSettings } from '@/lib/site-settings'
 import { ParallaxSection } from '@/components/animations'
-import { schoolEmail, telHref } from '@/lib/contact'
+import { telHref } from '@/lib/contact'
 
-export default function Footer() {
+export default function Footer({ settings }: { settings: SiteSettings }) {
+  const { identity, contact, navigation, onlineServices, footer, social } = settings
+  const schoolEmail = contact.emails[0]
   // Set after mount: the page is pre-rendered at build time, so a year baked into the HTML would go stale (and mismatch on hydration)
   const [currentYear, setCurrentYear] = useState<number | null>(null)
   useEffect(() => setCurrentYear(new Date().getFullYear()), [])
@@ -47,21 +49,39 @@ export default function Footer() {
             <div className="flex items-center gap-3 mb-5">
               <div className="w-12 h-12 relative">
                 <Image 
-                  src="/images/logo_batch.png" 
-                  alt="School Logo"
+                  src={identity.logo.src}
+                  alt={identity.logo.alt}
                   width={48}
                   height={48}
                   className="w-full h-full object-contain"
                 />
               </div>
               <div>
-                <h2 className="font-display text-lg font-semibold">{schoolInfo.name}</h2>
-                <p className="text-xs text-gray-300">Since {schoolInfo.established}</p>
+                <h2 className="font-display text-lg font-semibold">{identity.name}</h2>
+                <p className="text-xs text-gray-300">Since {identity.established}</p>
               </div>
             </div>
             <p className="text-gray-300 text-sm leading-relaxed">
-              {schoolInfo.tagline}. {schoolInfo.affiliation} affiliated school run by {schoolInfo.management}.
+              {footer.description}
             </p>
+            {social.length > 0 && (
+              <ul aria-label="Social media" className="mt-5 flex flex-wrap gap-2">
+                {social.map((s) => (
+                  <li key={s.url}>
+                    <a
+                      href={s.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-gray-200 hover:bg-white/15 hover:text-white transition-colors"
+                    >
+                      {s.platform}
+                      <ExternalLink aria-hidden size={11} className="opacity-70" />
+                      <span className="sr-only">(opens in a new tab)</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
           </m.div>
 
           {/* Quick Links */}
@@ -77,7 +97,7 @@ export default function Footer() {
               Quick Links
             </h2>
             <ul className="space-y-3">
-              {quickLinks.map((link, index) => {
+              {footer.quickLinks.map((link, index) => {
                 const key = link.href === '#' ? `ql-${index}` : link.href
                 return (
                   <li key={key}>
@@ -86,7 +106,7 @@ export default function Footer() {
                       className="text-gray-300 hover:text-white hover:translate-x-1 transition-all duration-200 flex items-center gap-2 text-sm group"
                     >
                       <ArrowRight size={14} className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all text-secondary-400" />
-                      {link.title}
+                      {link.text}
                     </Link>
                   </li>
                 )
@@ -167,9 +187,9 @@ export default function Footer() {
                   <MapPin size={18} className="text-secondary-400 group-hover:text-white transition-colors" />
                 </div>
                 <span className="text-gray-300 text-sm leading-relaxed pt-1 group-hover:text-white transition-colors">
-                  {schoolInfo.address.street}, {schoolInfo.address.tehsil}<br />
-                  Distt. {schoolInfo.address.district}, {schoolInfo.address.state}<br />
-                  {schoolInfo.address.pincode}
+                  {contact.address.street}, {contact.address.tehsil}<br />
+                  Distt. {contact.address.district}, {contact.address.state}<br />
+                  {contact.address.pincode}
                 </span>
               </li>
               <li className="flex items-center gap-3 group">
@@ -177,17 +197,19 @@ export default function Footer() {
                   <Phone size={18} className="text-secondary-400 group-hover:text-white transition-colors" />
                 </div>
                 <div className="text-gray-300 text-sm group-hover:text-white transition-colors">
-                  {schoolInfo.contact.phones.map(phone => (
+                  {contact.phones.map(phone => (
                     <a key={phone} href={telHref(phone)} className="block py-0.5 hover:underline">{phone}</a>
                   ))}
                 </div>
               </li>
-              <li className="flex items-center gap-3 group">
-                <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-primary-700 transition-colors">
-                  <Mail size={18} className="text-secondary-400 group-hover:text-white transition-colors" />
-                </div>
-                <a href={`mailto:${schoolEmail}`} className="text-gray-300 text-sm group-hover:text-white transition-colors hover:underline break-all">{schoolEmail}</a>
-              </li>
+              {schoolEmail && (
+                <li className="flex items-center gap-3 group">
+                  <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-primary-700 transition-colors">
+                    <Mail size={18} className="text-secondary-400 group-hover:text-white transition-colors" />
+                  </div>
+                  <a href={`mailto:${schoolEmail}`} className="text-gray-300 text-sm group-hover:text-white transition-colors hover:underline break-all">{schoolEmail}</a>
+                </li>
+              )}
             </ul>
           </m.div>
         </div>
@@ -228,7 +250,7 @@ export default function Footer() {
         <div className="container mx-auto px-4 py-5">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-400 text-sm">
-              Copyright ©{currentYear ? ` ${currentYear}` : ''} <span className="text-white font-medium">{schoolInfo.name}</span> - All Rights Reserved
+              Copyright ©{currentYear ? ` ${currentYear}` : ''} <span className="text-white font-medium">{identity.name}</span> - All Rights Reserved
             </p>
             <div className="flex gap-6">
               <Link href="/privacy" className="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</Link>

@@ -74,9 +74,9 @@ export const defaultSiteSettings: SiteSettings = {
   navigation: navigation.map((item) => ({
     text: item.text,
     href: item.href,
-    external: item.external,
+    external: Boolean(item.external),
     summary: SUMMARIES[item.href],
-    children: item.children?.map((c) => ({ text: c.text, href: c.href, external: c.external })),
+    children: item.children?.map((c) => ({ text: c.text, href: c.href, external: Boolean(c.external) })),
   })),
   header: { applyLabel: 'Apply now', applyHref: '/admission', mobileApplyLabel: 'Apply for admission' },
   footer: {

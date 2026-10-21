@@ -6,24 +6,12 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { Menu, X, ChevronDown, ExternalLink, Phone, Mail } from 'lucide-react'
 import { m, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { navigation, schoolInfo, onlineServices } from '@/data/school'
-import type { NavigationItem } from '@/types'
-
-// One-line summaries shown at the top of each desktop dropdown
-const sectionSummaries: Record<string, string> = {
-  '/about': `Our story since ${schoolInfo.established}, the people who run the school, and our alumni.`,
-  '/academics': 'Syllabus, homework, leave rules and the school calendar.',
-  '/admission': 'How to register, fees, uniform and school rules.',
-  '/achievements': 'Board exam toppers and achievements beyond the classroom.',
-}
+import type { NavChild, SiteSettings } from '@/lib/site-settings'
 
 const HIDE_AFTER = 120 // px scrolled before the bar may tuck away on scroll down
 const CLOSE_DELAY = 140 // ms grace period when the pointer leaves a dropdown
 const DESKTOP_QUERY = '(min-width: 1280px)' // keep in sync with the `xl:` classes below
 const EASE = [0.16, 1, 0.3, 1] as const
-
-const phone = schoolInfo.contact.phones[0]
-const email = schoolInfo.contact.emails[0]
 
 function isActive(pathname: string, href: string) {
   if (href === '/') return pathname === '/'
@@ -40,7 +28,7 @@ function ChildLink({
   className,
   onClick,
 }: {
-  item: NavigationItem
+  item: NavChild
   active: boolean
   className: string
   onClick?: () => void
@@ -61,7 +49,10 @@ function ChildLink({
   )
 }
 
-export default function Header() {
+export default function Header({ settings }: { settings: SiteSettings }) {
+  const { navigation, identity, contact, onlineServices, header } = settings
+  const phone = contact.phones[0]
+  const email = contact.emails[0]
   const pathname = usePathname() ?? '/'
   const reduceMotion = useReducedMotion()
 
@@ -118,7 +109,7 @@ export default function Header() {
     const current = navigation.find(item => item.children && isActive(pathname, item.href))
     setExpandedItem(current?.href ?? null)
     setIsMenuOpen(true)
-  }, [pathname])
+  }, [pathname, navigation])
 
   // Navigating anywhere closes every menu
   useEffect(() => {
@@ -229,7 +220,7 @@ export default function Header() {
           {/* School name */}
           <Link href="/" className="flex items-center gap-3 min-w-0 shrink-0">
             <Image
-              src="/images/logo_batch.png"
+              src={identity.logo.src}
               alt=""
               width={44}
               height={44}
@@ -238,10 +229,10 @@ export default function Header() {
             />
             <span className="flex flex-col min-w-0">
               <span className="font-heading text-[15px] sm:text-[17px] font-semibold leading-tight text-primary-900 whitespace-nowrap">
-                {schoolInfo.name}
+                {identity.name}
               </span>
               <span className="text-xs leading-tight text-gray-500 whitespace-nowrap mt-0.5">
-                {schoolInfo.address.tehsil}, {schoolInfo.address.district}
+                {contact.address.tehsil}, {contact.address.district}
               </span>
             </span>
           </Link>
@@ -329,9 +320,9 @@ export default function Header() {
                             className="block px-5 py-4 bg-primary-50/70 border-b border-primary-100 hover:bg-primary-50 transition-colors"
                           >
                             <span className="block font-heading text-base font-semibold text-primary-900">{item.text}</span>
-                            {sectionSummaries[item.href] && (
+                            {item.summary && (
                               <span className="block mt-0.5 text-sm leading-snug text-gray-600">
-                                {sectionSummaries[item.href]}
+                                {item.summary}
                               </span>
                             )}
                           </Link>
@@ -364,10 +355,10 @@ export default function Header() {
 
           <div className="flex items-center gap-2 shrink-0">
             <Link
-              href="/admission"
+              href={header.applyHref}
               className="hidden md:inline-flex items-center h-10 px-5 xl:px-4 2xl:px-5 rounded-full bg-primary-700 text-white text-[15px] font-semibold whitespace-nowrap hover:bg-primary-800 transition-colors"
             >
-              Apply now
+              {header.applyLabel}
             </Link>
 
             <button
@@ -475,11 +466,11 @@ export default function Header() {
               <div className="mt-auto pt-8">
                 <div className="border-t border-white/15 pt-6 space-y-3">
                   <Link
-                    href="/admission"
+                    href={header.applyHref}
                     onClick={closeMenu}
                     className="flex items-center justify-center h-12 rounded-full bg-secondary-400 text-primary-950 font-semibold hover:bg-secondary-300 transition-colors focus-visible:outline-secondary-300"
                   >
-                    Apply for admission
+                    {header.mobileApplyLabel}
                   </Link>
                   <div className="grid grid-cols-2 gap-3">
                     <a
@@ -521,7 +512,7 @@ export default function Header() {
                     )}
                   </div>
                   <p className="pt-2 text-center text-sm text-white/60">
-                    {schoolInfo.address.street}, {schoolInfo.address.tehsil}, {schoolInfo.address.district}
+                    {contact.address.street}, {contact.address.tehsil}, {contact.address.district}
                   </p>
                 </div>
               </div>
