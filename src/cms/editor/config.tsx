@@ -12,7 +12,7 @@ import { blockComponents } from '../blocks/components'
 import { blockDefinitions, defaultPropsFor } from '../blocks/definitions'
 import { CATEGORIES, type CategoryKey } from '../document/definition'
 import { commonFields } from './fields/helpers'
-import { generalFields } from './fields/general'
+import { fieldResolvers, generalFields } from './fields/general'
 import { homeFields } from './fields/home'
 import { pageFields } from './fields/pages'
 
@@ -47,6 +47,9 @@ export function createPuckConfig(settings: SiteSettings): Config {
       label: def.label,
       fields: { ...(FIELDS[def.type] ?? {}), ...slotFields, ...commonFields } as Fields,
       defaultProps: defaultPropsFor(def.type),
+      resolveFields: fieldResolvers[def.type]
+        ? (data: { props: Record<string, unknown> }, { fields }: { fields: Fields }) => fieldResolvers[def.type](data.props, fields)
+        : undefined,
       permissions: def.locked ? { delete: false } : undefined,
       render: (renderProps: Record<string, unknown>) => {
         // puck, editMode and id are Puck internals, not block props

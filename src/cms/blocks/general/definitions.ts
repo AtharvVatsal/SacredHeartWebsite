@@ -6,6 +6,7 @@ import { defineBlock } from '../../document/definition'
 import { bool, choice, href, image, list, longText, slot, text } from '../../document/fields'
 import { button, icon } from '../common'
 import { ICON_NAMES } from '../shared/icon-names'
+import { HERO_STYLES } from './hero-recipes'
 
 /** Approved section backgrounds, spacing and widths */
 export const BACKGROUNDS = ['white', 'light', 'mint', 'gold', 'green'] as const
@@ -38,8 +39,11 @@ export const PageHero = defineBlock({
     badge: text(60, 'Our School'),
     badgeIcon: icon('Sparkles'),
     title: text(120, 'Page title'),
+    /** Words shown in gold after the title */
+    highlight: text(80, ''),
     subtitle: text(300, 'A short line about this page'),
     back: button('', ''),
+    style: choice(HERO_STYLES, 'custom'),
     motif: z.enum(['none', ...ICON_NAMES]).default('GraduationCap'),
     motifSmall: z.enum(['none', ...ICON_NAMES]).default('BookOpen'),
     design: z

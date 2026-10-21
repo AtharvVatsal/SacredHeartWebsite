@@ -1,0 +1,42 @@
+// Colour fades the site uses for icon tiles, chips and card accents. Editors pick one by name; the value is
+// the pair of Tailwind classes, so only these approved fades can ever reach the page.
+export const GRADIENTS = {
+  'from-blue-500 to-indigo-600': 'Blue to indigo',
+  'from-blue-400 to-indigo-500': 'Light blue to indigo',
+  'from-blue-400 to-indigo-600': 'Light blue to deep indigo',
+  'from-blue-500 to-blue-700': 'Blue',
+  'from-sky-500 to-blue-600': 'Sky to blue',
+  'from-cyan-400 to-sky-500': 'Cyan to sky',
+  'from-cyan-400 to-blue-500': 'Cyan to blue',
+  'from-cyan-400 to-teal-500': 'Cyan to teal',
+  'from-cyan-500 to-blue-600': 'Deep cyan to blue',
+  'from-emerald-500 to-green-600': 'Emerald to green',
+  'from-emerald-400 to-green-500': 'Light emerald to green',
+  'from-emerald-500 to-teal-600': 'Emerald to teal',
+  'from-emerald-400 to-teal-500': 'Light emerald to teal',
+  'from-emerald-500 to-emerald-700': 'Emerald',
+  'from-green-400 to-emerald-500': 'Green to emerald',
+  'from-green-400 to-emerald-600': 'Green to deep emerald',
+  'from-green-500 to-emerald-600': 'Deep green to emerald',
+  'from-lime-400 to-green-500': 'Lime to green',
+  'from-primary-500 to-primary-700': 'School green',
+  'from-primary-600 to-primary-700': 'Deep school green',
+  'from-secondary-500 to-secondary-700': 'School gold',
+  'from-yellow-400 to-amber-500': 'Yellow to amber',
+  'from-amber-400 to-orange-500': 'Amber to orange',
+  'from-amber-500 to-orange-500': 'Deep amber to orange',
+  'from-amber-500 to-orange-600': 'Deep amber to deep orange',
+  'from-red-400 to-rose-500': 'Red to rose',
+  'from-rose-500 to-red-600': 'Rose to red',
+  'from-rose-500 to-pink-600': 'Rose to pink',
+  'from-pink-400 to-rose-500': 'Pink to rose',
+  'from-fuchsia-400 to-purple-500': 'Fuchsia to purple',
+  'from-purple-400 to-violet-500': 'Purple to violet',
+  'from-purple-500 to-violet-600': 'Deep purple to violet',
+  'from-purple-500 to-pink-600': 'Purple to pink',
+  'from-violet-400 to-purple-500': 'Violet to purple',
+  'from-violet-500 to-purple-600': 'Deep violet to purple',
+} as const
+
+export type GradientName = keyof typeof GRADIENTS
+export const GRADIENT_NAMES = Object.keys(GRADIENTS) as [GradientName, ...GradientName[]]

@@ -18,3 +18,26 @@ export const leavePage = page('/academics/leave-absence', 'Leave & Absence', [
   ['GuidelineCard'],
   ['CallBand'],
 ])
+
+export const syllabusPage = page('/academics/syllabus-homework', 'Syllabus & Homework', [
+  [
+    'PageHero',
+    {
+      style: 'syllabus',
+      back: { label: 'Back to Academics', href: '/academics' },
+      badge: 'Academics',
+      badgeIcon: 'Sparkles',
+      title: 'Syllabus &',
+      highlight: 'Homework',
+      subtitle: 'Curriculum details and study guidelines',
+      motif: 'BookOpen',
+      motifSmall: 'PenLine',
+    },
+  ],
+  ['CurriculumCard'],
+  ['SubjectGroups'],
+  ['StreamCards'],
+  ['HomeworkCard'],
+  ['TipsGrid'],
+  ['JoinCta'],
+])

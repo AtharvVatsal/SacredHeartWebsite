@@ -22,6 +22,7 @@ import StatsRow from './home/StatsRow'
 import { CallBand, GuidelineCard, NoticeStrip } from './pages/Academics'
 import { RuleCards } from './pages/Admission'
 import { PolicyIntro, PolicySections, SimpleCta } from './pages/Legal'
+import { CurriculumCard, HomeworkCard, JoinCta, StreamCards, SubjectGroups, TipsGrid } from './pages/Syllabus'
 
 // Each component takes its own block's validated props
 export const blockComponents: Record<string, ComponentType<any>> = {
@@ -60,4 +61,10 @@ export const blockComponents: Record<string, ComponentType<any>> = {
   NoticeStrip,
   GuidelineCard,
   CallBand,
+  CurriculumCard,
+  SubjectGroups,
+  StreamCards,
+  HomeworkCard,
+  TipsGrid,
+  JoinCta,
 }

@@ -6,6 +6,9 @@ const config: Config = {
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    // CMS sections and their content, so classes used only there are generated too
+    './src/cms/**/*.{ts,tsx}',
+    './src/content/**/*.ts',
   ],
   theme: {
     extend: {

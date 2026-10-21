@@ -2,7 +2,8 @@
 
 // Editor fields for the page-specific sections (see src/cms/blocks/pages)
 import type { Fields } from '@puckeditor/core'
-import { button, choose, iconChoice, list, paragraph, text } from './helpers'
+import { GRADIENTS } from '../../blocks/shared/gradients'
+import { button, choose, FORMAT_HINT, iconChoice, list, paragraph, text } from './helpers'
 
 const str = (v: unknown) => (typeof v === 'string' ? v : '')
 
@@ -72,4 +73,39 @@ Object.assign(pageFields, {
     items: list('Guidelines', { icon: iconChoice(), title: text('Title'), text: paragraph('Text') }, (i) => str(i.title), 30),
   },
   CallBand: { title: text('Title'), text: paragraph('Text (the button calls the first phone number in Site settings)') },
+} satisfies Record<string, Fields>)
+
+const gradientChoice = (label = 'Colour') => choose(label, Object.entries(GRADIENTS).map(([value, name]) => ({ label: name, value })))
+const textList = (label: string, max: number) => list(label, { text: text('Text') }, (i) => str(i.text), max)
+const centredHeading: Fields = {
+  pill: text('Small label above the title (optional)'),
+  pillIcon: iconChoice('Label icon'),
+  pillTone: choose('Label colour', [
+    { label: 'Blue', value: 'blue' },
+    { label: 'Purple', value: 'purple' },
+    { label: 'Green', value: 'green' },
+    { label: 'Amber', value: 'amber' },
+    { label: 'Gold', value: 'gold' },
+    { label: 'Gold (for dark backgrounds)', value: 'goldOnDark' },
+  ]),
+  title: text('Title'),
+  intro: text('Line under the title (optional)'),
+}
+
+Object.assign(pageFields, {
+  CurriculumCard: { icon: iconChoice('Header icon'), title: text('Title'), subtitle: text('Line under the title'), body: paragraph('Text', FORMAT_HINT) },
+  SubjectGroups: {
+    ...centredHeading,
+    groups: list('Groups', { category: text('Group name'), icon: iconChoice(), color: gradientChoice(), items: textList('Subjects', 20) }, (i) => str(i.category), 9),
+  },
+  StreamCards: {
+    ...centredHeading,
+    streams: list('Streams', { name: text('Name'), description: paragraph('Description'), color: gradientChoice(), subjects: textList('Subjects', 12) }, (i) => str(i.name), 9),
+  },
+  HomeworkCard: { icon: iconChoice(), title: text('Title'), text: paragraph('Text', FORMAT_HINT), note: text('Red note (optional)'), noteIcon: iconChoice('Note icon') },
+  TipsGrid: {
+    ...centredHeading,
+    tips: list('Tips', { icon: iconChoice(), title: text('Title'), text: paragraph('Text'), color: gradientChoice('Icon colour') }, (i) => str(i.title), 24),
+  },
+  JoinCta: { icon: iconChoice(), title: text('Title'), text: paragraph('Text'), button: button('Button') },
 } satisfies Record<string, Fields>)

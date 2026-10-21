@@ -2,6 +2,7 @@
 
 import type { Field, Fields } from '@puckeditor/core'
 import { ICONS } from '../../blocks/shared/icon-names'
+import { HERO_STYLE_LABELS, HERO_STYLES } from '../../blocks/general/hero-recipes'
 import { button, choose, FORMAT_HINT, iconChoice, imageField, link, list, paragraph, text, yesNo } from './helpers'
 
 const str = (v: unknown) => (typeof v === 'string' ? v : '')
@@ -71,12 +72,17 @@ const columns = (label = 'Cards per row on a computer') =>
 export const generalFields: Record<string, Fields> = {
   PageHero: {
     title: text('Page title'),
+    highlight: text('Words in gold after the title (optional)'),
     subtitle: paragraph('Line under the title'),
     badge: text('Small badge above the title (optional)'),
     badgeIcon: iconChoice('Badge icon'),
     back: button('“Back to” link (optional)'),
     motif: optionalIcon('Large faint picture (top right)'),
     motifSmall: optionalIcon('Small faint picture'),
+    style: choose(
+      'Banner style',
+      HERO_STYLES.map((value) => ({ label: HERO_STYLE_LABELS[value], value })),
+    ),
     design: {
       type: 'object',
       label: 'Design',
@@ -243,5 +249,14 @@ export const generalFields: Record<string, Fields> = {
     ]),
     line: yesNo('Show a thin line'),
     background: choose('Background', BACKGROUNDS),
+  },
+}
+
+/** Fields that depend on other choices: the banner's design options only apply to the Custom style */
+export const fieldResolvers: Record<string, (props: Record<string, unknown>, fields: Fields) => Fields> = {
+  PageHero: (props, fields) => {
+    if (props.style === 'custom' || props.style === undefined) return fields
+    const { design: _design, ...rest } = fields
+    return rest
   },
 }
