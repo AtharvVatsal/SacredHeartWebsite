@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { Bell, Download, ExternalLink, Calendar, AlertCircle, FileText } from 'lucide-react'
 import { notifications as defaultNotifications } from '@/data/school'
 import { useNotifications } from '@/lib/useCMS'
@@ -230,12 +231,12 @@ export default function NotificationsPage() {
             viewport={{ once: true }}
             transition={{ delay: 0.4 }}
           >
-            <a
+            <Link
               href="/contact"
               className="inline-flex items-center gap-2 bg-secondary-400 text-primary-900 px-8 py-4 rounded-full font-semibold hover:bg-secondary-300 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
             >
               Contact Us
-            </a>
+            </Link>
           </m.div>
         </div>
       </section>
