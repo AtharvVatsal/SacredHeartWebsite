@@ -208,26 +208,37 @@ export function TipsGrid({ tips, pill, pillIcon, pillTone, title, intro }: Block
   )
 }
 
-export function JoinCta({ icon, title, text, button }: BlockProps<typeof JoinDef>) {
-  return (
-    <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
-      <div className="container mx-auto px-4 text-center">
-        <div className="max-w-2xl mx-auto">
-          <div className="w-20 h-20 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <Icon name={icon} className="w-10 h-10 text-primary-600" />
-          </div>
-          <h2 className="text-2xl md:text-3xl font-display font-bold text-primary-900 mb-4">{title}</h2>
-          {text && <p className="text-gray-600 mb-8">{text}</p>}
-          {button.label && button.href && (
-            <SmartLink
-              href={button.href}
-              className="inline-flex items-center gap-2 bg-primary-700 text-white px-8 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:bg-primary-800 transition-all"
-            >
-              {button.label}
-            </SmartLink>
-          )}
-        </div>
+export function JoinCta({ icon, title, text, button, buttonIcon, width, spacing }: BlockProps<typeof JoinDef>) {
+  const wide = width === 'wide'
+  const content = (
+    <>
+      <div className="w-20 h-20 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+        <Icon name={icon} className="w-10 h-10 text-primary-600" />
       </div>
+      <h2 className="text-2xl md:text-3xl font-display font-bold text-primary-900 mb-4">{title}</h2>
+      {text && <p className={wide ? 'text-gray-600 mb-8 max-w-2xl mx-auto' : 'text-gray-600 mb-8'}>{text}</p>}
+      {button.label && button.href && (
+        <SmartLink
+          href={button.href}
+          className="inline-flex items-center gap-2 bg-primary-700 text-white px-8 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:bg-primary-800 transition-all"
+        >
+          {buttonIcon !== 'none' && <Icon name={buttonIcon} className="w-5 h-5" />}
+          {button.label}
+        </SmartLink>
+      )}
+    </>
+  )
+  return (
+    <section className={`${spacing === 'compact' ? 'py-16' : 'py-20'} bg-gradient-to-b from-gray-50 to-white`}>
+      {wide ? (
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center">{content}</div>
+        </div>
+      ) : (
+        <div className="container mx-auto px-4 text-center">
+          <div className="max-w-2xl mx-auto">{content}</div>
+        </div>
+      )}
     </section>
   )
 }

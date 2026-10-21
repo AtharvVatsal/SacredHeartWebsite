@@ -3,10 +3,10 @@ import { z } from 'zod'
 import { defineBlock } from '../../document/definition'
 import { choice, list, longText, text } from '../../document/fields'
 import { button, icon } from '../common'
-import { GRADIENT_NAMES } from '../shared/gradients'
+import { gradient } from '../shared/gradients'
+import { ICON_NAMES } from '../shared/icon-names'
 import { curriculumText, leaveGuidelines, streams, studyTips, subjectGroups } from '@/content/academics'
 
-const gradient = (fallback: (typeof GRADIENT_NAMES)[number]) => z.enum(GRADIENT_NAMES).default(fallback)
 const lines = (max: number, fallback: { text: string }[] = []) => list(z.object({ text: text(120) }), max, fallback)
 
 /** Pill above a centred section title */
@@ -111,6 +111,9 @@ export const JoinCta = defineBlock({
     title: text(120, 'Ready to Join Us?'),
     text: text(400, 'Discover the Sacred Heart experience and begin your journey to excellence.'),
     button: button('Apply for Admission', '/admission'),
+    buttonIcon: z.enum(['none', ...ICON_NAMES]).default('none'),
+    width: choice(['normal', 'wide'] as const, 'normal'),
+    spacing: choice(['normal', 'compact'] as const, 'normal'),
   }),
 })
 

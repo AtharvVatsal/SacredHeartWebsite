@@ -1,10 +1,13 @@
 // Sections of the Admission pages
 import { z } from 'zod'
 import { defineBlock } from '../../document/definition'
-import { choice, list, longText, text } from '../../document/fields'
+import { choice, int, list, longText, text } from '../../document/fields'
 import { ruleCards, rulesClosing } from '@/content/rules'
 import { dressCards, whereToBuy } from '@/content/uniform'
-import { icon } from '../common'
+import { button, icon } from '../common'
+import { gradient } from '../shared/gradients'
+import { feeClasses, feeGuidelines, payOnline, securityInfo } from '@/content/fee-page'
+import { admissionFee, feeSession } from '@/data/fees'
 
 const line = z.object({ text: text(800) })
 const lines = (items: string[]) => items.map((t) => ({ text: t }))
@@ -66,4 +69,66 @@ export const DressCard = defineBlock({
   }),
 })
 
-export const admissionBlocks = [RuleCards, GoldInfoCard, DressCard]
+const amount = () => int(0, 10_000_000, 0)
+
+export const FeeTable = defineBlock({
+  type: 'FeeTable',
+  label: 'Fee structure (class-wise, by quarter)',
+  category: 'admission',
+  schema: z.object({
+    session: text(20, feeSession),
+    admissionFee: int(0, 10_000_000, admissionFee),
+    title: text(120, 'Class-wise Fee Structure'),
+    intro: text(400, 'Choose a class to see what is payable each quarter. Fees are paid quarter by quarter, online or at PNB Sidhpur.'),
+    otherClassesNote: text(400, 'Fees for Classes IX, X and XII are not published on the website. Please contact the school office for them.'),
+    classes: list(
+      z.object({
+        label: text(40),
+        categories: list(
+          z.object({
+            name: text(80),
+            quarters: list(z.object({ rows: list(z.object({ item: text(120), period: text(80), amount: amount() }), 30) }), 8),
+          }),
+          6,
+        ),
+      }),
+      20,
+      feeClasses,
+    ),
+    payTitle: text(120, payOnline.title),
+    payText: text(400, payOnline.text),
+    payButton: button(payOnline.button.label, payOnline.button.href),
+  }),
+})
+
+export const FeeGuidelines = defineBlock({
+  type: 'FeeGuidelines',
+  label: 'Fee guidelines (cards, notice, refund terms)',
+  category: 'admission',
+  schema: z.object({
+    title: text(140, 'Fee Payment Guidelines'),
+    intro: text(300, 'Essential information for parents and guardians'),
+    cards: list(z.object({ icon: icon('Calendar'), title: text(120), text: text(600), color: gradient('from-blue-500 to-indigo-600') }), 6, feeGuidelines),
+    noticeTitle: text(120, 'Early Payment Discount'),
+    noticeText: longText(800, 'If desired, fees for the whole year may be deposited in **February** each year to avail early payment benefits.'),
+    listTitle: text(120, 'Security Amount Refund'),
+    listSubtitle: text(160, 'Terms and conditions apply'),
+    listIcon: icon('ShieldCheck'),
+    listItems: list(z.object({ icon: icon('CheckCircle'), text: text(400) }), 12, securityInfo),
+  }),
+})
+
+export const WarningCard = defineBlock({
+  type: 'WarningCard',
+  label: 'Red warning card',
+  category: 'admission',
+  schema: z.object({
+    icon: icon('AlertCircle'),
+    title: text(120, 'Examination Rules'),
+    subtitle: text(160, 'Important notice for students and parents'),
+    itemIcon: icon('Clock'),
+    text: longText(1000, 'Students who have not paid the tuition fee and other dues before the examination will **NOT be allowed to sit for the final examinations**.'),
+  }),
+})
+
+export const admissionBlocks = [RuleCards, GoldInfoCard, DressCard, FeeTable, FeeGuidelines, WarningCard]

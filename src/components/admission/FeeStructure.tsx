@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Info, Receipt } from 'lucide-react'
-import { classFees, feeSession, admissionFee, formatRupees, type FeeQuarter } from '@/data/fees'
+import { classFees, feeSession, admissionFee, formatRupees, type ClassFees, type FeeQuarter } from '@/data/fees'
 
 // The quarter's span is the longest period among its rows ("February 2026 to March 2026" rather than "February 2026")
 const quarterPeriod = (q: FeeQuarter) => q.rows.reduce((p, r) => (r.period.length > p.length ? r.period : p), '')
@@ -44,11 +44,29 @@ function QuarterCard({ quarter, index }: { quarter: FeeQuarter; index: number })
   )
 }
 
-export default function FeeStructure() {
-  const [classId, setClassId] = useState(classFees[0].id)
+interface FeeStructureProps {
+  /** The fees to show; the published fee list by default (the CMS passes the edited one) */
+  classes?: ClassFees[]
+  session?: string
+  admission?: number
+  title?: string
+  intro?: string
+  otherClassesNote?: string
+}
+
+export default function FeeStructure({
+  classes = classFees,
+  session = feeSession,
+  admission = admissionFee,
+  title = 'Class-wise Fee Structure',
+  intro = 'Choose a class to see what is payable each quarter. Fees are paid quarter by quarter, online or at PNB Sidhpur.',
+  otherClassesNote = 'Fees for Classes IX, X and XII are not published on the website. Please contact the school office for them.',
+}: FeeStructureProps = {}) {
+  const [classId, setClassId] = useState(classes[0]?.id)
   const [categoryIndex, setCategoryIndex] = useState(0)
-  const current = classFees.find(c => c.id === classId) ?? classFees[0]
-  const category = current.categories[Math.min(categoryIndex, current.categories.length - 1)]
+  const current = classes.find(c => c.id === classId) ?? classes[0]
+  const category = current?.categories[Math.min(categoryIndex, current.categories.length - 1)]
+  if (!current || !category) return null
   const yearTotal = category.quarters.reduce((t, q) => t + q.total, 0)
 
   const chip = (active: boolean) =>
@@ -59,13 +77,13 @@ export default function FeeStructure() {
   return (
     <div>
       <div className="text-center mb-10">
-        <h2 className="text-sm font-semibold text-secondary-800 tracking-wider uppercase mb-3">Session {feeSession.replace('-', '–')}</h2>
-        <h3 className="text-3xl md:text-4xl font-display font-bold text-primary-900 mb-4">Class-wise Fee Structure</h3>
-        <p className="text-gray-600 max-w-2xl mx-auto">Choose a class to see what is payable each quarter. Fees are paid quarter by quarter, online or at PNB Sidhpur.</p>
+        <h2 className="text-sm font-semibold text-secondary-800 tracking-wider uppercase mb-3">Session {session.replace('-', '–')}</h2>
+        <h3 className="text-3xl md:text-4xl font-display font-bold text-primary-900 mb-4">{title}</h3>
+        <p className="text-gray-600 max-w-2xl mx-auto">{intro}</p>
       </div>
 
       <div className="flex flex-wrap justify-center gap-2 mb-6" role="group" aria-label="Choose a class">
-        {classFees.map(c => (
+        {classes.map(c => (
           <button
             key={c.id}
             type="button"
@@ -110,13 +128,13 @@ export default function FeeStructure() {
         <div className="flex items-start gap-3 rounded-2xl border border-secondary-200 bg-secondary-50 p-5">
           <Info aria-hidden className="w-5 h-5 text-secondary-700 shrink-0 mt-0.5" />
           <p className="text-sm text-gray-800 leading-relaxed">
-            The <strong>Admission Fee of {formatRupees(admissionFee)}</strong> is paid only once, at the time of admission, whether a student joins LKG or any class from UKG to XI. It and other one-time admission charges are not charged again on promotion to the next class.
+            The <strong>Admission Fee of {formatRupees(admission)}</strong> is paid only once, at the time of admission, whether a student joins LKG or any class from UKG to XI. It and other one-time admission charges are not charged again on promotion to the next class.
           </p>
         </div>
         <div className="flex items-start gap-3 rounded-2xl border border-gray-200 bg-white p-5">
           <Info aria-hidden className="w-5 h-5 text-primary-700 shrink-0 mt-0.5" />
           <p className="text-sm text-gray-700 leading-relaxed">
-            Fees for Classes IX, X and XII are not published on the website. Please contact the school office for them.
+            {otherClassesNote}
           </p>
         </div>
       </div>

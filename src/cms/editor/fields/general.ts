@@ -3,7 +3,7 @@
 import type { Field, Fields } from '@puckeditor/core'
 import { ICONS } from '../../blocks/shared/icon-names'
 import { HERO_STYLE_LABELS, HERO_STYLES } from '../../blocks/general/hero-recipes'
-import { button, choose, FORMAT_HINT, iconChoice, imageField, link, list, paragraph, text, yesNo } from './helpers'
+import { button, choose, FORMAT_HINT, iconChoice, imageField, link, list, optionalIcon, paragraph, text, yesNo } from './helpers'
 
 const str = (v: unknown) => (typeof v === 'string' ? v : '')
 
@@ -46,12 +46,6 @@ const sectionHeading = (label = 'Heading'): Field => ({
     intro: paragraph('Introduction (optional)'),
     divider: yesNo('Gold line under the title'),
   },
-})
-
-const optionalIcon = (label: string): Field => ({
-  type: 'select',
-  label,
-  options: [{ label: 'No icon', value: 'none' }, ...Object.entries(ICONS).map(([value, name]) => ({ label: name, value }))],
 })
 
 const cardStyle = (label = 'Card look') =>

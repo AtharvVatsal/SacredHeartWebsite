@@ -35,3 +35,34 @@ export const uniformPage = page('/admission/uniform', 'School Uniform', [
   ['GoldInfoCard'],
   ...dressCards.map((card): [string, Record<string, unknown>] => ['DressCard', { ...card }]),
 ])
+
+export const feePage = page('/admission/fee-structure', 'School Fee', [
+  [
+    'PageHero',
+    {
+      style: 'financial',
+      back: { label: 'Back to Admission', href: '/admission' },
+      badge: 'Financials',
+      badgeIcon: 'Sparkles',
+      title: 'School Fee',
+      subtitle: 'Fee structure and payment information',
+      motif: 'Wallet',
+      motifSmall: 'Receipt',
+    },
+  ],
+  ['FeeTable'],
+  ['FeeGuidelines'],
+  ['WarningCard'],
+  [
+    'JoinCta',
+    {
+      icon: 'Banknote',
+      title: 'Need More Information?',
+      text: 'For the fees of Classes IX, X and XII, or any question about your dues, please contact the school office.',
+      button: { label: 'Contact School', href: '/contact' },
+      buttonIcon: 'Building',
+      width: 'wide',
+      spacing: 'compact',
+    },
+  ],
+])

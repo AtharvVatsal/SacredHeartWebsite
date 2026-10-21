@@ -1,3 +1,5 @@
+import { z } from 'zod'
+
 // Colour fades the site uses for icon tiles, chips and card accents. Editors pick one by name; the value is
 // the pair of Tailwind classes, so only these approved fades can ever reach the page.
 export const GRADIENTS = {
@@ -40,3 +42,6 @@ export const GRADIENTS = {
 
 export type GradientName = keyof typeof GRADIENTS
 export const GRADIENT_NAMES = Object.keys(GRADIENTS) as [GradientName, ...GradientName[]]
+
+/** Schema for a colour fade choice */
+export const gradient = (fallback: GradientName) => z.enum(GRADIENT_NAMES).default(fallback)

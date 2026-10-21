@@ -1,9 +1,9 @@
 'use client'
 
 // Editor fields for the page-specific sections (see src/cms/blocks/pages)
-import type { Fields } from '@puckeditor/core'
+import type { Field, Fields } from '@puckeditor/core'
 import { GRADIENTS } from '../../blocks/shared/gradients'
-import { button, choose, FORMAT_HINT, iconChoice, list, paragraph, text, yesNo } from './helpers'
+import { button, choose, FORMAT_HINT, iconChoice, list, optionalIcon, paragraph, text, yesNo } from './helpers'
 
 const str = (v: unknown) => (typeof v === 'string' ? v : '')
 
@@ -107,7 +107,21 @@ Object.assign(pageFields, {
     ...centredHeading,
     tips: list('Tips', { icon: iconChoice(), title: text('Title'), text: paragraph('Text'), color: gradientChoice('Icon colour') }, (i) => str(i.title), 24),
   },
-  JoinCta: { icon: iconChoice(), title: text('Title'), text: paragraph('Text'), button: button('Button') },
+  JoinCta: {
+    icon: iconChoice(),
+    title: text('Title'),
+    text: paragraph('Text'),
+    button: button('Button'),
+    buttonIcon: optionalIcon('Icon in the button'),
+    width: choose('Width', [
+      { label: 'Normal', value: 'normal' },
+      { label: 'Wider', value: 'wide' },
+    ]),
+    spacing: choose('Space above and below', [
+      { label: 'Normal', value: 'normal' },
+      { label: 'A little less', value: 'compact' },
+    ]),
+  },
 } satisfies Record<string, Fields>)
 
 Object.assign(pageFields, {
@@ -146,5 +160,60 @@ Object.assign(pageFields, {
       6,
     ),
     note: paragraph('Blue note under the lists (optional)', FORMAT_HINT),
+  },
+} satisfies Record<string, Fields>)
+
+const numberField = (label: string): Field => ({ type: 'number', label, min: 0 })
+
+Object.assign(pageFields, {
+  FeeTable: {
+    session: text('Session (e.g. 2026-27)'),
+    admissionFee: numberField('One-time admission fee (₹)'),
+    title: text('Title'),
+    intro: paragraph('Introduction'),
+    classes: list(
+      'Classes',
+      {
+        label: text('Class (e.g. LKG, I, XI)'),
+        categories: list(
+          'Categories (e.g. New admission, Old students)',
+          {
+            name: text('Category name'),
+            quarters: list(
+              'Quarters',
+              { rows: list('Fee heads', { item: text('Fee head'), period: text('Period (e.g. April 2026 to June 2026)'), amount: numberField('Amount (₹)') }, (i) => str(i.item), 30) },
+              (_i, n) => `Quarter ${(n ?? 0) + 1}`,
+              8,
+            ),
+          },
+          (i) => str(i.name),
+          6,
+        ),
+      },
+      (i) => (i.label ? `Class ${str(i.label)}` : ''),
+      20,
+    ),
+    otherClassesNote: paragraph('Note about classes not listed'),
+    payTitle: text('“Pay online” box title (leave empty to hide the box)'),
+    payText: paragraph('“Pay online” box text'),
+    payButton: button('“Pay online” box button'),
+  },
+  FeeGuidelines: {
+    title: text('Title'),
+    intro: text('Line under the title'),
+    cards: list('Cards', { icon: iconChoice(), title: text('Title'), text: paragraph('Text'), color: gradientChoice() }, (i) => str(i.title), 6),
+    noticeTitle: text('Yellow notice title (leave empty to hide)'),
+    noticeText: paragraph('Yellow notice text', FORMAT_HINT),
+    listTitle: text('List box title (leave empty to hide)'),
+    listSubtitle: text('List box subtitle'),
+    listIcon: iconChoice('List box icon'),
+    listItems: list('List items', { icon: iconChoice(), text: text('Text') }, (i) => str(i.text), 12),
+  },
+  WarningCard: {
+    icon: iconChoice('Header icon'),
+    title: text('Title'),
+    subtitle: text('Line under the title'),
+    itemIcon: iconChoice('Icon beside the text'),
+    text: paragraph('Text (**bold** shows in red)', FORMAT_HINT),
   },
 } satisfies Record<string, Fields>)

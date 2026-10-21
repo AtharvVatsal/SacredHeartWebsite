@@ -31,6 +31,12 @@ export const iconChoice = (label = 'Icon'): Field => ({
   options: Object.entries(ICONS).map(([value, name]) => ({ label: name, value })),
 })
 
+export const optionalIcon = (label: string): Field => ({
+  type: 'select',
+  label,
+  options: [{ label: 'No icon', value: 'none' }, ...Object.entries(ICONS).map(([value, name]) => ({ label: name, value }))],
+})
+
 export const imageField = (label = 'Image'): Field => ({ type: 'custom', label, render: ImagePickerField })
 
 export const button = (label: string): Field => ({
