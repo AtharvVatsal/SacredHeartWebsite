@@ -19,6 +19,7 @@ import { homePage, homeSeo } from './pages/home'
 import { legalSeo, privacyPage, termsPage } from './pages/legal'
 import { onlineFeePage, onlineRegistrationPage } from './pages/online'
 import { aimsPage, historyPage, messagesPage, officeBearersPage, principalPage } from './pages/about'
+import { achievementsPage, toppers10Page, toppers12Page } from './pages/achievements'
 
 const SEEDS: { seed: SeedPage; seo?: { title?: string; description?: string } }[] = [
   { seed: homePage, seo: homeSeo },
@@ -34,6 +35,9 @@ const SEEDS: { seed: SeedPage; seo?: { title?: string; description?: string } }[
   { seed: principalPage },
   { seed: messagesPage },
   { seed: officeBearersPage },
+  { seed: toppers10Page },
+  { seed: toppers12Page },
+  { seed: achievementsPage },
   { seed: leavePage },
   { seed: syllabusPage },
 ]

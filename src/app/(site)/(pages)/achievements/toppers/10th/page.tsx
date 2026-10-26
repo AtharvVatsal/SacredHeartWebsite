@@ -1,14 +1,7 @@
-'use client'
+import { BuiltInPage } from '@/cms/render/builtin'
+import Class10ToppersPage from './legacy-page'
 
-import ToppersPage from '@/components/achievements/ToppersPage'
-import { class10Sessions } from '@/data/toppers'
-
-export default function Class10ToppersPage() {
-  return (
-    <ToppersPage
-      classLabel="Class 10"
-      sessions={class10Sessions}
-      otherClass={{ label: 'Class 12', href: '/achievements/toppers/12th' }}
-    />
-  )
+// The CMS version of this page once it is published there; until then the original in legacy-page.tsx
+export default function Page() {
+  return <BuiltInPage path="/achievements/toppers/10th" legacy={<Class10ToppersPage />} />
 }

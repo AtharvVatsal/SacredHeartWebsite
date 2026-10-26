@@ -9,6 +9,7 @@ import { migrateDocument } from '@/cms/document/migrations'
 import type { PageDocument } from '@/cms/document/types'
 import { validateDocument } from '@/cms/document/validate'
 import { EditorShell } from '@/cms/editor/EditorShell'
+import { loadLinkedData } from '@/cms/render/linked-data'
 import { getSiteSettings } from '@/cms/render/settings'
 import { fontVariables } from '@/lib/fonts'
 
@@ -43,6 +44,7 @@ export default async function EditorPage({ params }: { params: Promise<{ id: str
       initialData={document as unknown as Data}
       initialIssues={issues}
       settings={await getSiteSettings()}
+      linked={await loadLinkedData(payload, document, user)}
       fontClassName={fontVariables}
     />
   )

@@ -8,6 +8,8 @@ import { migrateDocument } from '../document/migrations'
 import type { BlockIssue, PageDocument } from '../document/types'
 import { validateDocument } from '../document/validate'
 import { getPayloadSafe } from './payload'
+import type { LinkedData } from '../blocks/shared/linked'
+import { loadLinkedData } from './linked-data'
 import { resolveMedia } from './resolve-media'
 
 export interface LoadedPage {
@@ -15,6 +17,8 @@ export interface LoadedPage {
   document: PageDocument
   issues: BlockIssue[]
   preview: boolean
+  /** Content this page shows from other pages */
+  linked: LinkedData
 }
 
 /** Is the current request an authenticated preview? Only then are drafts read. */
@@ -53,7 +57,7 @@ export const loadCmsPage = cache(async (path: string, opts: { allowEmpty?: boole
     const { document, issues } = validateDocument(migrated, blockRegistry, 'repair')
     if (!document.content.length && !opts.allowEmpty) return null
     if (issues.length) console.warn(`[cms] ${path}: ${issues.length} section problem(s) skipped or repaired`)
-    return { page, document: await resolveMedia(payload, document), issues, preview: Boolean(user) }
+    return { page, document: await resolveMedia(payload, document), issues, preview: Boolean(user), linked: await loadLinkedData(payload, document, user) }
   } catch (error) {
     console.warn(`[cms] Could not load ${path}, using the built-in page: ${(error as Error).message}`)
     return null

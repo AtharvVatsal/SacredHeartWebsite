@@ -38,6 +38,7 @@ import {
 } from './pages/About'
 import { LeaderMessages } from './pages/Leaders'
 import { OfficeBearersList } from './pages/OfficeBearers'
+import { NotableAchievements, TopperCta, TopperHero, TopperHighlights, ToppersList } from './pages/Achievements'
 import { DressCard, GoldInfoCard } from './pages/Uniform'
 import { PolicyIntro, PolicySections, SimpleCta } from './pages/Legal'
 import { CurriculumCard, HomeworkCard, JoinCta, StreamCards, SubjectGroups, TipsGrid } from './pages/Syllabus'
@@ -108,4 +109,9 @@ export const blockComponents: Record<string, ComponentType<any>> = {
   HighlightBand,
   LeaderMessages,
   OfficeBearersList,
+  NotableAchievements,
+  TopperHighlights,
+  TopperHero,
+  ToppersList,
+  TopperCta,
 }

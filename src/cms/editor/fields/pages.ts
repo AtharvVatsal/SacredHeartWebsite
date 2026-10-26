@@ -440,3 +440,62 @@ Object.assign(pageFields, {
     messagesHref: text('Address of the messages page (the "Read Message" buttons, current session only)'),
   },
 } satisfies Record<string, Fields>)
+
+Object.assign(pageFields, {
+  NotableAchievements: {
+    title: text('Title'),
+    items: list(
+      'Achievements',
+      {
+        title: text('Title'),
+        year: text('Year'),
+        category: choose('Kind', [
+          { label: 'Academic', value: 'academic' },
+          { label: 'Sports', value: 'sports' },
+          { label: 'Cultural', value: 'cultural' },
+          { label: 'Other', value: 'other' },
+        ]),
+        text: paragraph('Text'),
+        studentName: text('Student (optional)'),
+      },
+      (i) => str(i.title),
+      30,
+    ),
+  },
+  TopperHighlights: {
+    columns: list(
+      'Columns',
+      {
+        classLabel: text('Class (e.g. Class 10)'),
+        source: choose('Toppers from', [
+          { label: 'The Class 10 toppers page', value: '/achievements/toppers/10th' },
+          { label: 'The Class 12 toppers page', value: '/achievements/toppers/12th' },
+        ]),
+        href: text('“View all” link address'),
+      },
+      (i) => str(i.classLabel),
+      2,
+    ),
+  },
+  TopperHero: { title: text('Title'), badge: text('Small badge above the title'), subtitle: paragraph('Line under the title'), link: button('Button') },
+  ToppersList: {
+    classLabel: text('Class (e.g. Class 10)'),
+    title: text('Title'),
+    intro: text('Line under the title'),
+    sessions: list(
+      'Sessions (newest first; the first one is shown when the page opens)',
+      {
+        year: text('Session (e.g. 2025-26)'),
+        toppers: list(
+          'Toppers (ranked automatically by percentage)',
+          { name: text('Name'), percentage: { type: 'number', label: 'Percentage', min: 0, max: 100 }, photo: imageField('Photo (optional)') },
+          (i) => [str(i.name), typeof i.percentage === 'number' ? `${i.percentage}%` : ''].filter(Boolean).join(' · '),
+          60,
+        ),
+      },
+      (i) => (i.year ? `Session ${str(i.year)}` : ''),
+      30,
+    ),
+  },
+  TopperCta: { title: text('Title'), text: paragraph('Text'), button: button('Button') },
+} satisfies Record<string, Fields>)

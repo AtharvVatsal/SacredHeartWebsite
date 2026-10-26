@@ -6,6 +6,7 @@ import { Puck, type Data } from '@puckeditor/core'
 import '@puckeditor/core/puck.css'
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { SiteSettings } from '@/lib/site-settings'
+import type { LinkedData } from '../blocks/shared/linked'
 import type { BlockIssue } from '../document/types'
 import { publishAction, saveDraftAction, type SaveResult } from './actions'
 import { SectionActionBar } from './ActionBar'
@@ -28,6 +29,7 @@ interface Props {
   initialData: Data
   initialIssues: BlockIssue[]
   settings: SiteSettings
+  linked: LinkedData
   fontClassName: string
 }
 
@@ -136,8 +138,8 @@ function NoticeBar({ notice, onClose }: { notice: Notice | null; onClose: () => 
   )
 }
 
-export function EditorShell({ page, role, initialData, initialIssues, settings, fontClassName }: Props) {
-  const config = useMemo(() => createPuckConfig(settings), [settings])
+export function EditorShell({ page, role, initialData, initialIssues, settings, linked, fontClassName }: Props) {
+  const config = useMemo(() => createPuckConfig(settings, linked), [settings, linked])
   const [data, setData] = useState<Data>(initialData)
   const savedJson = useRef(JSON.stringify(initialData))
   const [dirty, setDirty] = useState(false)

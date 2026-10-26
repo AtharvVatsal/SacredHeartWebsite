@@ -1,3 +1,4 @@
+import { LinkedDataProvider } from '../blocks/shared/LinkedData'
 import type { LoadedPage } from './page'
 import { RenderBlocks } from './RenderBlocks'
 
@@ -5,7 +6,9 @@ import { RenderBlocks } from './RenderBlocks'
 export function CmsPage({ loaded }: { loaded: LoadedPage }) {
   return (
     <>
-      <RenderBlocks blocks={loaded.document.content} preview={loaded.preview} />
+      <LinkedDataProvider value={loaded.linked}>
+        <RenderBlocks blocks={loaded.document.content} preview={loaded.preview} />
+      </LinkedDataProvider>
       {loaded.preview && (
         <div role="status" data-cms-preview-banner className="fixed left-3 bottom-3 z-[60] max-w-sm rounded-2xl bg-gray-900/95 px-4 py-3 text-sm text-white shadow-2xl print:hidden">
           <p className="font-semibold">Preview: you are seeing the latest saved draft</p>

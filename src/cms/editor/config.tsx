@@ -7,6 +7,8 @@ import type { ReactNode } from 'react'
 import SmoothScrollProvider from '@/components/layout/SmoothScrollProvider'
 import { RevealAllContext } from '@/components/animations/RevealContext'
 import { SiteSettingsProvider } from '@/components/providers/SiteSettingsProvider'
+import type { LinkedData } from '../blocks/shared/linked'
+import { LinkedDataProvider } from '../blocks/shared/LinkedData'
 import type { SiteSettings } from '@/lib/site-settings'
 import { blockComponents } from '../blocks/components'
 import { blockDefinitions, defaultPropsFor } from '../blocks/definitions'
@@ -34,7 +36,7 @@ function EditorBlockFrame({ hidden, hideOn, label, children }: { hidden?: boolea
   )
 }
 
-export function createPuckConfig(settings: SiteSettings): Config {
+export function createPuckConfig(settings: SiteSettings, linked?: LinkedData): Config {
   const components: Record<string, ComponentConfig> = {}
 
   for (const def of blockDefinitions) {
@@ -83,7 +85,9 @@ export function createPuckConfig(settings: SiteSettings): Config {
           {/* Show every section straight away: scroll-triggered reveals do not fire reliably in the canvas iframe */}
           <RevealAllContext.Provider value>
             <SiteSettingsProvider settings={settings}>
-              <main className="flex-grow outline-none">{children}</main>
+              <LinkedDataProvider value={linked}>
+                <main className="flex-grow outline-none">{children}</main>
+              </LinkedDataProvider>
             </SiteSettingsProvider>
           </RevealAllContext.Provider>
         </SmoothScrollProvider>

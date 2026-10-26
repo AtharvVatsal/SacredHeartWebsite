@@ -74,9 +74,10 @@ function TopperRow({ topper }: { topper: RankedTopper }) {
   )
 }
 
-function SessionSection({ classLabel, sessions }: { classLabel: string; sessions: TopperSession[] }) {
+function SessionSection({ classLabel, sessions, title, intro }: { classLabel: string; sessions: TopperSession[]; title: string; intro: string }) {
   const [activeSession, setActiveSession] = useState(0)
-  const session = sessions[activeSession]
+  const session = sessions[Math.min(activeSession, sessions.length - 1)]
+  if (!session) return null
 
   return (
     <div className="mb-20">
@@ -85,8 +86,8 @@ function SessionSection({ classLabel, sessions }: { classLabel: string; sessions
           <div className="inline-flex items-center gap-2 bg-primary-50 text-primary-800 px-4 py-1.5 rounded-full text-sm font-medium mb-4 border border-primary-100">
             <BookOpen aria-hidden size={14} />{classLabel}
           </div>
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-900 mb-4">Board Examination Results</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">Celebrating academic excellence of our {classLabel} students</p>
+          <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-900 mb-4">{title}</h2>
+          {intro && <p className="text-gray-600 max-w-2xl mx-auto">{intro}</p>}
         </div>
       </FadeIn>
 
@@ -131,9 +132,11 @@ interface ToppersPageProps {
   otherClass: { label: string; href: string }
 }
 
-export default function ToppersPage({ classLabel, sessions, otherClass }: ToppersPageProps) {
+type Link_ = { label: string; href: string }
+
+/** The green banner at the top of a toppers page */
+export function ToppersHero({ classLabel, title, badge = 'Academic Excellence', subtitle = 'Celebrating the outstanding achievements of our students', otherClass }: { classLabel: string; title?: string; badge?: string; subtitle?: string; otherClass?: Link_ | null }) {
   return (
-    <>
       <section className="relative bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white pt-32 pb-28 overflow-hidden">
         <HeroDecor icon={Trophy} secondaryIcon={Medal} orbs />
 
@@ -141,13 +144,15 @@ export default function ToppersPage({ classLabel, sessions, otherClass }: Topper
           <FadeIn blur>
             <div className="max-w-3xl">
               <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-medium mb-6 border border-white/20">
-                <Award aria-hidden size={16} className="text-secondary-400" />Academic Excellence
+                <Award aria-hidden size={16} className="text-secondary-400" />{badge}
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-4">{classLabel} Toppers</h1>
-              <p className="text-xl text-primary-200 mb-8">Celebrating the outstanding achievements of our students</p>
-              <Link href={otherClass.href} className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 py-3 rounded-full font-medium hover:bg-white/20 transition-all">
-                View {otherClass.label} Toppers <ArrowRight aria-hidden size={18} />
-              </Link>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-4">{title ?? `${classLabel} Toppers`}</h1>
+              {subtitle && <p className="text-xl text-primary-200 mb-8">{subtitle}</p>}
+              {otherClass && (
+                <Link href={otherClass.href} className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 py-3 rounded-full font-medium hover:bg-white/20 transition-all">
+                  {otherClass.label} <ArrowRight aria-hidden size={18} />
+                </Link>
+              )}
             </div>
           </FadeIn>
         </div>
@@ -159,25 +164,46 @@ export default function ToppersPage({ classLabel, sessions, otherClass }: Topper
           </svg>
         </div>
       </section>
+  )
+}
 
+/** Session picker and the toppers of the chosen session */
+export function ToppersSessions({ classLabel, sessions, title = 'Board Examination Results', intro }: { classLabel: string; sessions: TopperSession[]; title?: string; intro?: string }) {
+  return (
       <Section className="bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-primary-50/50 to-transparent pointer-events-none" />
         <div className="container mx-auto px-4 relative z-10">
-          <SessionSection classLabel={classLabel} sessions={sessions} />
+          <SessionSection classLabel={classLabel} sessions={sessions} title={title} intro={intro ?? `Celebrating academic excellence of our ${classLabel} students`} />
         </div>
       </Section>
+  )
+}
 
+/** Closing invitation under the toppers */
+export function ToppersCta({ title = 'Be the Next Topper!', text = 'Join Sacred Heart Senior Secondary School and excel academically', button = { label: 'Apply for Admission', href: '/admission' } }: { title?: string; text?: string; button?: Link_ | null }) {
+  return (
       <div className="bg-primary-800 py-12">
         <div className="container mx-auto px-4 text-center">
           <FadeIn blur>
-            <h2 className="text-2xl font-display font-bold text-white mb-4">Be the Next Topper!</h2>
-            <p className="text-primary-200 mb-6 max-w-xl mx-auto">Join Sacred Heart Senior Secondary School and excel academically</p>
-            <Link href="/admission" className="inline-flex items-center gap-2 bg-secondary-400 text-primary-900 px-8 py-3 rounded-full font-bold hover:bg-secondary-300 transition-all shadow-glow-secondary">
-              Apply for Admission <ArrowRight aria-hidden size={18} />
-            </Link>
+            <h2 className="text-2xl font-display font-bold text-white mb-4">{title}</h2>
+            {text && <p className="text-primary-200 mb-6 max-w-xl mx-auto">{text}</p>}
+            {button && (
+              <Link href={button.href} className="inline-flex items-center gap-2 bg-secondary-400 text-primary-900 px-8 py-3 rounded-full font-bold hover:bg-secondary-300 transition-all shadow-glow-secondary">
+                {button.label} <ArrowRight aria-hidden size={18} />
+              </Link>
+            )}
           </FadeIn>
         </div>
       </div>
+  )
+}
+
+export default function ToppersPage({ classLabel, sessions, otherClass }: ToppersPageProps) {
+  return (
+    <>
+      <ToppersHero classLabel={classLabel} otherClass={{ label: `View ${otherClass.label} Toppers`, href: otherClass.href }} />
+      <ToppersSessions classLabel={classLabel} sessions={sessions} />
+      <ToppersCta />
     </>
   )
 }
