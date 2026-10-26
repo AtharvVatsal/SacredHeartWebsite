@@ -761,3 +761,29 @@ Object.assign(pageFields, {
     ctaButton: button('Closing band button'),
   },
 } satisfies Record<string, Fields>)
+
+Object.assign(pageFields, {
+  CalendarBoard: {
+    badge: text('Small badge in the banner'),
+    title: text('Title'),
+    highlight: text('Words in gold after the title'),
+    subtitle: text('Line under the title'),
+    events: list(
+      'Dates',
+      {
+        title: text('Title'),
+        date: text('Date (YYYY-MM-DD, e.g. 2025-07-01)'),
+        type: choose('Kind', [
+          { label: 'Holiday', value: 'holiday' },
+          { label: 'Exam', value: 'exam' },
+          { label: 'Event', value: 'event' },
+          { label: 'Meeting', value: 'meeting' },
+          { label: 'Activity', value: 'activity' },
+        ]),
+        description: text('Short description'),
+      },
+      (i) => [str(i.date), str(i.title)].filter(Boolean).join(' · '),
+      300,
+    ),
+  },
+} satisfies Record<string, Fields>)
