@@ -16,7 +16,7 @@ import { Icon, ICON_COMPONENTS } from '../shared/Icon'
 import type { IconName } from '../shared/icon-names'
 import { Inline } from '../shared/InlineText'
 import { toTopperSessions } from '../shared/linked'
-import { useLinkedData } from '../shared/LinkedData'
+import { useFigures, useLinkedData } from '../shared/LinkedData'
 import type {
   AchieverCards as AchieversDef,
   DreamCta as DreamDef,
@@ -229,7 +229,8 @@ export function FeaturedAlumnus(p: BlockProps<typeof FeaturedDef>) {
 }
 
 export function StatCounters({ stats }: BlockProps<typeof CountersDef>) {
-  return <Other.StatCounters stats={stats} />
+  const figure = useFigures()
+  return <Other.StatCounters stats={stats.map((s) => ({ label: s.label, value: figure(s.count, s.value) }))} />
 }
 
 export function HighlightNote({ icon, title, subtitle, text }: BlockProps<typeof NoteDef>) {

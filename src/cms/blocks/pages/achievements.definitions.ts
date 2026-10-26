@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { defineBlock } from '../../document/definition'
 import { bool, choice, href, image, list, longText, text } from '../../document/fields'
 import { button, icon } from '../common'
+import { figureSource, sourceOfStat } from '../shared/figures'
 import { achievements, statistics } from '@/data/school'
 import { chandrayaanPhotos, otherAchievements } from '@/content/other-achievements'
 import { class10Sessions } from '@/data/toppers'
@@ -148,7 +149,7 @@ export const StatCounters = defineBlock({
   label: 'Counting figures',
   category: 'cards',
   schema: z.object({
-    stats: list(z.object({ label: text(60), value: text(20) }), 8, statistics.map((s) => ({ label: s.label, value: `${s.value}${s.suffix ?? ''}` }))),
+    stats: list(z.object({ label: text(60), value: text(20), count: figureSource() }), 8, statistics.map((s) => ({ label: s.label, value: `${s.value}${s.suffix ?? ''}`, count: sourceOfStat(s.label) }))),
   }),
 })
 

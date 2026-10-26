@@ -578,6 +578,12 @@ export interface SiteSetting {
     androidApp?: string | null;
     iosApp?: string | null;
   };
+  figures?: {
+    years?: string | null;
+    staffStrength?: string | null;
+    students?: string | null;
+    libraryBooks?: string | null;
+  };
   /**
    * The order here is the order in the header and footer. Drag to reorder.
    */
@@ -684,6 +690,14 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         alumniRegistration?: T;
         androidApp?: T;
         iosApp?: T;
+      };
+  figures?:
+    | T
+    | {
+        years?: T;
+        staffStrength?: T;
+        students?: T;
+        libraryBooks?: T;
       };
   navigation?:
     | T

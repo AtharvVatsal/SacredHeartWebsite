@@ -80,6 +80,18 @@ export const SiteSettings: GlobalConfig = {
           })),
         },
         {
+          name: 'figures',
+          label: 'Figures',
+          description: 'Figures shown on several pages (home, About, Contact, Achievements). Sections set to use them all change together when you save.',
+          fields: (Object.keys(d.figures) as (keyof typeof d.figures)[]).map((key) => ({
+            name: key,
+            type: 'text' as const,
+            maxLength: 20,
+            defaultValue: d.figures[key],
+            label: { years: 'Glorious years (e.g. 56+)', staffStrength: 'Staff strength (e.g. 100+)', students: 'Students strength (e.g. 2.6K+)', libraryBooks: 'Library books (e.g. 24K+)' }[key],
+          })),
+        },
+        {
           label: 'Menu',
           fields: [
             {

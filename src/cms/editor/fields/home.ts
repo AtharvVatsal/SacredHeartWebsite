@@ -1,7 +1,7 @@
 'use client'
 
 import type { Fields } from '@puckeditor/core'
-import { button, choose, documentField, FORMAT_HINT, heading, iconChoice, imageField, link, list, number, paragraph, text, yesNo } from './helpers'
+import { button, choose, documentField, figureSourceField, FORMAT_HINT, heading, iconChoice, imageField, link, list, number, paragraph, text, yesNo } from './helpers'
 
 const str = (v: unknown) => (typeof v === 'string' ? v : '')
 
@@ -42,7 +42,7 @@ export const homeFields: Record<string, Fields> = {
     ),
   },
   StatsRow: {
-    stats: list('Numbers', { value: text('Number (e.g. 56 or 2.6K)'), suffix: text('After the number (e.g. +)'), label: text('Label') }, (i) => `${str(i.value)}${str(i.suffix)} ${str(i.label)}`, 6),
+    stats: list('Numbers', { value: text('Number (e.g. 56 or 2.6K)'), suffix: text('After the number (e.g. +)'), label: text('Label'), count: figureSourceField() }, (i) => `${str(i.value)}${str(i.suffix)} ${str(i.label)}`, 6),
   },
   QuickLinksGrid: {
     heading: heading(),

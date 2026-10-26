@@ -3,7 +3,7 @@
 // Editor fields for the page-specific sections (see src/cms/blocks/pages)
 import type { Field, Fields } from '@puckeditor/core'
 import { GRADIENTS } from '../../blocks/shared/gradients'
-import { button, choose, documentField, FORMAT_HINT, iconChoice, imageField, list, optionalIcon, paragraph, text, yesNo } from './helpers'
+import { button, choose, documentField, figureSourceField, FORMAT_HINT, iconChoice, imageField, list, optionalIcon, paragraph, text, yesNo } from './helpers'
 
 const str = (v: unknown) => (typeof v === 'string' ? v : '')
 
@@ -367,6 +367,7 @@ Object.assign(pageFields, {
           { label: 'Light green', value: 'light' },
           { label: 'Gold', value: 'gold' },
         ]),
+        count: figureSourceField(),
       },
       (i) => [str(i.value), str(i.label)].filter(Boolean).join(' '),
       6,
@@ -403,10 +404,7 @@ Object.assign(pageFields, {
         icon: iconChoice(),
         value: text('Figure (e.g. 2.6K+)'),
         label: text('Label'),
-        count: choose('Work the figure out automatically', [
-          { label: 'No, show the figure above', value: 'none' },
-          { label: 'Yes: the number of staff on the Staff page', value: 'staff' },
-        ]),
+        count: figureSourceField(),
       },
       (i) => [str(i.value), str(i.label)].filter(Boolean).join(' '),
       8,
@@ -566,7 +564,7 @@ Object.assign(pageFields, {
     galleryTitle: text('Photo gallery title'),
     photos: list('Photos', { photo: imageField('Photo') }, (_i, n) => `Photo ${(n ?? 0) + 1}`, 24),
   },
-  StatCounters: { stats: list('Figures', { value: text('Figure (e.g. 2.6K+)'), label: text('Label') }, (i) => [str(i.value), str(i.label)].filter(Boolean).join(' '), 8) },
+  StatCounters: { stats: list('Figures', { value: text('Figure (e.g. 2.6K+)'), label: text('Label'), count: figureSourceField() }, (i) => [str(i.value), str(i.label)].filter(Boolean).join(' '), 8) },
   HighlightNote: { icon: iconChoice(), title: text('Title'), subtitle: text('Line under the title'), text: paragraph('Text') },
   AchieverCards: {
     pill: text('Small label above the title'),
@@ -682,7 +680,7 @@ Object.assign(pageFields, {
         label: text('Label'),
         icon: iconChoice(),
         color: gradientChoice(),
-        count: toneChoice('Work the figure out automatically', [['none', 'No, show the figure above'], ['staff', 'Yes: the number of staff on the Staff page']]),
+        count: figureSourceField(),
       },
       (i) => [str(i.value), str(i.label)].filter(Boolean).join(' '),
       8,
@@ -723,10 +721,7 @@ Object.assign(pageFields, {
       {
         value: text('Figure'),
         label: text('Label'),
-        count: choose('Work the figure out automatically', [
-          { label: 'No, show the figure above', value: 'none' },
-          { label: 'Yes: the number of staff listed on this page', value: 'staff' },
-        ]),
+        count: figureSourceField('The number of staff listed on this page'),
       },
       (i) => [str(i.value), str(i.label)].filter(Boolean).join(' '),
       4,
@@ -841,7 +836,7 @@ Object.assign(pageFields, {
 Object.assign(pageFields, {
   ContactBoard: {
     banner: bannerFields,
-    stats: list('Figures under the banner', { value: text('Figure (e.g. 2.6K+)'), label: text('Label') }, (i) => [str(i.value), str(i.label)].filter(Boolean).join(' '), 8),
+    stats: list('Figures under the banner', { value: text('Figure (e.g. 2.6K+)'), label: text('Label'), count: figureSourceField() }, (i) => [str(i.value), str(i.label)].filter(Boolean).join(' '), 8),
     officeHours: paragraph('Office hours (address, phone numbers and emails come from Site settings)'),
   },
   EnquiryForm: { banner: bannerFields, ctaTitle: text('Band title under the form'), ctaText: paragraph('Band text'), ctaButton: button('Band button') },

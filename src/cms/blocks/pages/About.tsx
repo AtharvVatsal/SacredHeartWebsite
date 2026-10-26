@@ -8,7 +8,7 @@ import { FadeInItem, StaggerContainer } from '@/components/animations'
 import { useRevealAll } from '@/components/animations/RevealContext'
 import { useSiteSettings } from '@/components/providers/SiteSettingsProvider'
 import StaffDirectory from '@/components/about/StaffDirectory'
-import { useStaffCount } from '../shared/LinkedData'
+import { useFigures } from '../shared/LinkedData'
 import type { BlockProps } from '../../document/definition'
 import { CmsImage } from '../shared/CmsImage'
 import { Icon } from '../shared/Icon'
@@ -468,6 +468,7 @@ export function StoryCard({ look, pill, pillIcon, pillTone, title, body }: Block
 
 export function StatTiles({ tiles }: BlockProps<typeof StatsDef>) {
   const rise = useInView({ opacity: 0, y: 40 }, { opacity: 1, y: 0 })
+  const figure = useFigures()
   return (
     <section className="py-20 bg-white relative overflow-hidden">
       <div className="container mx-auto px-4">
@@ -486,7 +487,7 @@ export function StatTiles({ tiles }: BlockProps<typeof StatsDef>) {
                     <div className={`w-16 h-16 ${gold ? 'bg-white/20' : 'bg-white'} rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg`}>
                       <Icon name={tile.icon} className={`w-8 h-8 ${gold ? 'text-primary-900' : 'text-primary-600'}`} />
                     </div>
-                    <div className="text-5xl font-display font-bold text-primary-900 mb-2">{tile.value}</div>
+                    <div className="text-5xl font-display font-bold text-primary-900 mb-2">{figure(tile.count, tile.value)}</div>
                     <p className={`${gold ? 'text-primary-800' : 'text-gray-600'} font-medium`}>{tile.label}</p>
                   </div>
                 </m.div>
@@ -673,14 +674,14 @@ export function NumberedThemes(p: BlockProps<typeof ThemesDef>) {
 
 function HighlightStat({ index, stat, lift }: { index: number; stat: BlockProps<typeof BandDef>['stats'][number]; lift: number }) {
   const pop = useInView({ opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1 })
-  const staffCount = useStaffCount()
+  const figure = useFigures()
   return (
     <m.div {...pop} transition={{ delay: index * 0.1, type: 'spring' }}>
       <m.div whileHover={{ y: lift, transition: { duration: 0.2, delay: 0 } }} className="text-center">
         <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
           <Icon name={stat.icon} className="w-8 h-8 text-secondary-400" />
         </div>
-        <div className="text-3xl md:text-4xl font-display font-bold text-white mb-1">{stat.count === 'staff' ? String(staffCount) : stat.value}</div>
+        <div className="text-3xl md:text-4xl font-display font-bold text-white mb-1">{figure(stat.count, stat.value)}</div>
         <div className="text-primary-200 text-sm font-medium">{stat.label}</div>
       </m.div>
     </m.div>
@@ -721,7 +722,7 @@ function SpotlightStat({ index, value, label }: { index: number; value: string; 
 
 export function PrincipalSpotlight({ photo, pill, name, text, stats }: BlockProps<typeof SpotlightDef>) {
   const { identity } = useSiteSettings()
-  const staffCount = useStaffCount()
+  const figure = useFigures()
   const principal = name || identity.principal
   const rise = useInView({ opacity: 0, y: 30 }, { opacity: 1, y: 0 })
   const riseSmall = useInView({ opacity: 0, y: 10 }, { opacity: 1, y: 0 })
@@ -752,7 +753,7 @@ export function PrincipalSpotlight({ photo, pill, name, text, stats }: BlockProp
                   {text && <p className="text-primary-100 text-lg leading-relaxed max-w-2xl mb-8">{text}</p>}
                   <div className="flex flex-wrap justify-center lg:justify-start gap-4">
                     {stats.map((s, i) => (
-                      <SpotlightStat key={i} index={i} value={s.count === 'staff' ? String(staffCount) : s.value} label={s.label} />
+                      <SpotlightStat key={i} index={i} value={figure(s.count, s.value)} label={s.label} />
                     ))}
                   </div>
                 </div>

@@ -65,5 +65,11 @@ export function toSiteSettings(g: SiteSetting): SiteSettings {
       linkHref: str(g.announcement?.linkHref, ''),
       tone: g.announcement?.tone === 'important' ? 'important' : 'info',
     },
+    figures: {
+      years: str(g.figures?.years, d.figures.years) || d.figures.years,
+      staffStrength: str(g.figures?.staffStrength, d.figures.staffStrength) || d.figures.staffStrength,
+      students: str(g.figures?.students, d.figures.students) || d.figures.students,
+      libraryBooks: str(g.figures?.libraryBooks, d.figures.libraryBooks) || d.figures.libraryBooks,
+    },
   }
 }

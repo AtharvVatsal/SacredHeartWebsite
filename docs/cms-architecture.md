@@ -60,7 +60,7 @@ Each layer has its own root layout through route groups. The public site's root 
 ```
 src/payload.config.ts               Payload config (collections, globals, db, storage, auth, csrf)
 src/cms/collections/*               Users, Media, Pages, Redirects (hooks inside each file)
-src/cms/globals/SiteSettings.ts     school details, contact, online services, menu, header, footer, announcement
+src/cms/globals/SiteSettings.ts     school details, contact, online services, figures, menu, header, footer, announcement
 src/cms/access.ts                   role checks used by every collection (server-side)
 src/cms/blocks/definitions.ts       registry of every block: type, label, category, zod schema (server-safe)
 src/cms/blocks/components.ts        type → React component (shared by the public renderer and the editor canvas)
@@ -79,7 +79,7 @@ src/components/<area>/*View.tsx     interactive page bodies shared by the origin
 
 **How blocks reproduce the original pages.** Most blocks are the original section's JSX with its strings, lists, links and images turned into props, and the original values as defaults. Where a page's body is interactive and large (staff directory, office bearers, gallery, calendar, notifications, pass-out batches, contact, enquiry form, other achievements, toppers), the body was moved unchanged into a component under `src/components/`, which both the original `legacy-page.tsx` and the CMS block render with data props; the move itself was verified by before/after screenshots. The page banners of the inner pages differ in small ways (entrance timing, glows, back-link style), so `hero-recipes.ts` describes each original banner as a named style ("As on Our Aims"), with a "Custom" style for new pages.
 
-**Content shown on more than one page.** The toppers lists (Class 10 and 12 pages), the staff list (Our Staff) and the notices (Notifications) are edited on their own page. Other pages that show them (top five on Achievements, counts, home notices) receive them through `src/cms/render/linked-data.ts`, which reads the published source page (or the draft, in preview and the editor) on the server and passes it down a React context. Publishing one of those source pages revalidates the whole site, so cached pages stay consistent.
+**Content shown on more than one page.** The toppers lists (Class 10 and 12 pages), the staff list (Our Staff) and the notices (Notifications) are edited on their own page. Other pages that show them (top five on Achievements, counts, home notices) receive them through `src/cms/render/linked-data.ts`, which reads the published source page (or the draft, in preview and the editor) on the server and passes it down a React context. Publishing one of those source pages revalidates the whole site, so cached pages stay consistent. Figures work the same way: each figure in a section has a source (`count`: typed in the section, the staff count, or a Site settings figure; `src/cms/blocks/shared/figures.ts`), resolved on render by `useFigures`.
 
 ## 4. Data model
 
@@ -147,7 +147,8 @@ Everything the header, footer and structured data read today from `data/school.t
 - the navigation tree (top items with children, external flag);
 - the header call to action;
 - the footer description;
-- an optional announcement banner (on/off, text, link, tone).
+- an optional announcement banner (on/off, text, link, tone);
+- the school's figures shown on several pages (glorious years, staff and students strength, library books).
 
 Versions and drafts are enabled. Only administrators can change it.
 

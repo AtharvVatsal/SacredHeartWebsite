@@ -1,7 +1,8 @@
 // Site-wide settings (school identity, contact details, navigation, header and footer). The CMS stores an
 // edited copy in the "site-settings" global; these defaults come from src/data/school.ts and are used whenever
 // the CMS has nothing saved or cannot be reached, so the site always renders as it does without the CMS.
-import { navigation, onlineServices, quickLinks, schoolInfo, schoolLocation } from '@/data/school'
+import { navigation, onlineServices, quickLinks, schoolInfo, schoolLocation, statistics } from '@/data/school'
+import { formatStat } from './stats'
 
 export interface NavChild {
   text: string
@@ -38,6 +39,20 @@ export interface SiteSettings {
   footer: { description: string; quickLinks: { text: string; href: string }[] }
   social: { platform: string; url: string }[]
   announcement: { enabled: boolean; message: string; linkLabel: string; linkHref: string; tone: 'info' | 'important' }
+  /** Figures shown on several pages; sections can show these instead of their own copy */
+  figures: SchoolFigures
+}
+
+export interface SchoolFigures {
+  years: string
+  staffStrength: string
+  students: string
+  libraryBooks: string
+}
+
+const figure = (label: string) => {
+  const s = statistics.find((x) => x.label === label)
+  return s ? formatStat(s) : ''
 }
 
 const SUMMARIES: Record<string, string> = {
@@ -85,4 +100,10 @@ export const defaultSiteSettings: SiteSettings = {
   },
   social: [],
   announcement: { enabled: false, message: '', linkLabel: '', linkHref: '', tone: 'info' },
+  figures: {
+    years: figure('Glorious Years'),
+    staffStrength: figure('Staff Strength'),
+    students: figure('Students Strength'),
+    libraryBooks: figure('Library Books'),
+  },
 }

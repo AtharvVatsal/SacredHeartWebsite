@@ -4,6 +4,9 @@ import { CURRENT_SCHEMA_VERSION, migrateDocument, migrations } from '@/cms/docum
 import type { PageDocument } from '@/cms/document/types'
 import { MAX_DEPTH, validateDocument } from '@/cms/document/validate'
 import { homePage } from '@/cms/seed/pages/home'
+import { toSiteSettings } from '@/cms/render/settings-map'
+import { defaultSiteSettings } from '@/lib/site-settings'
+import type { SiteSetting } from '@/payload-types'
 
 const doc = (content: unknown[]): unknown => ({ root: { props: {} }, content })
 const block = (type: string, props: Record<string, unknown> = {}, id = `${type}-1`) => ({ type, props: { id, ...defaultPropsFor(type), ...props } })
@@ -143,5 +146,37 @@ describe('image addresses', () => {
   it('still refuses plain http addresses on other sites', () => {
     const result = validateDocument(imageDoc('http://example.com/photo.jpg'), blockRegistry, 'strict')
     expect(result.issues.length).toBeGreaterThan(0)
+  })
+})
+
+describe('shared figures', () => {
+  type Item = { value?: string; suffix?: string; count?: string }
+  const linkedItems = blockDefinitions.flatMap((def) =>
+    Object.values(defaultPropsFor(def.type))
+      .filter((v): v is Item[] => Array.isArray(v))
+      .flatMap((list) => list.filter((i) => i && typeof i === 'object' && typeof i.count === 'string' && i.count !== 'none' && i.count !== 'staff'))
+      .map((i) => ({ type: def.type, ...i })),
+  )
+
+  it('links the default figures to Site settings values that read the same, so nothing changes on screen', () => {
+    expect(linkedItems.length).toBeGreaterThanOrEqual(15)
+    const { figures, identity } = defaultSiteSettings
+    for (const i of linkedItems) {
+      const shown = i.count === 'established' ? String(identity.established) : figures[i.count as keyof typeof figures]
+      expect(`${i.value}${i.suffix ?? ''}`, `${i.type} ${i.count}`).toBe(shown)
+    }
+  })
+
+  it('keeps figures saved before linking existed as typed', () => {
+    const r = validateDocument(doc([block('StatsRow', { stats: [{ value: '57', suffix: '+', label: 'Glorious Years' }] })]), blockRegistry, 'strict')
+    expect(r.issues).toEqual([])
+    expect((r.document.content[0].props as unknown as { stats: Item[] }).stats[0].count).toBe('none')
+  })
+
+  it('reads saved Site settings figures, and keeps the built-in figure for an empty one', () => {
+    const s = toSiteSettings({ id: 1, figures: { years: '57+', students: '' } } as unknown as SiteSetting)
+    expect(s.figures.years).toBe('57+')
+    expect(s.figures.students).toBe(defaultSiteSettings.figures.students)
+    expect(s.figures.libraryBooks).toBe('24K+')
   })
 })

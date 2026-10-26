@@ -1,6 +1,7 @@
 // Content of the About pages, as used by the CMS migration.
 // The original pages (legacy-page.tsx) keep their own copy of the same text.
 import type { GradientName } from '@/cms/blocks/shared/gradients'
+import type { FigureSource } from '@/cms/blocks/shared/figures'
 import type { IconName } from '@/cms/blocks/shared/icon-names'
 import { schoolInfo, statistics } from '@/data/school'
 import { formatStat } from '@/lib/stats'
@@ -76,10 +77,10 @@ export const excellenceStory = [
   'Today, Sacred Heart continues to excel in every facet of student development—fostering outstanding achievements in academics, sports, and co-curricular activities alike.',
 ].join('\n\n')
 
-export const historyStats: { icon: IconName; value: string; label: string; look: 'light' | 'gold' }[] = [
-  { icon: 'Calendar', value: '1969', label: 'School Established', look: 'light' },
-  { icon: 'Users', value: '56+', label: 'Years of Excellence', look: 'gold' },
-  { icon: 'GraduationCap', value: '10K+', label: 'Alumni', look: 'light' },
+export const historyStats: { icon: IconName; value: string; label: string; look: 'light' | 'gold'; count: FigureSource }[] = [
+  { icon: 'Calendar', value: '1969', label: 'School Established', look: 'light', count: 'established' },
+  { icon: 'Users', value: '56+', label: 'Years of Excellence', look: 'gold', count: 'years' },
+  { icon: 'GraduationCap', value: '10K+', label: 'Alumni', look: 'light', count: 'none' },
 ]
 
 export const principalMessage: { icon: IconName; text: string }[] = [
@@ -115,9 +116,9 @@ const statValue = (label: string) => {
   return s ? formatStat(s) : ''
 }
 
-export const principalHighlights: { icon: IconName; label: string; value: string }[] = [
-  { icon: 'GraduationCap', label: 'CISCE Affiliated', value: `Since ${schoolInfo.established}` },
-  { icon: 'Users', label: 'Students Strength', value: statValue('Students Strength') },
-  { icon: 'Award', label: 'Staff Strength', value: statValue('Staff Strength') },
-  { icon: 'Star', label: 'Glorious Years', value: statValue('Glorious Years') },
+export const principalHighlights: { icon: IconName; label: string; value: string; count: FigureSource }[] = [
+  { icon: 'GraduationCap', label: 'CISCE Affiliated', value: `Since ${schoolInfo.established}`, count: 'none' },
+  { icon: 'Users', label: 'Students Strength', value: statValue('Students Strength'), count: 'students' },
+  { icon: 'Award', label: 'Staff Strength', value: statValue('Staff Strength'), count: 'staffStrength' },
+  { icon: 'Star', label: 'Glorious Years', value: statValue('Glorious Years'), count: 'years' },
 ]

@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { defineBlock } from '../../document/definition'
 import { bool, choice, href, image, list, longText, text } from '../../document/fields'
 import { button, icon } from '../common'
+import { figureSource } from '../shared/figures'
 import { gradient } from '../shared/gradients'
 import { aboutNav, aboutStats, growthAreas, journey, principalExcerpt, whoWeAre } from '@/content/about-landing'
 import { schoolAnthem, schoolInfo } from '@/data/school'
@@ -156,7 +157,7 @@ export const StatBoxes = defineBlock({
   category: 'about',
   schema: z.object({
     stats: list(
-      z.object({ icon: icon('Star'), value: text(20), label: text(60), color: gradient('from-emerald-500 to-teal-600'), count: choice(['none', 'staff'] as const, 'none') }),
+      z.object({ icon: icon('Star'), value: text(20), label: text(60), color: gradient('from-emerald-500 to-teal-600'), count: figureSource() }),
       8,
       aboutStats,
     ),

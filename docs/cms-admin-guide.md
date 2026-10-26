@@ -116,6 +116,7 @@ Open **Site settings** (the dashboard card *School details, menu and footer*). I
 - **School**: name, tagline, affiliation, year established, management and principal's name. The principal's name is used wherever the site names the principal.
 - **Contact**: phone numbers, emails, address and map location. These appear in the footer, on the Contact page, the call and email buttons, and the search engine information.
 - **Online services**: the fee portal, registration portal, alumni form and app store addresses. Buttons such as *Pay fee online* use these.
+- **Figures**: glorious years (56+), staff strength, students strength and library books. These appear on the Home, About, History, Principal, Staff, Achievements and Contact pages; change them here once a year and every page follows.
 - **Menu**: the main menu and its drop-downs.
 - **Header** and **Footer**: the header button, the footer description, its quick links and the social media links.
 - **Announcement**: an optional strip across the top of every page (for example "Admissions for 2027-28 are open"), with a link.
@@ -132,8 +133,11 @@ So that the same facts are never typed twice:
 | **Our Staff** page (the staff directory) | "Staff Members" on **About Us**, and the counts on **Our Staff** (where a figure is set to *the number of staff*) |
 | **Notifications** page | the notices on the **Home** page (unless that section is set to its own list) |
 | **Site settings** | header, footer, Contact page, call and email buttons |
+| **Site settings → Figures** (and the year established) | every figure set to come from Site settings |
 
-Changes show elsewhere once the page you edited is **published**.
+Changes show elsewhere once the page you edited is **published** (Site settings: once saved).
+
+Each figure in a section has a **Figure comes from** setting. *This section* shows the figure typed in the section; the other choices show the number of staff or a figure from Site settings, and the typed figure is then ignored. The school's figures are already set up this way.
 
 ## 10. Special sections
 

@@ -5,16 +5,20 @@ import Section from '@/components/ui/Section'
 import { CountUp, FadeInItem, StaggerContainer } from '@/components/animations'
 import { parseStatValue } from '@/lib/stats'
 import type { BlockProps } from '../../document/definition'
+import { useFigures } from '../shared/LinkedData'
 import type { StatsRow as Def } from './definitions'
 
 export default function StatsRow({ stats }: BlockProps<typeof Def>) {
+  const figure = useFigures()
   return (
     <div className="relative z-20 py-10 bg-gray-50">
       <Section className="bg-transparent !py-0">
         <div className="container mx-auto px-4">
           <StaggerContainer className="grid grid-cols-2 md:grid-cols-4 gap-6" delay={0.2}>
             {stats.map((stat, index) => {
-              const { end, decimals, unit } = parseStatValue(stat.value)
+              // A linked figure arrives whole ("56+"); its trailing "+" is read as the unit
+              const linked = stat.count !== 'none'
+              const { end, decimals, unit } = parseStatValue(linked ? figure(stat.count, stat.value) : stat.value)
               return (
                 <FadeInItem key={index} direction="up" blur>
                   <m.div
@@ -23,7 +27,7 @@ export default function StatsRow({ stats }: BlockProps<typeof Def>) {
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                     <div className="text-4xl md:text-5xl font-display font-bold text-primary-700 mb-2 drop-shadow-sm">
-                      <CountUp end={end} decimals={decimals} suffix={unit + (stat.suffix || '')} />
+                      <CountUp end={end} decimals={decimals} suffix={unit + (linked ? '' : stat.suffix || '')} />
                     </div>
                     <div className="text-gray-600 font-medium group-hover:text-primary-800 transition-colors">{stat.label}</div>
                   </m.div>

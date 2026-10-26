@@ -3,7 +3,9 @@
 // Content that one page shows from another (e.g. the top five toppers on Achievements come from the toppers
 // pages). The server collects it before rendering (src/cms/render/linked-data.ts) and hands it down here.
 import { createContext, useContext, type ReactNode } from 'react'
+import { useSiteSettings } from '@/components/providers/SiteSettingsProvider'
 import { staffMembers } from '@/data/school'
+import type { FigureSource } from './figures'
 import type { LinkedData } from './linked'
 
 const EMPTY: LinkedData = { toppers: {} }
@@ -18,4 +20,25 @@ export const useLinkedData = () => useContext(LinkedDataContext)
 /** The number of staff on the Staff page; the list published with the site until that page is in the CMS */
 export function useStaffCount() {
   return useContext(LinkedDataContext).staffCount ?? staffMembers.length
+}
+
+/** Shows a figure from where it is set to come from: the Staff page, Site settings, or the section itself */
+export function useFigures() {
+  const staffCount = useStaffCount()
+  const { figures, identity } = useSiteSettings()
+  return (source: FigureSource | undefined, own: string): string => {
+    switch (source) {
+      case 'staff':
+        return String(staffCount)
+      case 'established':
+        return String(identity.established)
+      case 'years':
+      case 'staffStrength':
+      case 'students':
+      case 'libraryBooks':
+        return figures[source]
+      default:
+        return own
+    }
+  }
 }

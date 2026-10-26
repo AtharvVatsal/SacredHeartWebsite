@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { defineBlock } from '../../document/definition'
 import { bool, choice, href, image, list, longText, text } from '../../document/fields'
 import { button, icon } from '../common'
+import { figureSource } from '../shared/figures'
 import { gradient } from '../shared/gradients'
 import { ICON_NAMES } from '../shared/icon-names'
 import {
@@ -125,7 +126,7 @@ export const StatTiles = defineBlock({
   label: 'Three big numbers',
   category: 'about',
   schema: z.object({
-    tiles: list(z.object({ icon: icon('Calendar'), value: text(20), label: text(80), look: choice(['light', 'gold'] as const, 'light') }), 6, historyStats),
+    tiles: list(z.object({ icon: icon('Calendar'), value: text(20), label: text(80), look: choice(['light', 'gold'] as const, 'light'), count: figureSource() }), 6, historyStats),
   }),
 })
 
@@ -170,7 +171,7 @@ export const HighlightBand = defineBlock({
   label: 'Key figures on a green band',
   category: 'about',
   schema: z.object({
-    stats: list(z.object({ icon: icon('Star'), label: text(80), value: text(30), count: choice(['none', 'staff'] as const, 'none') }), 8, principalHighlights.map((s) => ({ ...s, count: 'none' as const }))),
+    stats: list(z.object({ icon: icon('Star'), label: text(80), value: text(30), count: figureSource() }), 8, principalHighlights),
     lift: choice(['normal', 'small'] as const, 'normal'),
   }),
 })
@@ -185,7 +186,7 @@ export const PrincipalSpotlight = defineBlock({
     /** Empty: the principal's name from Site settings */
     name: text(120, ''),
     text: text(600, 'Leading Sacred Heart Senior Secondary School with dedication and vision. Committed to academic excellence and holistic development of every student.'),
-    stats: list(z.object({ value: text(20), label: text(60), count: choice(['none', 'staff'] as const, 'none') }), 4, spotlightStats),
+    stats: list(z.object({ value: text(20), label: text(60), count: figureSource() }), 4, spotlightStats),
   }),
 })
 

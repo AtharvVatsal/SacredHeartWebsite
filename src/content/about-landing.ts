@@ -1,14 +1,15 @@
 // Content of the About Us landing page, as used by the CMS migration.
 // The original page (legacy-page.tsx) keeps its own copy of the same text.
 import type { GradientName } from '@/cms/blocks/shared/gradients'
+import type { FigureSource } from '@/cms/blocks/shared/figures'
 import type { IconName } from '@/cms/blocks/shared/icon-names'
 import { principalMessage, staffMembers } from '@/data/school'
 
-export const aboutStats: { icon: IconName; value: string; label: string; color: GradientName; count: 'none' | 'staff' }[] = [
-  { icon: 'GraduationCap', value: '1969', label: 'Established', color: 'from-emerald-500 to-teal-600', count: 'none' },
+export const aboutStats: { icon: IconName; value: string; label: string; color: GradientName; count: FigureSource }[] = [
+  { icon: 'GraduationCap', value: '1969', label: 'Established', color: 'from-emerald-500 to-teal-600', count: 'established' },
   { icon: 'Users', value: String(staffMembers.length), label: 'Staff Members', color: 'from-blue-500 to-indigo-600', count: 'staff' },
   { icon: 'Heart', value: 'CISCE', label: 'Affiliation', color: 'from-rose-500 to-pink-600', count: 'none' },
-  { icon: 'Star', value: '56+', label: 'Years of Excellence', color: 'from-amber-500 to-orange-600', count: 'none' },
+  { icon: 'Star', value: '56+', label: 'Years of Excellence', color: 'from-amber-500 to-orange-600', count: 'years' },
 ]
 
 export const aboutNav: { href: string; label: string; icon: IconName; color: GradientName }[] = [

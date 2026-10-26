@@ -37,6 +37,18 @@ export const optionalIcon = (label: string): Field => ({
   options: [{ label: 'No icon', value: 'none' }, ...Object.entries(ICONS).map(([value, name]) => ({ label: name, value }))],
 })
 
+/** Where a figure comes from: typed in the section, or linked so that it changes with the Staff page or Site settings */
+export const figureSourceField = (staffLabel = 'The number of staff on the Staff page'): Field =>
+  choose('Figure comes from', [
+    { label: 'This section (the figure typed above)', value: 'none' },
+    { label: staffLabel, value: 'staff' },
+    { label: 'Site settings: Glorious years', value: 'years' },
+    { label: 'Site settings: Staff strength', value: 'staffStrength' },
+    { label: 'Site settings: Students strength', value: 'students' },
+    { label: 'Site settings: Library books', value: 'libraryBooks' },
+    { label: 'Site settings: Year established', value: 'established' },
+  ])
+
 export const imageField = (label = 'Image'): Field => ({ type: 'custom', label, render: ImagePickerField })
 
 /** A link to a document: an address, or a PDF chosen from (or uploaded to) the media library */

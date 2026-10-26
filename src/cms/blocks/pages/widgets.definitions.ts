@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { defineBlock } from '../../document/definition'
 import { bool, choice, href, image, int, list, text } from '../../document/fields'
 import { button } from '../common'
+import { figureSource, sourceOfStat } from '../shared/figures'
 import { batchPhotos, notifications, statistics } from '@/data/school'
 import { formatStat } from '@/lib/stats'
 import { calendarEvents } from '@/content/calendar'
@@ -111,7 +112,7 @@ export const ContactBoard = defineBlock({
   locked: true,
   schema: z.object({
     banner: banner('Get in Touch', 'Contact Us', "We'd love to hear from you. Reach out anytime!"),
-    stats: list(z.object({ label: text(60), value: text(20) }), 8, statistics.map((s) => ({ label: s.label, value: formatStat(s) }))),
+    stats: list(z.object({ label: text(60), value: text(20), count: figureSource() }), 8, statistics.map((s) => ({ label: s.label, value: formatStat(s), count: sourceOfStat(s.label) }))),
     officeHours: text(600, 'Monday – Saturday: 8:00 AM – 2:30 PM\nSunday: Holiday\nThe office is closed on non-working days, including national and state holidays.'),
   }),
 })

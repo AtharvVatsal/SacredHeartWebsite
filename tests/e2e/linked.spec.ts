@@ -61,3 +61,21 @@ test('the staff count on About Us follows the staff list', async ({ request }) =
   await expectPublic(request, '/about', `>${count}</p>`)
   await expectPublic(request, '/about/staff', 'E2E STAFF MEMBER')
 })
+
+test('figures set in Site settings show on every page that uses them', async ({ request }) => {
+  const headers = await apiAs(request, 'admin')
+  await publish(request, headers, await pageAt(request, headers, '/contact'))
+  await publish(request, headers, await pageAt(request, headers, '/about/history'))
+  await expectPublic(request, '/contact', '>56+</p>')
+
+  const save = (years: string) => request.post('/api/globals/site-settings', { data: { figures: { years } }, headers })
+  expect((await save('57+')).ok()).toBeTruthy()
+  try {
+    // Neither page was edited; both follow the figure saved once in Site settings
+    await expectPublic(request, '/contact', '>57+</p>')
+    await expectPublic(request, '/about/history', '>57+</div>')
+  } finally {
+    await save('56+')
+  }
+  await expectPublic(request, '/contact', '>56+</p>')
+})

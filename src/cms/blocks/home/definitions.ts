@@ -6,6 +6,7 @@ import { bool, choice, href, image, int, list, longText, text } from '../../docu
 import { achievements, facilities, heroImages, heroSection, notifications, quickLinks, schoolInfo, statistics, studentLeaders } from '@/data/school'
 import { button, heading, icon } from '../common'
 import type { IconName } from '../shared/icon-names'
+import { figureSource, sourceOfStat } from '../shared/figures'
 
 const slide = (src: string) => ({ image: { mediaId: null, src, alt: "", position: "center" as const } })
 
@@ -53,7 +54,7 @@ export const StatsRow = defineBlock({
   label: 'Numbers (count up)',
   category: 'cards',
   schema: z.object({
-    stats: list(z.object({ value: text(12), suffix: text(6), label: text(40) }), 6, statistics.map((s) => ({ value: s.value, suffix: s.suffix ?? '', label: s.label }))),
+    stats: list(z.object({ value: text(12), suffix: text(6), label: text(40), count: figureSource() }), 6, statistics.map((s) => ({ value: s.value, suffix: s.suffix ?? '', label: s.label, count: sourceOfStat(s.label) }))),
   }),
 })
 

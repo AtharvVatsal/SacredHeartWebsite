@@ -14,6 +14,7 @@ import { ICON_COMPONENTS } from '../shared/Icon'
 import type { IconName } from '../shared/icon-names'
 import type { BlockProps } from '../../document/definition'
 import { toNotifications } from '../shared/linked'
+import { useFigures } from '../shared/LinkedData'
 import type {
   CalendarBoard as CalendarDef,
   ContactBoard as ContactDef,
@@ -74,6 +75,7 @@ export function PassOutBoard({ banner, batches }: BlockProps<typeof PassOutDef>)
 
 export function ContactBoard({ banner, officeHours, stats }: BlockProps<typeof ContactDef>) {
   const { contact } = useSiteSettings()
+  const figure = useFigures()
   const a = contact.address
   const details = {
     address: `${a.street}, ${a.tehsil}, District ${a.district}, ${a.state} - ${a.pincode}`,
@@ -81,7 +83,7 @@ export function ContactBoard({ banner, officeHours, stats }: BlockProps<typeof C
     emails: contact.emails,
     plusCode: contact.mapPlusCode,
   }
-  return <ContactView details={details} officeHours={officeHours} stats={stats} banner={banner} />
+  return <ContactView details={details} officeHours={officeHours} stats={stats.map((s) => ({ label: s.label, value: figure(s.count, s.value) }))} banner={banner} />
 }
 
 export function EnquiryForm({ banner, ctaTitle, ctaText, ctaButton }: BlockProps<typeof EnquiryDef>) {
