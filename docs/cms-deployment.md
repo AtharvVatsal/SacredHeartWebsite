@@ -115,7 +115,16 @@ Accounts: there is no public sign-up. Only administrators (or the `cms:create-ad
 
 ## 8. Known dependency advisories
 
-At the time of writing (October 2026), `npm audit --omit=dev` reports advisories in libraries the CMS depends on. Their status is recorded in the final project report and in `package.json` `overrides` where a patched version exists. Re-check after every `npm ci`; upgrade Payload (`payload` and all `@payloadcms/*` packages together, same version) once a release has been out long enough to trust, and run the full test suite (§9) after any upgrade.
+Status on 26 October 2026, from `npm audit --omit=dev`:
+
+| Package | Severity | How it is handled |
+|---|---|---|
+| `dompurify` (via Payload's admin code editor) | critical / high | Pinned to the fixed 3.4.17 with `overrides` in `package.json`. |
+| `undici` (Payload's HTTP client) | high / moderate | Pinned to the fixed 7.30.1 with `overrides`. |
+| `esbuild` (via `drizzle-kit`, the migration tool) | moderate | The advisory concerns esbuild's own development server (`esbuild serve`), which this site never runs. No fixed release for this dependency chain yet. |
+| `happy-dom` (via Puck's rich-text field, `@tiptap/html`) | high | No compatible fix (Puck 0.23 requires happy-dom 20). The site does not use rich-text fields, so this code path is not reached. Re-check when Puck updates. |
+
+Payload 3.92.0 was released on 25 October 2026 and updates some of these dependencies. Upgrade `payload` and all `@payloadcms/*` packages together, to the same version, once a release has been out long enough to trust; then remove the overrides that are no longer needed and run every check in §9. Re-run `npm audit --omit=dev` after every `npm ci`.
 
 ## 9. Checks before going live
 

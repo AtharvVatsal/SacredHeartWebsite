@@ -55,5 +55,9 @@
     "typescript": "^5",
     "vitest": "4.1.12"
   },
-  "type": "module"
+  "type": "module",
+  "overrides": {
+    "dompurify": "3.4.17",
+    "undici": "7.30.1"
+  }
 }
