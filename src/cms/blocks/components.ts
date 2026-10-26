@@ -23,7 +23,19 @@ import { CallBand, GuidelineCard, NoticeStrip } from './pages/Academics'
 import { RuleCards } from './pages/Admission'
 import { FeeGuidelines, FeeTable, WarningCard } from './pages/Fees'
 import { AppHelpBand, HelpCards, InfoTiles, PortalCta, StepsGuide } from './pages/Online'
-import { AimsGrid, DualCta, MilestoneTimeline, MissionPanel, StatTiles, StoryCard, ValuesGrid, VisionTabs } from './pages/About'
+import {
+  AimsGrid,
+  DualCta,
+  HighlightBand,
+  LeaderProfile,
+  MilestoneTimeline,
+  MissionPanel,
+  NumberedThemes,
+  StatTiles,
+  StoryCard,
+  ValuesGrid,
+  VisionTabs,
+} from './pages/About'
 import { DressCard, GoldInfoCard } from './pages/Uniform'
 import { PolicyIntro, PolicySections, SimpleCta } from './pages/Legal'
 import { CurriculumCard, HomeworkCard, JoinCta, StreamCards, SubjectGroups, TipsGrid } from './pages/Syllabus'
@@ -89,4 +101,7 @@ export const blockComponents: Record<string, ComponentType<any>> = {
   MissionPanel,
   StoryCard,
   StatTiles,
+  LeaderProfile,
+  NumberedThemes,
+  HighlightBand,
 }

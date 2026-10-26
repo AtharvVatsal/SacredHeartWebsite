@@ -1,10 +1,23 @@
 // Sections of the About pages
 import { z } from 'zod'
 import { defineBlock } from '../../document/definition'
-import { bool, choice, list, longText, text } from '../../document/fields'
+import { bool, choice, image, list, longText, text } from '../../document/fields'
 import { button, icon } from '../common'
 import { gradient } from '../shared/gradients'
-import { aims, coreValues, historyStats, historyStory, milestones, missionText, scjmVision } from '@/content/about'
+import {
+  aims,
+  coreValues,
+  deskClosing,
+  deskThemes,
+  historyStats,
+  historyStory,
+  milestones,
+  missionText,
+  principalHighlights,
+  principalMessage,
+  scjmVision,
+} from '@/content/about'
+import { schoolInfo } from '@/data/school'
 import { PILL_TONES } from './academics.definitions'
 
 export const TINTS = ['amber', 'pink', 'blue', 'purple', 'emerald', 'cyan'] as const
@@ -108,4 +121,47 @@ export const StatTiles = defineBlock({
   }),
 })
 
-export const aboutBlocks = [VisionTabs, AimsGrid, ValuesGrid, DualCta, MilestoneTimeline, MissionPanel, StoryCard, StatTiles]
+export const LeaderProfile = defineBlock({
+  type: 'LeaderProfile',
+  label: 'Leader profile (photo and message)',
+  category: 'about',
+  schema: z.object({
+    photo: image({ src: '/images/principal.webp', alt: `${schoolInfo.principal}, Principal` }),
+    /** Empty: the principal's name from Site settings */
+    name: text(120, ''),
+    role: text(160, 'Principal'),
+    pill: text(60, 'School Leadership'),
+    badgeLabel: text(60, 'Guided by'),
+    badgeText: text(80, 'Faith · Knowledge · Service'),
+    cornerBadge: text(30, 'CISCE'),
+    message: list(z.object({ icon: icon('BookOpen'), text: text(2000) }), 8, principalMessage),
+    quote: text(400, 'Anything is possible only with the right thoughts in mind.'),
+    link: button('Contact School', '/contact'),
+  }),
+})
+
+export const NumberedThemes = defineBlock({
+  type: 'NumberedThemes',
+  label: 'Numbered themes with a signed closing',
+  category: 'about',
+  schema: z.object({
+    eyebrow: text(80, "From the Principal's Desk"),
+    title: text(140, 'What We Believe'),
+    themes: list(z.object({ title: text(120), text: text(2000) }), 20, deskThemes),
+    closing: longText(2000, deskClosing),
+    signoff: text(60, 'God Bless'),
+    /** Empty: the principal's name from Site settings */
+    signName: text(120, ''),
+    /** Empty: "Principal, <full school name>, Sidhpur" */
+    signRole: text(200, ''),
+  }),
+})
+
+export const HighlightBand = defineBlock({
+  type: 'HighlightBand',
+  label: 'Key figures on a green band',
+  category: 'about',
+  schema: z.object({ stats: list(z.object({ icon: icon('Star'), label: text(80), value: text(30) }), 8, principalHighlights) }),
+})
+
+export const aboutBlocks = [VisionTabs, AimsGrid, ValuesGrid, DualCta, MilestoneTimeline, MissionPanel, StoryCard, StatTiles, LeaderProfile, NumberedThemes, HighlightBand]

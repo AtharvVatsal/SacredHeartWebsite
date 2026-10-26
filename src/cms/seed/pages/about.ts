@@ -1,4 +1,5 @@
 import { excellenceStory } from '@/content/about'
+import { schoolInfo } from '@/data/school'
 import { page } from '../builders'
 
 export const aimsPage = page('/about/aims', 'Our Aims', [
@@ -48,6 +49,34 @@ export const historyPage = page('/about/history', 'Our History', [
       primary: { label: 'Back to About', href: '/about' },
       secondary: { label: 'Apply for Admission', href: '/admission' },
       arrows: false,
+    },
+  ],
+])
+
+export const principalPage = page('/about/principal', "Principal's Message", [
+  [
+    'PageHero',
+    {
+      style: 'principal',
+      back: { label: 'Back to About', href: '/about' },
+      badge: 'Leadership Message',
+      badgeIcon: 'Sparkles',
+      title: "Principal's Message",
+      subtitle: 'Words of wisdom from our visionary leader',
+      motif: 'Quote',
+      motifSmall: 'BookOpen',
+    },
+  ],
+  ['LeaderProfile'],
+  ['NumberedThemes'],
+  ['HighlightBand'],
+  [
+    'DualCta',
+    {
+      title: 'Experience Our Leadership',
+      text: `Under ${schoolInfo.principal}'s guidance, Sacred Heart continues to nurture young minds with values and excellence.`,
+      primary: { label: 'Back to About', href: '/about' },
+      secondary: { label: 'Apply for Admission', href: '/admission' },
     },
   ],
 ])

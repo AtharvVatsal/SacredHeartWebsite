@@ -2,6 +2,8 @@
 // The original pages (legacy-page.tsx) keep their own copy of the same text.
 import type { GradientName } from '@/cms/blocks/shared/gradients'
 import type { IconName } from '@/cms/blocks/shared/icon-names'
+import { schoolInfo, statistics } from '@/data/school'
+import { formatStat } from '@/lib/stats'
 
 export const scjmVision: { title: string; content: string }[] = [
   {
@@ -78,4 +80,44 @@ export const historyStats: { icon: IconName; value: string; label: string; look:
   { icon: 'Calendar', value: '1969', label: 'School Established', look: 'light' },
   { icon: 'Users', value: '56+', label: 'Years of Excellence', look: 'gold' },
   { icon: 'GraduationCap', value: '10K+', label: 'Alumni', look: 'light' },
+]
+
+export const principalMessage: { icon: IconName; text: string }[] = [
+  {
+    icon: 'BookOpen',
+    text: 'Welcome to the Sacred Heart school website. The purpose of this website is to provide parents, students, and our school community with easy access to a wealth of information on our school programs, policies and activities.',
+  },
+  {
+    icon: 'Users',
+    text: 'Sacred Heart school is a great place to teach and learn. Our teachers are committed to a high-quality learning experience focused on the individual needs of each child. We are striving to be creative and innovative in our instruction to engage students in their learning through a variety of activities, applications of technology and 21st century skills.',
+  },
+]
+
+// The principal's message in full, worded as the school published it
+export const deskThemes: { title: string; text: string }[] = [
+  { title: 'Holistic Education', text: "Education aims at a holistic and integral development of a student/person. It is a collective responsibility based on a deep and healthy relationship between teachers, students, parents and among students themselves. We strive to connect this deep relationship with the Creator, God Almighty, to help us achieve our dreams and goals. Such relationships build strength in the heart and at the core of one's being." },
+  { title: 'Spiritual & Moral Values', text: 'Contemporary youth experience increasing pressure from the value systems developing in society. Therefore, they need to imbibe spiritual and moral values to withstand confusion and the erosion of sound values and to become genuine human beings.' },
+  { title: 'Creative & Innovative Learning', text: 'Creative and innovative education is very important. The essence of creative teaching is openness, flexibility and respect for the uniqueness of every human being. The school provides a healthy, vibrant and holistic education that aims at excellence in every sphere of human endeavour.' },
+  { title: 'Every Child is Unique', text: 'Every child is unique and a masterpiece. Each one is taken care of and given a conducive ambience for their learning and developing.' },
+  { title: 'Education Without Fear', text: 'The goal of education must be freedom from fear. The only sufficient basis for fearlessness is knowledge of the self. The foundation of education is this self-knowledge and awareness.' },
+  { title: 'Creating a Better World', text: 'Man alone has been bestowed with capacities with which he can make this world a better place to live in. Every person has a responsibility to ask: “What can I do to this world that did not exist when I was born?” Every human life has the power to lift not only itself, but also the collective consciousness of humanity.' },
+  { title: 'Discover Your Potential', text: 'The tragedy of life is not ultimate death, but the resources and potential that die within a person while he or she is still alive. We must use the resources with which we have been bestowed, or we may lose them. Let us think positively, because positive thought patterns create positive vibes in life.' },
+  { title: 'The Power of Right Thoughts', text: 'Anything is possible only with the right thoughts in mind. As parents and teachers, it is our commitment to channelize the talents and energy of our students into creative community building.' },
+  { title: 'Together Towards Greater Heights', text: 'With this noble sense of purpose, I request all staff, parents and well-wishers to join hands with us as we take Sacred Heart School to greater heights. Together, let us nurture talent, strengthen character and build a better and more compassionate community.' },
+  { title: 'Our Students', text: 'I am very proud of my students. They are intelligent, resilient, creative, imaginative, disciplined and dedicated to lifelong learning. They are respectful and ethical, and they are the future leaders and role models of society.' },
+]
+
+export const deskClosing =
+  'As parents and teachers, it is our commitment to adopt ways and means to channelize the talents and energy of our students into creative community building. With this noble sense of purpose, may I request all staff, parents and well-wishers to join hands as we take Sacred Heart to greater heights.'
+
+const statValue = (label: string) => {
+  const s = statistics.find((x) => x.label === label)
+  return s ? formatStat(s) : ''
+}
+
+export const principalHighlights: { icon: IconName; label: string; value: string }[] = [
+  { icon: 'GraduationCap', label: 'CISCE Affiliated', value: `Since ${schoolInfo.established}` },
+  { icon: 'Users', label: 'Students Strength', value: statValue('Students Strength') },
+  { icon: 'Award', label: 'Staff Strength', value: statValue('Staff Strength') },
+  { icon: 'Star', label: 'Glorious Years', value: statValue('Glorious Years') },
 ]

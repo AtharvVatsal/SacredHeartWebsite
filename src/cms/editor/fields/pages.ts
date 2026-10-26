@@ -3,7 +3,7 @@
 // Editor fields for the page-specific sections (see src/cms/blocks/pages)
 import type { Field, Fields } from '@puckeditor/core'
 import { GRADIENTS } from '../../blocks/shared/gradients'
-import { button, choose, FORMAT_HINT, iconChoice, list, optionalIcon, paragraph, text, yesNo } from './helpers'
+import { button, choose, FORMAT_HINT, iconChoice, imageField, list, optionalIcon, paragraph, text, yesNo } from './helpers'
 
 const str = (v: unknown) => (typeof v === 'string' ? v : '')
 
@@ -362,4 +362,29 @@ Object.assign(pageFields, {
       6,
     ),
   },
+} satisfies Record<string, Fields>)
+
+Object.assign(pageFields, {
+  LeaderProfile: {
+    photo: imageField('Photo'),
+    name: text('Name (leave empty to use the principal named in Site settings)'),
+    role: text('Role (shown before the school name)'),
+    pill: text('Small label above the name'),
+    message: list('Message', { icon: iconChoice(), text: paragraph('Paragraph') }, (i) => str(i.text).slice(0, 60), 8),
+    quote: paragraph('Highlighted quote (optional)'),
+    link: button('Link under the message'),
+    badgeLabel: text('Photo badge: small line'),
+    badgeText: text('Photo badge: main line (leave empty to hide)'),
+    cornerBadge: text('Corner badge on the photo (optional)'),
+  },
+  NumberedThemes: {
+    eyebrow: text('Small line above the title'),
+    title: text('Title'),
+    themes: list('Themes', { title: text('Title'), text: paragraph('Text') }, (i) => str(i.title), 20),
+    closing: paragraph('Closing message (leave empty to hide the signed box)'),
+    signoff: text('Sign-off (e.g. God Bless)'),
+    signName: text('Signed by (leave empty to use the principal named in Site settings)'),
+    signRole: text('Role under the name (leave empty for "Principal, <school name>, Sidhpur")'),
+  },
+  HighlightBand: { stats: list('Figures', { icon: iconChoice(), value: text('Figure (e.g. 2.6K+)'), label: text('Label') }, (i) => [str(i.value), str(i.label)].filter(Boolean).join(' '), 8) },
 } satisfies Record<string, Fields>)
