@@ -5,12 +5,14 @@ import { useMemo } from 'react'
 import NotificationsView from '@/components/notifications/NotificationsView'
 import CalendarView from '@/components/academics/CalendarView'
 import GalleryView from '@/components/gallery/GalleryView'
+import PassOutView from '@/components/about/PassOutView'
+import { useSiteSettings } from '@/components/providers/SiteSettingsProvider'
 import type { Album } from '@/data/gallery'
 import { ICON_COMPONENTS } from '../shared/Icon'
 import type { IconName } from '../shared/icon-names'
 import type { BlockProps } from '../../document/definition'
 import { toNotifications } from '../shared/linked'
-import type { CalendarBoard as CalendarDef, GalleryBoard as GalleryDef, NotificationsBoard as BoardDef } from './widgets.definitions'
+import type { CalendarBoard as CalendarDef, GalleryBoard as GalleryDef, NotificationsBoard as BoardDef, PassOutBoard as PassOutDef } from './widgets.definitions'
 
 export function NotificationsBoard({ badge, title, subtitle, notices, ctaTitle, ctaText, ctaButton }: BlockProps<typeof BoardDef>) {
   const list = useMemo(() => toNotifications(notices), [notices])
@@ -42,4 +44,19 @@ export function GalleryBoard({ eyebrow, title, albums, videosTitle, videos }: Bl
   }, [albums])
   const videoList = useMemo(() => videos.map((v) => ({ id: v.youtubeId, title: v.title, note: v.note })), [videos])
   return <GalleryView albums={data.list} videos={videoList} icons={data.icons} eyebrow={eyebrow} title={title} videosTitle={videosTitle} />
+}
+
+export function PassOutBoard({ batches }: BlockProps<typeof PassOutDef>) {
+  const { onlineServices } = useSiteSettings()
+  const data = useMemo(
+    () =>
+      batches.map((b) => ({
+        year: b.year,
+        photos: b.photos
+          .filter((p) => p.photo.src)
+          .map((p, i) => ({ id: `${b.year}-${i + 1}`, year: b.year, title: p.title, image: p.photo.src })),
+      })),
+    [batches],
+  )
+  return <PassOutView batches={data} alumniHref={onlineServices.alumniRegistration} />
 }

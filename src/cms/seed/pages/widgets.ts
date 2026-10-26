@@ -19,3 +19,5 @@ export const galleryPage = page('/gallery', 'Photo Gallery', [
   ],
   ['GalleryBoard'],
 ])
+
+export const passOutPage = page('/about/pass-out-batches', 'Pass Out Batches', [['PassOutBoard']])

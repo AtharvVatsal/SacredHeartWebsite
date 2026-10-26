@@ -39,7 +39,7 @@ import {
   VisionTabs,
 } from './pages/About'
 import { LeaderMessages } from './pages/Leaders'
-import { CalendarBoard, GalleryBoard, NotificationsBoard } from './pages/Widgets'
+import { CalendarBoard, GalleryBoard, NotificationsBoard, PassOutBoard } from './pages/Widgets'
 import {
   ActivitiesBand,
   AnthemCard,
@@ -176,4 +176,5 @@ export const blockComponents: Record<string, ComponentType<any>> = {
   NotificationsBoard,
   CalendarBoard,
   GalleryBoard,
+  PassOutBoard,
 }

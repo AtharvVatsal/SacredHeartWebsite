@@ -816,3 +816,17 @@ Object.assign(pageFields, {
     videos: list('YouTube videos', { youtubeId: text('Video id (the part after v= in the YouTube address)'), title: text('Title'), note: text('Short note') }, (i) => str(i.title), 24),
   },
 } satisfies Record<string, Fields>)
+
+Object.assign(pageFields, {
+  PassOutBoard: {
+    batches: list(
+      'Batches',
+      {
+        year: { type: 'number', label: 'Year', min: 1900, max: 2200 },
+        photos: list('Photos', { title: text('Title (e.g. Class of 1972)'), photo: imageField('Photo') }, (i) => str(i.title), 40),
+      },
+      (i) => (typeof i.year === 'number' ? `Batch ${i.year}` : ''),
+      200,
+    ),
+  },
+} satisfies Record<string, Fields>)

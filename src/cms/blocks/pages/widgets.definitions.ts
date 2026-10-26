@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { defineBlock } from '../../document/definition'
 import { bool, choice, href, image, int, list, text } from '../../document/fields'
 import { button } from '../common'
-import { notifications } from '@/data/school'
+import { batchPhotos, notifications } from '@/data/school'
 import { calendarEvents } from '@/content/calendar'
 import { galleryAlbums, galleryVideos } from '@/content/gallery'
 import { icon } from '../common'
@@ -79,4 +79,23 @@ export const GalleryBoard = defineBlock({
   }),
 })
 
-export const widgetBlocks = [NotificationsBoard, CalendarBoard, GalleryBoard]
+export const PassOutBoard = defineBlock({
+  type: 'PassOutBoard',
+  label: 'Pass out batches (years and photos)',
+  category: 'features',
+  schema: z.object({
+    batches: list(
+      z.object({
+        year: int(1900, 2200, 2025),
+        photos: list(z.object({ title: text(160), photo: image() }), 40),
+      }),
+      200,
+      batchPhotos.map((b) => ({
+        year: b.year,
+        photos: b.photos.map((p) => ({ title: p.title, photo: { mediaId: null, src: p.image ? encodeURI(p.image) : '', alt: p.title, position: 'center' as const } })),
+      })),
+    ),
+  }),
+})
+
+export const widgetBlocks = [NotificationsBoard, CalendarBoard, GalleryBoard, PassOutBoard]
