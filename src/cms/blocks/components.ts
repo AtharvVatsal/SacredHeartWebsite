@@ -37,6 +37,7 @@ import {
   VisionTabs,
 } from './pages/About'
 import { LeaderMessages } from './pages/Leaders'
+import { OfficeBearersList } from './pages/OfficeBearers'
 import { DressCard, GoldInfoCard } from './pages/Uniform'
 import { PolicyIntro, PolicySections, SimpleCta } from './pages/Legal'
 import { CurriculumCard, HomeworkCard, JoinCta, StreamCards, SubjectGroups, TipsGrid } from './pages/Syllabus'
@@ -106,4 +107,5 @@ export const blockComponents: Record<string, ComponentType<any>> = {
   NumberedThemes,
   HighlightBand,
   LeaderMessages,
+  OfficeBearersList,
 }

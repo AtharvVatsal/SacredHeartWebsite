@@ -1,7 +1,7 @@
 // Sections of the About pages
 import { z } from 'zod'
 import { defineBlock } from '../../document/definition'
-import { bool, choice, image, list, longText, text } from '../../document/fields'
+import { bool, choice, href, image, list, longText, text } from '../../document/fields'
 import { button, icon } from '../common'
 import { gradient } from '../shared/gradients'
 import {
@@ -17,7 +17,7 @@ import {
   principalMessage,
   scjmVision,
 } from '@/content/about'
-import { schoolInfo } from '@/data/school'
+import { officeBearers, schoolInfo } from '@/data/school'
 import { leaderMessageCards } from '@/content/leader-messages'
 import { PILL_TONES } from './academics.definitions'
 
@@ -186,4 +186,43 @@ export const LeaderMessages = defineBlock({
   }),
 })
 
-export const aboutBlocks = [LeaderMessages, VisionTabs, AimsGrid, ValuesGrid, DualCta, MilestoneTimeline, MissionPanel, StoryCard, StatTiles, LeaderProfile, NumberedThemes, HighlightBand]
+const person = () => text(200)
+const pictureOf = (src?: string) => ({ mediaId: null, src: src ?? '', alt: '', position: 'center' as const })
+
+export const OfficeBearersList = defineBlock({
+  type: 'OfficeBearersList',
+  label: 'Office bearers by session (year picker)',
+  category: 'about',
+  schema: z.object({
+    messagesHref: href('/about/office-bearers/messages'),
+    sessions: list(
+      z.object({
+        year: text(20),
+        headGirl: person(),
+        headBoy: person(),
+        headGirlImage: image(),
+        headBoyImage: image(),
+        gamesCaptainGirls: person(),
+        gamesViceCaptainGirls: person(),
+        gamesCaptainBoys: person(),
+        gamesViceCaptainBoys: person(),
+        editorsInChief: text(400),
+        editorialMembers: text(600),
+        houseCaptains: list(z.object({ house: text(60), captain: person(), viceCaptain: person() }), 12),
+        prefects: list(z.object({ house: text(60), names: text(1000) }), 12),
+        juniorCaptains: list(z.object({ house: text(60), captain: person(), viceCaptain: person() }), 12),
+      }),
+      30,
+      officeBearers.map((s) => ({
+        ...s,
+        headGirlImage: pictureOf(s.headGirlImage),
+        headBoyImage: pictureOf(s.headBoyImage),
+        editorialMembers: s.editorialMembers ?? '',
+        prefects: s.prefects.map((p) => ({ house: p.house ?? '', names: p.names })),
+        juniorCaptains: s.juniorCaptains ?? [],
+      })),
+    ),
+  }),
+})
+
+export const aboutBlocks = [OfficeBearersList, LeaderMessages, VisionTabs, AimsGrid, ValuesGrid, DualCta, MilestoneTimeline, MissionPanel, StoryCard, StatTiles, LeaderProfile, NumberedThemes, HighlightBand]

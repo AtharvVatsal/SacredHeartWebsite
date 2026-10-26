@@ -97,3 +97,20 @@ export const messagesPage = page('/about/office-bearers/messages', 'Head Boy & H
   ],
   ['LeaderMessages'],
 ])
+
+export const officeBearersPage = page('/about/office-bearers', 'Office Bearers', [
+  [
+    'PageHero',
+    {
+      style: 'officeBearers',
+      back: { label: 'Back to About', href: '/about' },
+      badge: 'Student Leadership',
+      badgeIcon: 'Sparkles',
+      title: 'Office Bearers',
+      subtitle: 'Student leaders of Sacred Heart Senior Secondary School',
+      motif: 'Crown',
+      motifSmall: 'Users',
+    },
+  ],
+  ['OfficeBearersList'],
+])

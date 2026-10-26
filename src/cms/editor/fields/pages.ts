@@ -410,3 +410,33 @@ Object.assign(pageFields, {
     ),
   },
 } satisfies Record<string, Fields>)
+
+const houseRows = (label: string) =>
+  list(label, { house: text('House'), captain: text('Captain'), viceCaptain: text('Vice captain') }, (i) => str(i.house), 12)
+
+Object.assign(pageFields, {
+  OfficeBearersList: {
+    sessions: list(
+      'Sessions (newest first; the first one is shown when the page opens)',
+      {
+        year: text('Session (e.g. 2026)'),
+        headGirl: text('Head Girl (name and class)'),
+        headGirlImage: imageField('Head Girl photo (optional)'),
+        headBoy: text('Head Boy (name and class)'),
+        headBoyImage: imageField('Head Boy photo (optional)'),
+        gamesCaptainGirls: text('Games captain, girls'),
+        gamesViceCaptainGirls: text('Games vice captain, girls'),
+        gamesCaptainBoys: text('Games captain, boys'),
+        gamesViceCaptainBoys: text('Games vice captain, boys'),
+        editorsInChief: text('Editors-in-chief'),
+        editorialMembers: text('Editorial members (optional)'),
+        houseCaptains: houseRows('House captains'),
+        prefects: list('Prefects', { house: text('House (optional)'), names: paragraph('Names, separated by commas') }, (i) => str(i.house) || str(i.names).slice(0, 40), 12),
+        juniorCaptains: houseRows('Junior captains (optional)'),
+      },
+      (i) => (i.year ? `Session ${str(i.year)}` : ''),
+      30,
+    ),
+    messagesHref: text('Address of the messages page (the "Read Message" buttons, current session only)'),
+  },
+} satisfies Record<string, Fields>)
