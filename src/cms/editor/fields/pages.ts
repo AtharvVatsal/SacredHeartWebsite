@@ -787,3 +787,32 @@ Object.assign(pageFields, {
     ),
   },
 } satisfies Record<string, Fields>)
+
+Object.assign(pageFields, {
+  GalleryBoard: {
+    eyebrow: text('Small line above the title'),
+    title: text('Title'),
+    albums: list(
+      'Albums',
+      {
+        name: text('Album name'),
+        description: text('Short description'),
+        category: choose('Category (for the filter buttons)', [
+          { label: 'Cultural', value: 'cultural' },
+          { label: 'Sports', value: 'sports' },
+          { label: 'Events', value: 'events' },
+          { label: 'Campus', value: 'campus' },
+        ]),
+        icon: iconChoice(),
+        cover: imageField('Cover photo'),
+        photos: list('Photos (add them here for a new album)', { photo: imageField('Photo') }, (_i, n) => `Photo ${(n ?? 0) + 1}`, 300),
+        key: text('Short name for the album address (letters, numbers and dashes)'),
+        folderCount: { type: 'number', label: 'Photos already on the server for this album (leave as it is)', min: 0, max: 500 },
+      },
+      (i) => str(i.name),
+      100,
+    ),
+    videosTitle: text('Videos title'),
+    videos: list('YouTube videos', { youtubeId: text('Video id (the part after v= in the YouTube address)'), title: text('Title'), note: text('Short note') }, (i) => str(i.title), 24),
+  },
+} satisfies Record<string, Fields>)

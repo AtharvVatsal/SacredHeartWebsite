@@ -2,10 +2,12 @@
 // the site's own components
 import { z } from 'zod'
 import { defineBlock } from '../../document/definition'
-import { bool, choice, href, list, text } from '../../document/fields'
+import { bool, choice, href, image, int, list, text } from '../../document/fields'
 import { button } from '../common'
 import { notifications } from '@/data/school'
 import { calendarEvents } from '@/content/calendar'
+import { galleryAlbums, galleryVideos } from '@/content/gallery'
+import { icon } from '../common'
 
 export const noticeItem = z.object({ title: text(200), text: text(1000), date: text(20), important: bool(false), attachment: href('') })
 export const noticeItems = notifications.map((n) => ({ title: n.title, text: n.description, date: n.date, important: n.important, attachment: n.attachment ?? '' }))
@@ -47,4 +49,34 @@ export const CalendarBoard = defineBlock({
   }),
 })
 
-export const widgetBlocks = [NotificationsBoard, CalendarBoard]
+export const GalleryBoard = defineBlock({
+  type: 'GalleryBoard',
+  label: 'Photo gallery (albums and videos)',
+  category: 'features',
+  schema: z.object({
+    eyebrow: text(60, 'Explore'),
+    title: text(140, 'Our Events Gallery'),
+    albums: list(
+      z.object({
+        key: z.string().max(60).regex(/^[a-z0-9-]+$/, 'Use lower-case letters, numbers and dashes only').default('new-album'),
+        name: text(120),
+        description: text(300),
+        category: choice(['cultural', 'sports', 'events', 'campus'] as const, 'events'),
+        icon: icon('Camera'),
+        cover: image(),
+        folderCount: int(0, 500, 0),
+        photos: list(z.object({ photo: image() }), 300),
+      }),
+      100,
+      galleryAlbums,
+    ),
+    videosTitle: text(140, 'School Videos'),
+    videos: list(
+      z.object({ youtubeId: z.string().regex(/^[A-Za-z0-9_-]{11}$/, 'Paste the 11-character video id from the YouTube address').default('jwEzWZsKNdE'), title: text(160), note: text(200) }),
+      24,
+      galleryVideos,
+    ),
+  }),
+})
+
+export const widgetBlocks = [NotificationsBoard, CalendarBoard, GalleryBoard]

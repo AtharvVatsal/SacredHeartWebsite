@@ -31,7 +31,12 @@ async function importFile(payload: Payload, src: string, alt: string, cache: Map
 
 /** Returns a copy of `value` where every image that points at /public has been linked to the media library */
 export async function importImages<T>(payload: Payload, value: T, cache = new Map()): Promise<T> {
-  if (Array.isArray(value)) return (await Promise.all(value.map((v) => importImages(payload, v, cache)))) as T
+  if (Array.isArray(value)) {
+    // One at a time: files with the same name (e.g. several 01.webp) must not be uploaded concurrently
+    const out: unknown[] = []
+    for (const v of value) out.push(await importImages(payload, v, cache))
+    return out as T
+  }
   if (!isRecord(value)) return value
   if ('mediaId' in value && 'src' in value && !value.mediaId && typeof value.src === 'string' && value.src.startsWith('/')) {
     const media = await importFile(payload, value.src, typeof value.alt === 'string' ? value.alt : '', cache)

@@ -12,6 +12,14 @@ export interface Album {
   count: number
   // Albums that hold one local photo instead of a numbered set
   single?: string
+  // Photos chosen one by one (albums made in the CMS); otherwise the numbered files in the album's folder
+  photos?: { src: string; thumb?: string }[]
+}
+
+export interface Video {
+  id: string
+  title: string
+  note: string
 }
 
 export const albums: Album[] = [
@@ -44,17 +52,19 @@ export const albums: Album[] = [
 const pad = (n: number) => String(n).padStart(2, '0')
 
 export function albumPhoto(album: Album, index: number) {
+  if (album.photos?.length) return album.photos[index]?.src ?? ''
   return album.single ?? `/images/Gallery/${album.id}/${pad(index + 1)}.webp`
 }
 
 export function albumThumb(album: Album, index: number) {
+  if (album.photos?.length) return album.photos[index]?.thumb || album.photos[index]?.src || ''
   return album.single ?? `/images/Gallery/${album.id}/thumbs/${pad(index + 1)}.webp`
 }
 
 export const totalPhotos = albums.reduce((n, a) => n + a.count, 0)
 
 // School videos on YouTube (titles as published there)
-export const videos = [
+export const videos: Video[] = [
   { id: 'jwEzWZsKNdE', title: 'Sacred Heart Sr. Sec. School, Dharamshala', note: 'A film about the school by Himachal 365' },
   { id: '8Tfh0UhxwGU', title: "Happy Teacher's Day", note: "Teacher's Day celebrations" },
   { id: 'KcV86owwT8g', title: 'Art and Craft Exhibition', note: 'Student artwork on display' },
