@@ -21,3 +21,7 @@ export const galleryPage = page('/gallery', 'Photo Gallery', [
 ])
 
 export const passOutPage = page('/about/pass-out-batches', 'Pass Out Batches', [['PassOutBoard']])
+
+export const contactPage = page('/contact', 'Contact Us', [['ContactBoard']])
+
+export const enquiryPage = page('/admission/register', 'Admission Enquiry', [['EnquiryForm']])

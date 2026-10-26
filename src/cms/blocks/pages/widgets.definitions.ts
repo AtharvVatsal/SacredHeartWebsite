@@ -98,4 +98,26 @@ export const PassOutBoard = defineBlock({
   }),
 })
 
-export const widgetBlocks = [NotificationsBoard, CalendarBoard, GalleryBoard, PassOutBoard]
+export const ContactBoard = defineBlock({
+  type: 'ContactBoard',
+  label: 'Contact page (details, enquiry form, careers, directions)',
+  category: 'features',
+  locked: true,
+  schema: z.object({
+    officeHours: text(600, 'Monday – Saturday: 8:00 AM – 2:30 PM\nSunday: Holiday\nThe office is closed on non-working days, including national and state holidays.'),
+  }),
+})
+
+export const EnquiryForm = defineBlock({
+  type: 'EnquiryForm',
+  label: 'Admission enquiry form',
+  category: 'features',
+  locked: true,
+  schema: z.object({
+    ctaTitle: text(120, 'Need Immediate Assistance?'),
+    ctaText: text(300, 'Call or email the school office for help with admissions'),
+    ctaButton: button('Contact Us', '/contact'),
+  }),
+})
+
+export const widgetBlocks = [NotificationsBoard, CalendarBoard, GalleryBoard, PassOutBoard, ContactBoard, EnquiryForm]

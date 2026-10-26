@@ -830,3 +830,8 @@ Object.assign(pageFields, {
     ),
   },
 } satisfies Record<string, Fields>)
+
+Object.assign(pageFields, {
+  ContactBoard: { officeHours: paragraph('Office hours (address, phone numbers and emails come from Site settings)') },
+  EnquiryForm: { ctaTitle: text('Band title under the form'), ctaText: paragraph('Band text'), ctaButton: button('Band button') },
+} satisfies Record<string, Fields>)

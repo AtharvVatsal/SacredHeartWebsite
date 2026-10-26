@@ -21,7 +21,7 @@ import { onlineFeePage, onlineRegistrationPage } from './pages/online'
 import { aimsPage, historyPage, messagesPage, officeBearersPage, principalPage, staffPage } from './pages/about'
 import { achievementsPage, otherAchievementsPage, toppers10Page, toppers12Page, toppersIndexPage } from './pages/achievements'
 import { aboutLandingPage, academicsLandingPage, admissionLandingPage } from './pages/landing'
-import { calendarPage, galleryPage, notificationsPage, passOutPage } from './pages/widgets'
+import { calendarPage, contactPage, enquiryPage, galleryPage, notificationsPage, passOutPage } from './pages/widgets'
 
 const SEEDS: { seed: SeedPage; seo?: { title?: string; description?: string } }[] = [
   { seed: homePage, seo: homeSeo },
@@ -50,6 +50,8 @@ const SEEDS: { seed: SeedPage; seo?: { title?: string; description?: string } }[
   { seed: calendarPage },
   { seed: galleryPage },
   { seed: passOutPage },
+  { seed: contactPage },
+  { seed: enquiryPage },
   { seed: leavePage },
   { seed: syllabusPage },
 ]

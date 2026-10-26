@@ -6,13 +6,22 @@ import NotificationsView from '@/components/notifications/NotificationsView'
 import CalendarView from '@/components/academics/CalendarView'
 import GalleryView from '@/components/gallery/GalleryView'
 import PassOutView from '@/components/about/PassOutView'
+import ContactView from '@/components/contact/ContactView'
+import RegisterView from '@/components/admission/RegisterView'
 import { useSiteSettings } from '@/components/providers/SiteSettingsProvider'
 import type { Album } from '@/data/gallery'
 import { ICON_COMPONENTS } from '../shared/Icon'
 import type { IconName } from '../shared/icon-names'
 import type { BlockProps } from '../../document/definition'
 import { toNotifications } from '../shared/linked'
-import type { CalendarBoard as CalendarDef, GalleryBoard as GalleryDef, NotificationsBoard as BoardDef, PassOutBoard as PassOutDef } from './widgets.definitions'
+import type {
+  CalendarBoard as CalendarDef,
+  ContactBoard as ContactDef,
+  EnquiryForm as EnquiryDef,
+  GalleryBoard as GalleryDef,
+  NotificationsBoard as BoardDef,
+  PassOutBoard as PassOutDef,
+} from './widgets.definitions'
 
 export function NotificationsBoard({ badge, title, subtitle, notices, ctaTitle, ctaText, ctaButton }: BlockProps<typeof BoardDef>) {
   const list = useMemo(() => toNotifications(notices), [notices])
@@ -59,4 +68,21 @@ export function PassOutBoard({ batches }: BlockProps<typeof PassOutDef>) {
     [batches],
   )
   return <PassOutView batches={data} alumniHref={onlineServices.alumniRegistration} />
+}
+
+export function ContactBoard({ officeHours }: BlockProps<typeof ContactDef>) {
+  const { contact } = useSiteSettings()
+  const a = contact.address
+  const details = {
+    address: `${a.street}, ${a.tehsil}, District ${a.district}, ${a.state} - ${a.pincode}`,
+    phones: contact.phones,
+    emails: contact.emails,
+    plusCode: contact.mapPlusCode,
+  }
+  return <ContactView details={details} officeHours={officeHours} />
+}
+
+export function EnquiryForm({ ctaTitle, ctaText, ctaButton }: BlockProps<typeof EnquiryDef>) {
+  const { contact } = useSiteSettings()
+  return <RegisterView email={contact.emails[0]} ctaTitle={ctaTitle} ctaText={ctaText} ctaButton={ctaButton} />
 }
