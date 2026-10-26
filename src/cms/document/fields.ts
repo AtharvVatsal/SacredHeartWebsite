@@ -2,6 +2,7 @@
 // Everything an editor can type ends up in one of these, so this is where hostile input is stopped.
 // Schemas are strict (publishing reports the error); rendering repairs field-by-field with defaults (validate.ts).
 import { z } from 'zod'
+import { toSitePath } from '../render/media'
 
 /** Plain text with a length limit. Rendered as text, never as HTML. */
 export const text = (max = 200, fallback = '') => z.string().max(max, `Keep this under ${max} characters`).default(fallback)
@@ -44,7 +45,11 @@ export const image = (fallback: { src?: string; alt?: string } = {}) =>
   z
     .object({
       mediaId: z.number().int().positive().nullable().default(null),
-      src: z.string().max(500).refine((v) => v === '' || IMAGE_SRC.test(v), { message: 'Image address is not allowed' }).default(''),
+      // Full addresses of this site's own media files (saved by older versions) are stored as site paths
+      src: z
+        .preprocess((v) => (typeof v === 'string' ? toSitePath(v) : v), z.string().max(500))
+        .refine((v) => v === '' || IMAGE_SRC.test(v), { message: 'Image address is not allowed' })
+        .default(''),
       alt: z.string().max(300).default(''),
       /** Which part of the photo stays visible when it is cropped to fit */
       position: z.enum(['center', 'top', 'bottom', 'left', 'right']).default('center'),

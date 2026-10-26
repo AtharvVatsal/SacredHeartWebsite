@@ -126,3 +126,22 @@ describe('document migrations', () => {
     expect(migrateDocument(d, null)).toEqual(d)
   })
 })
+
+describe('image addresses', () => {
+  const imageDoc = (src: string): PageDocument => ({
+    root: { props: {} },
+    content: [{ type: 'ImageBlock', props: { id: 'img-1', image: { mediaId: 3, src, alt: 'A photo', position: 'center' } } }],
+  })
+  const srcOf = (doc: PageDocument) => (doc.content[0].props as { image: { src: string } }).image.src
+
+  it('stores full addresses of this site’s media files as site paths, so they can be published', () => {
+    const result = validateDocument(imageDoc('http://localhost:3000/api/media/file/Hero_1.webp'), blockRegistry, 'strict')
+    expect(result.issues).toEqual([])
+    expect(srcOf(result.document)).toBe('/api/media/file/Hero_1.webp')
+  })
+
+  it('still refuses plain http addresses on other sites', () => {
+    const result = validateDocument(imageDoc('http://example.com/photo.jpg'), blockRegistry, 'strict')
+    expect(result.issues.length).toBeGreaterThan(0)
+  })
+})
