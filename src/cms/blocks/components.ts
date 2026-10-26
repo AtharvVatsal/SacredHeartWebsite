@@ -37,7 +37,19 @@ import {
   VisionTabs,
 } from './pages/About'
 import { LeaderMessages } from './pages/Leaders'
-import { ActivitiesBand, ClassLevels, ResourceLinks, StreamTiles, SubjectOverview } from './pages/Landing'
+import {
+  ActivitiesBand,
+  ApplyBand,
+  ChecklistCard,
+  ClassLevels,
+  DatesNotice,
+  GradientLinkCards,
+  NumberedRules,
+  ProcessSteps,
+  ResourceLinks,
+  StreamTiles,
+  SubjectOverview,
+} from './pages/Landing'
 import { OfficeBearersList } from './pages/OfficeBearers'
 import {
   AchieverCards,
@@ -138,4 +150,10 @@ export const blockComponents: Record<string, ComponentType<any>> = {
   SubjectOverview,
   ResourceLinks,
   ActivitiesBand,
+  ProcessSteps,
+  ChecklistCard,
+  NumberedRules,
+  GradientLinkCards,
+  DatesNotice,
+  ApplyBand,
 }

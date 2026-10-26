@@ -1,7 +1,6 @@
-import type { Metadata } from 'next'
-import { pageMeta } from '@/lib/seo'
+import { builtInMetadata } from '@/cms/render/builtin'
 
-export const metadata: Metadata = pageMeta('/admission')
+export const generateMetadata = () => builtInMetadata('/admission')
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children

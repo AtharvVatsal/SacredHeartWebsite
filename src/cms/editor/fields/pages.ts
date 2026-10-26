@@ -613,3 +613,28 @@ Object.assign(pageFields, {
     items: list('Activities', { name: text('Name'), icon: iconChoice(), tone: toneChoice('Colour', [['pink', 'Pink'], ['purple', 'Purple'], ['green', 'Green'], ['blue', 'Blue']]) }, (i) => str(i.name), 12),
   },
 } satisfies Record<string, Fields>)
+
+Object.assign(pageFields, {
+  ProcessSteps: {
+    ...eyebrowTitle,
+    intro: paragraph('Line under the title'),
+    steps: list('Steps', { title: text('Title'), text: paragraph('Text'), icon: iconChoice(), color: gradientChoice() }, (i) => str(i.title), 8),
+    button: button('Button under the steps'),
+    footText: text('Line under the button'),
+    footLink: button('Link at the end of that line'),
+  },
+  ChecklistCard: { icon: iconChoice(), title: text('Title'), subtitle: text('Line under the title'), items: textList('Items', 20) },
+  NumberedRules: { ...eyebrowTitle, rules: textList('Rules', 30), note: paragraph('Note under the rules (links allowed)', FORMAT_HINT) },
+  GradientLinkCards: {
+    ...eyebrowTitle,
+    links: list('Cards', { title: text('Title'), text: paragraph('Text'), href: text('Link address'), icon: iconChoice(), color: gradientChoice() }, (i) => str(i.title), 8),
+    moreLabel: text('Text beside the arrow'),
+  },
+  DatesNotice: {
+    ...eyebrowTitle,
+    heading: text('Notice heading'),
+    text: paragraph('Notice text (empty line between paragraphs; phone numbers and email come from Site settings)'),
+    emailLabel: text('Email button text'),
+  },
+  ApplyBand: { title: text('Title'), text: paragraph('Text'), button: button('Button') },
+} satisfies Record<string, Fields>)

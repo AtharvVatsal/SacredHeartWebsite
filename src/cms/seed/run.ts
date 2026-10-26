@@ -20,7 +20,7 @@ import { legalSeo, privacyPage, termsPage } from './pages/legal'
 import { onlineFeePage, onlineRegistrationPage } from './pages/online'
 import { aimsPage, historyPage, messagesPage, officeBearersPage, principalPage } from './pages/about'
 import { achievementsPage, otherAchievementsPage, toppers10Page, toppers12Page, toppersIndexPage } from './pages/achievements'
-import { academicsLandingPage } from './pages/landing'
+import { academicsLandingPage, admissionLandingPage } from './pages/landing'
 
 const SEEDS: { seed: SeedPage; seo?: { title?: string; description?: string } }[] = [
   { seed: homePage, seo: homeSeo },
@@ -42,6 +42,7 @@ const SEEDS: { seed: SeedPage; seo?: { title?: string; description?: string } }[
   { seed: toppersIndexPage },
   { seed: otherAchievementsPage },
   { seed: academicsLandingPage },
+  { seed: admissionLandingPage },
   { seed: leavePage },
   { seed: syllabusPage },
 ]

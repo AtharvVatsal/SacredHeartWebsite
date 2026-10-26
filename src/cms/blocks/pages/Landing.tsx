@@ -1,14 +1,24 @@
 'use client'
 
 // Section landing page sections (Academics, Admission, About Us), moved verbatim from those pages
+import Link from 'next/link'
 import { m } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Calendar, CheckCircle, Mail, Phone, Scale } from 'lucide-react'
+import { useSiteSettings } from '@/components/providers/SiteSettingsProvider'
+import { telHref } from '@/lib/contact'
 import { FadeIn, FadeInItem, ParallaxSection, StaggerContainer } from '@/components/animations'
 import type { BlockProps } from '../../document/definition'
 import { Icon } from '../shared/Icon'
+import { Inline } from '../shared/InlineText'
 import { useInView } from '../shared/reveal'
 import { SmartLink } from '../shared/SmartLink'
 import type {
+  ApplyBand as ApplyDef,
+  ChecklistCard as ChecklistDef,
+  DatesNotice as DatesDef,
+  GradientLinkCards as GradientLinksDef,
+  NumberedRules as RulesDef,
+  ProcessSteps as StepsDef,
   ActivitiesBand as ActivitiesDef,
   ClassLevels as LevelsDef,
   ResourceLinks as LinksDef,
@@ -36,7 +46,7 @@ function EyebrowHeading({ eyebrow, title, divider = 'spaced', size = 'large', da
             <div className="h-1 bg-secondary-400 rounded-full mx-auto" />
           </div>
         )}
-        {intro && <p className="text-gray-300 max-w-2xl mx-auto">{intro}</p>}
+        {intro && <p className={`${dark ? 'text-gray-300' : 'text-gray-600'} max-w-2xl mx-auto`}>{intro}</p>}
       </div>
     </FadeIn>
   )
@@ -238,6 +248,244 @@ export function ActivitiesBand({ eyebrow, title, intro, items }: BlockProps<type
             </FadeInItem>
           ))}
         </StaggerContainer>
+      </div>
+    </section>
+  )
+}
+
+export function ProcessSteps(p: BlockProps<typeof StepsDef>) {
+  return (
+    <section className="py-20 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+      <ParallaxSection offset={-80} className="absolute top-0 right-0 w-[400px] h-[400px] bg-secondary-400/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="container mx-auto px-4 relative z-10">
+        <EyebrowHeading eyebrow={p.eyebrow} title={p.title} intro={p.intro} />
+        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" stagger={0.1}>
+          {p.steps.map((step, index) => (
+            <FadeInItem key={index} direction="up" blur>
+              <m.div
+                whileHover={{ y: -8, scale: 1.02 }}
+                className={`bg-gradient-to-br ${step.color} p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 text-white relative overflow-hidden group h-full`}
+              >
+                <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
+                <div className="relative z-10">
+                  <m.div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform" whileHover={{ rotate: 10 }}>
+                    <Icon name={step.icon} className="w-8 h-8" />
+                  </m.div>
+                  <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center font-bold text-xl mb-4 text-primary-900">{index + 1}</div>
+                  <h3 className="font-display font-bold text-xl mb-2">{step.title}</h3>
+                  <p className="text-white/80 text-sm">{step.text}</p>
+                </div>
+              </m.div>
+            </FadeInItem>
+          ))}
+        </StaggerContainer>
+
+        {(p.button.label || p.footLink.label) && (
+          <FadeIn blur>
+            <div className="text-center mt-12">
+              {p.button.label && p.button.href && (
+                <m.div whileHover={{ scale: 1.05 }} className="inline-flex">
+                  <SmartLink
+                    href={p.button.href}
+                    className="active:scale-[0.98] inline-flex items-center gap-3 bg-gradient-to-r from-primary-700 to-primary-800 text-white px-10 py-5 rounded-full font-semibold hover:from-primary-600 hover:to-primary-700 transition-all shadow-xl hover:shadow-2xl"
+                  >
+                    {p.button.label}
+                    <ArrowRight size={20} />
+                  </SmartLink>
+                </m.div>
+              )}
+              {p.footLink.label && p.footLink.href && (
+                <p className="mt-5 text-gray-600">
+                  {p.footText}{' '}
+                  <SmartLink href={p.footLink.href} className="font-semibold text-primary-800 underline hover:text-primary-900">
+                    {p.footLink.label}
+                  </SmartLink>
+                </p>
+              )}
+            </div>
+          </FadeIn>
+        )}
+      </div>
+    </section>
+  )
+}
+
+export function ChecklistCard({ icon, title, subtitle, items }: BlockProps<typeof ChecklistDef>) {
+  return (
+    <section className="py-20 bg-white relative overflow-hidden">
+      <div className="container mx-auto px-4 relative z-10">
+        <FadeIn blur>
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-gradient-to-br from-primary-50 via-white to-secondary-50 rounded-3xl p-10 shadow-xl border border-primary-100 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-secondary-400/10 rounded-full blur-[80px]" />
+              <div className="relative z-10">
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="w-16 h-16 bg-gradient-to-br from-primary-600 to-primary-700 rounded-2xl flex items-center justify-center shadow-lg">
+                    <Icon name={icon} className="w-8 h-8 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl md:text-3xl font-display font-bold text-primary-900">{title}</h3>
+                    {subtitle && <p className="text-gray-600">{subtitle}</p>}
+                  </div>
+                </div>
+                <StaggerContainer className="grid md:grid-cols-2 gap-4" stagger={0.05}>
+                  {items.map((item, index) => (
+                    <FadeInItem key={index} direction="right">
+                      <m.div whileHover={{ x: 10 }} className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-100 hover:border-primary-200 hover:shadow-md transition-all">
+                        <div className="w-10 h-10 bg-secondary-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <CheckCircle className="w-5 h-5 text-secondary-600" />
+                        </div>
+                        <span className="font-medium text-gray-700">{item.text}</span>
+                      </m.div>
+                    </FadeInItem>
+                  ))}
+                </StaggerContainer>
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+      </div>
+    </section>
+  )
+}
+
+export function NumberedRules({ eyebrow, title, rules, note }: BlockProps<typeof RulesDef>) {
+  return (
+    <section className="py-20 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
+      <div className="container mx-auto px-4 relative z-10">
+        <EyebrowHeading eyebrow={eyebrow} title={title} divider="none" size="medium" gap="mb-12" />
+        <StaggerContainer className="max-w-4xl mx-auto grid gap-4" stagger={0.06}>
+          {rules.map((rule, index) => (
+            <FadeInItem key={index} direction="up">
+              <div className="flex items-start gap-4 bg-white rounded-2xl p-5 md:p-6 shadow-sm border border-gray-100 hover:border-primary-200 hover:shadow-md transition-all">
+                <span className="w-10 h-10 shrink-0 rounded-xl bg-primary-50 text-primary-800 font-display font-bold flex items-center justify-center" aria-hidden>
+                  {index + 1}
+                </span>
+                <p className="text-gray-700 leading-relaxed pt-1.5">{rule.text}</p>
+              </div>
+            </FadeInItem>
+          ))}
+        </StaggerContainer>
+        {note && (
+          <p className="max-w-4xl mx-auto mt-6 text-sm text-gray-600 flex items-start gap-2">
+            <Scale aria-hidden className="w-4 h-4 shrink-0 mt-0.5 text-primary-700" />
+            <span>
+              <Inline text={note} linkClassName="font-semibold text-primary-800 underline" />
+            </span>
+          </p>
+        )}
+      </div>
+    </section>
+  )
+}
+
+export function GradientLinkCards({ eyebrow, title, links, moreLabel }: BlockProps<typeof GradientLinksDef>) {
+  return (
+    <section className="py-20 bg-gradient-to-br from-gray-50 via-white to-primary-50 relative overflow-hidden">
+      <div className="absolute -top-32 -left-32 w-96 h-96 bg-secondary-400/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="container mx-auto px-4 relative z-10">
+        <EyebrowHeading eyebrow={eyebrow} title={title} divider="none" size="medium" gap="mb-12" />
+        <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto" stagger={0.1}>
+          {links.map((link, index) => (
+            <FadeInItem key={index} direction="up" blur>
+              <SmartLink href={link.href}>
+                <m.div
+                  whileHover={{ y: -8, scale: 1.02 }}
+                  className={`bg-gradient-to-br ${link.color} p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 text-white relative overflow-hidden group h-full`}
+                >
+                  <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
+                  <div className="relative z-10">
+                    <m.div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform" whileHover={{ rotate: 10 }}>
+                      <Icon name={link.icon} className="w-8 h-8" />
+                    </m.div>
+                    <h3 className="font-display font-bold text-2xl mb-2">{link.title}</h3>
+                    <p className="text-white/80">{link.text}</p>
+                    {moreLabel && (
+                      <div className="mt-6 flex items-center gap-2 text-white/60 group-hover:text-white transition-colors">
+                        <span className="font-medium">{moreLabel}</span>
+                        <m.div animate={{ x: [0, 5, 0] }} transition={{ duration: 2, repeat: Infinity }}>
+                          <ArrowRight size={18} />
+                        </m.div>
+                      </div>
+                    )}
+                  </div>
+                </m.div>
+              </SmartLink>
+            </FadeInItem>
+          ))}
+        </StaggerContainer>
+      </div>
+    </section>
+  )
+}
+
+export function DatesNotice({ eyebrow, title, heading, text, emailLabel }: BlockProps<typeof DatesDef>) {
+  const { contact } = useSiteSettings()
+  const email = contact.emails[0]
+  const paragraphs = text
+    .split(/\n\s*\n/)
+    .map((t) => t.trim())
+    .filter(Boolean)
+  return (
+    <section className="py-20 bg-white relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-primary-50/50 to-transparent pointer-events-none" />
+      <div className="container mx-auto px-4 relative z-10">
+        <EyebrowHeading eyebrow={eyebrow} title={title} divider="tight" size="medium" gap="mb-12" />
+        <div className="max-w-3xl mx-auto rounded-2xl border border-primary-100 bg-primary-50 p-6 md:p-8 text-center">
+          <Calendar aria-hidden className="w-10 h-10 text-primary-700 mx-auto mb-4" />
+          <p className="font-display font-bold text-xl text-primary-900 mb-2">{heading}</p>
+          {paragraphs.map((para, i) => (
+            <p key={i} className={`text-gray-700 ${i === paragraphs.length - 1 ? 'mb-6' : 'mb-2'}`}>
+              {para}
+            </p>
+          ))}
+          <div className="flex flex-wrap justify-center gap-3">
+            {contact.phones.map((phone) => (
+              <a key={phone} href={telHref(phone)} className="inline-flex items-center gap-2 rounded-full bg-primary-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-800 transition-colors">
+                <Phone aria-hidden size={16} /> Call {phone}
+              </a>
+            ))}
+            {email && (
+              <a href={`mailto:${email}`} className="inline-flex items-center gap-2 rounded-full border border-primary-200 bg-white px-5 py-2.5 text-sm font-semibold text-primary-800 hover:bg-primary-100 transition-colors">
+                <Mail aria-hidden size={16} /> {emailLabel}
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+export function ApplyBand({ title, text, button }: BlockProps<typeof ApplyDef>) {
+  const pop = useInView({ opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1 })
+  return (
+    <section className="py-20 bg-gradient-to-br from-primary-800 via-primary-700 to-primary-900 text-white relative overflow-hidden">
+      <div className="absolute inset-0">
+        <m.div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-secondary-500/10 rounded-full blur-[100px]"
+          animate={{ scale: [1, 1.2, 1] }}
+          transition={{ duration: 6, repeat: Infinity }}
+        />
+      </div>
+      <div className="container mx-auto px-4 relative z-10 text-center">
+        <FadeIn blur>
+          <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">{title}</h2>
+          {text && <p className="text-gray-200 mb-8 max-w-2xl mx-auto">{text}</p>}
+        </FadeIn>
+        {button.label && button.href && (
+          <m.div {...pop} transition={{ delay: 0.2 }}>
+            <m.div whileHover={{ scale: 1.05, y: -2 }} className="inline-flex">
+              <SmartLink
+                href={button.href}
+                className="active:scale-[0.98] inline-flex items-center gap-3 bg-secondary-400 text-primary-900 px-10 py-5 rounded-full font-semibold hover:bg-secondary-300 transition-all shadow-xl hover:shadow-2xl"
+              >
+                {button.label}
+                <ArrowRight size={20} />
+              </SmartLink>
+            </m.div>
+          </m.div>
+        )}
       </div>
     </section>
   )

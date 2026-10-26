@@ -19,3 +19,24 @@ export const academicsLandingPage = page('/academics', 'Academics', [
   ['ResourceLinks'],
   ['ActivitiesBand'],
 ])
+
+export const admissionLandingPage = page('/admission', 'Admission', [
+  [
+    'PageHero',
+    {
+      style: 'landing',
+      badge: 'Admissions',
+      badgeIcon: 'GraduationCap',
+      title: 'Admission',
+      subtitle: 'Join our school family for a bright future',
+      motif: 'GraduationCap',
+      motifSmall: 'Sparkles',
+    },
+  ],
+  ['ProcessSteps'],
+  ['ChecklistCard'],
+  ['NumberedRules'],
+  ['GradientLinkCards'],
+  ['DatesNotice'],
+  ['ApplyBand'],
+])
