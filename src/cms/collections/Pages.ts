@@ -6,6 +6,7 @@ import { CURRENT_SCHEMA_VERSION } from '../document/migrations'
 import { isRecord } from '../document/types'
 import { MAX_DOCUMENT_BYTES, validateDocument } from '../document/validate'
 import { checkPath, normalizePath } from '../paths'
+import { LINKED_SOURCE_PATHS } from '../blocks/shared/linked'
 import { revalidatePaths } from '../revalidate'
 
 export const describeIssues = (issues: { label: string; message: string }[]) =>
@@ -68,7 +69,9 @@ const afterChange: CollectionAfterChangeHook = async ({ doc, previousDoc, req })
   if (isPublished && wasPublished && previousDoc.path && previousDoc.path !== doc.path && doc.kind === 'custom') {
     await redirectOldPath(req, previousDoc.path, doc.path)
   }
-  if (isPublished || wasPublished) revalidatePaths(req.payload, [doc.path, previousDoc?.path])
+  // Pages that other pages read from (toppers, staff, notices) refresh every page, so those stay in step
+  const shared = [doc.path, previousDoc?.path].some((p) => typeof p === 'string' && LINKED_SOURCE_PATHS.includes(p))
+  if (isPublished || wasPublished) revalidatePaths(req.payload, [doc.path, previousDoc?.path], { layout: shared })
   return doc
 }
 
@@ -106,7 +109,7 @@ export const Pages: CollectionConfig = {
     ],
     beforeChange: [beforeChange],
     afterChange: [afterChange],
-    afterDelete: [({ doc, req }) => revalidatePaths(req.payload, [doc.path])],
+    afterDelete: [({ doc, req }) => revalidatePaths(req.payload, [doc.path], { layout: LINKED_SOURCE_PATHS.includes(doc.path) })],
   },
   fields: [
     { name: 'title', type: 'text', required: true, maxLength: 120, label: 'Page name', admin: { description: 'Shown in the page list and used as the browser tab title unless an SEO title is set.' } },

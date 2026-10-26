@@ -132,7 +132,7 @@ describe('image addresses', () => {
     root: { props: {} },
     content: [{ type: 'ImageBlock', props: { id: 'img-1', image: { mediaId: 3, src, alt: 'A photo', position: 'center' } } }],
   })
-  const srcOf = (doc: PageDocument) => (doc.content[0].props as { image: { src: string } }).image.src
+  const srcOf = (doc: PageDocument) => (doc.content[0].props as unknown as { image: { src: string } }).image.src
 
   it('stores full addresses of this site’s media files as site paths, so they can be published', () => {
     const result = validateDocument(imageDoc('http://localhost:3000/api/media/file/Hero_1.webp'), blockRegistry, 'strict')

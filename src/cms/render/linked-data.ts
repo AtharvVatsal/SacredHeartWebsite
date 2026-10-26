@@ -6,7 +6,7 @@ import type { Payload, TypedUser } from 'payload'
 import type { Page } from '@/payload-types'
 import { blockRegistry } from '../blocks/definitions'
 import { TOPPER_SOURCES } from '../blocks/pages/achievements.definitions'
-import { toNotifications, toTopperSessions, type LinkedData } from '../blocks/shared/linked'
+import { NOTIFICATIONS_PAGE, STAFF_PAGE, toNotifications, toTopperSessions, type LinkedData } from '../blocks/shared/linked'
 import { migrateDocument } from '../document/migrations'
 import { isRecord, type PageDocument } from '../document/types'
 import { validateDocument } from '../document/validate'
@@ -23,8 +23,6 @@ function sourcesIn(document: PageDocument) {
   return sources
 }
 
-export const STAFF_PAGE = '/about/staff'
-export const NOTIFICATIONS_PAGE = '/notifications'
 
 async function loadSource(payload: Payload, path: string, user: TypedUser | null): Promise<PageDocument | null> {
   const { docs } = await payload.find({ collection: 'pages', where: { path: { equals: path } }, limit: 1, depth: 0, draft: Boolean(user), overrideAccess: false, user: user ?? undefined })

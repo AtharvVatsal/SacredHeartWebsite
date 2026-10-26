@@ -26,3 +26,8 @@ type NoticeInput = { title: string; text: string; date: string; important: boole
 export function toNotifications(notices: NoticeInput[]): Notification[] {
   return notices.map((n, i) => ({ id: String(i), title: n.title, description: n.text, date: n.date, important: n.important, ...(n.attachment ? { attachment: n.attachment } : {}) }))
 }
+
+/** Pages whose content other pages show. Publishing one of them refreshes the whole site, not just itself. */
+export const STAFF_PAGE = '/about/staff'
+export const NOTIFICATIONS_PAGE = '/notifications'
+export const LINKED_SOURCE_PATHS: readonly string[] = ['/achievements/toppers/10th', '/achievements/toppers/12th', STAFF_PAGE, NOTIFICATIONS_PAGE]
