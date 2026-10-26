@@ -44,6 +44,16 @@ export const PageHero = defineBlock({
     subtitle: text(300, 'A short line about this page'),
     back: button('', ''),
     style: choice(HERO_STYLES, 'custom'),
+    buttons: list(
+      z.object({
+        label: text(60),
+        /** custom: the address below; the others use the portal addresses in Site settings */
+        link: choice(['custom', 'feePortal', 'registrationPortal'] as const, 'custom'),
+        href: href(''),
+        look: choice(['gold', 'glass'] as const, 'gold'),
+      }),
+      3,
+    ),
     motif: z.enum(['none', ...ICON_NAMES]).default('GraduationCap'),
     motifSmall: z.enum(['none', ...ICON_NAMES]).default('BookOpen'),
     design: z

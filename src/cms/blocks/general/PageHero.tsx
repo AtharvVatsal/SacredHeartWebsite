@@ -5,8 +5,9 @@
 import Link from 'next/link'
 import { m } from 'framer-motion'
 import type { ReactNode } from 'react'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react'
 import HeroDecor from '@/components/layout/HeroDecor'
+import { useSiteSettings } from '@/components/providers/SiteSettingsProvider'
 import type { BlockProps } from '../../document/definition'
 import { ICON_COMPONENTS } from '../shared/Icon'
 import type { IconName } from '../shared/icon-names'
@@ -138,6 +139,47 @@ function Badge({ p, r }: { p: P; r: HeroRecipe }) {
     <Tag className={className} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: b.motion === 'pop3' ? 0.3 : 0.2 }}>
       {content}
     </Tag>
+  )
+}
+
+const BUTTON_LOOKS = {
+  gold: 'active:scale-95 inline-flex items-center gap-2 bg-secondary-400 text-primary-900 px-7 py-3.5 rounded-full font-semibold hover:bg-secondary-300 transition-all shadow-lg',
+  glass: 'inline-flex items-center gap-2 bg-white/10 border border-white/20 text-white px-7 py-3.5 rounded-full font-semibold hover:bg-white/20 transition-all',
+} as const
+
+/** Buttons under the subtitle; portal buttons take their address from Site settings */
+function HeroButtons({ buttons }: { buttons: P['buttons'] }) {
+  const { onlineServices } = useSiteSettings()
+  const items = buttons
+    .map((b) => ({ ...b, url: b.link === 'custom' ? b.href : onlineServices[b.link] }))
+    .filter((b) => b.label && b.url)
+  if (!items.length) return null
+  return (
+    <m.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5 }} className="flex flex-wrap gap-3">
+      {items.map((b, i) => {
+        const className = BUTTON_LOOKS[b.look]
+        if (/^https?:\/\//i.test(b.url)) {
+          return (
+            <a key={i} href={b.url} target="_blank" rel="noopener noreferrer" className={className}>
+              {b.label} <ExternalLink aria-hidden size={18} />
+              <span className="sr-only">(opens in a new tab)</span>
+            </a>
+          )
+        }
+        if (b.url.startsWith('/')) {
+          return (
+            <Link key={i} href={b.url} className={className}>
+              {b.label}
+            </Link>
+          )
+        }
+        return (
+          <a key={i} href={b.url} className={className}>
+            {b.label}
+          </a>
+        )
+      })}
+    </m.div>
   )
 }
 
@@ -306,6 +348,7 @@ export default function PageHero(p: P) {
             {p.subtitle}
           </Rising>
         )}
+        {p.buttons.length > 0 && <HeroButtons buttons={p.buttons} />}
       </Column>
     </>
   )

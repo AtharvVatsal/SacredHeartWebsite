@@ -73,6 +73,24 @@ export const generalFields: Record<string, Fields> = {
     back: button('“Back to” link (optional)'),
     motif: optionalIcon('Large faint picture (top right)'),
     motifSmall: optionalIcon('Small faint picture'),
+    buttons: list(
+      'Buttons under the text (optional)',
+      {
+        label: text('Button text'),
+        link: choose('Opens', [
+          { label: 'The address below', value: 'custom' },
+          { label: 'The online fee portal (from Site settings)', value: 'feePortal' },
+          { label: 'The registration portal (from Site settings)', value: 'registrationPortal' },
+        ]),
+        href: link('Address (when “The address below” is chosen)'),
+        look: choose('Look', [
+          { label: 'Gold', value: 'gold' },
+          { label: 'See-through', value: 'glass' },
+        ]),
+      },
+      (i) => str(i.label),
+      3,
+    ),
     style: choose(
       'Banner style',
       HERO_STYLES.map((value) => ({ label: HERO_STYLE_LABELS[value], value })),

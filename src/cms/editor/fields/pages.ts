@@ -217,3 +217,86 @@ Object.assign(pageFields, {
     text: paragraph('Text (**bold** shows in red)', FORMAT_HINT),
   },
 } satisfies Record<string, Fields>)
+
+const pairRows = (label: string, a: string, b: string, max: number) => list(label, { a: text(a), b: text(b) }, (i) => str(i.a), max)
+
+Object.assign(pageFields, {
+  InfoTiles: { tiles: list('Tiles', { icon: iconChoice(), title: text('Title'), text: paragraph('Text') }, (i) => str(i.title), 4) },
+  StepsGuide: {
+    eyebrow: text('Small line above the title'),
+    title: text('Title'),
+    intro: paragraph('Introduction'),
+    steps: list(
+      'Steps',
+      {
+        title: text('Step title'),
+        summary: text('Line under the step title'),
+        icon: iconChoice(),
+        points: textList('Points', 12),
+        tables: list(
+          'Small tables (optional)',
+          { caption: text('Table heading'), headA: text('First column heading'), headB: text('Second column heading'), rows: pairRows('Rows', 'First column', 'Second column', 12) },
+          (i) => str(i.caption),
+          4,
+        ),
+        chipsTitle: text('Heading for the chips (optional)'),
+        chips: textList('Chips (optional)', 12),
+        important: paragraph('“Important” note (optional)'),
+      },
+      (i) => str(i.title),
+      20,
+    ),
+    label: text('Name of the list for screen readers'),
+    anchor: text('Link anchor (optional, e.g. “steps” lets other links jump here with #steps)'),
+    background: choose('Background', [
+      { label: 'White', value: 'white' },
+      { label: 'Soft green fade', value: 'mint' },
+    ]),
+  },
+  HelpCards: {
+    cards: list(
+      'Cards',
+      {
+        tone: choose('Look', [
+          { label: 'Red (warning)', value: 'red' },
+          { label: 'White', value: 'white' },
+        ]),
+        icon: iconChoice(),
+        title: text('Title'),
+        text: paragraph('Text (empty line between paragraphs)'),
+        items: textList('List (optional)', 12),
+        note: text('Small note at the bottom (optional)'),
+      },
+      (i) => str(i.title),
+      3,
+    ),
+    tableTitle: text('Table title (leave empty to hide the table)'),
+    tableIcon: iconChoice('Table icon'),
+    headA: text('First column heading'),
+    headB: text('Second column heading'),
+    rows: pairRows('Table rows', 'First column', 'Second column', 12),
+    footnote: paragraph('Note under the table'),
+    background: choose('Background', [
+      { label: 'Light grey', value: 'grey' },
+      { label: 'White', value: 'white' },
+    ]),
+  },
+  AppHelpBand: {
+    appTitle: text('App title'),
+    appText: paragraph('App text (store links come from Site settings)'),
+    androidLabel: text('Google Play button text'),
+    iosLabel: text('App Store button text'),
+    helpTitle: text('Help box title'),
+    helpText: paragraph('Help box text (phone numbers come from Site settings)'),
+    linkLabel: text('Link text'),
+    linkHref: text('Link address'),
+  },
+  PortalCta: {
+    title: text('Title'),
+    text: paragraph('Text'),
+    buttonLabel: text('Portal button text (the address comes from Site settings)'),
+    footText: text('Line at the bottom'),
+    footLinkLabel: text('Link text at the bottom'),
+    footLinkHref: text('Link address at the bottom'),
+  },
+} satisfies Record<string, Fields>)

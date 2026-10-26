@@ -22,6 +22,7 @@ import StatsRow from './home/StatsRow'
 import { CallBand, GuidelineCard, NoticeStrip } from './pages/Academics'
 import { RuleCards } from './pages/Admission'
 import { FeeGuidelines, FeeTable, WarningCard } from './pages/Fees'
+import { AppHelpBand, HelpCards, InfoTiles, PortalCta, StepsGuide } from './pages/Online'
 import { DressCard, GoldInfoCard } from './pages/Uniform'
 import { PolicyIntro, PolicySections, SimpleCta } from './pages/Legal'
 import { CurriculumCard, HomeworkCard, JoinCta, StreamCards, SubjectGroups, TipsGrid } from './pages/Syllabus'
@@ -74,4 +75,9 @@ export const blockComponents: Record<string, ComponentType<any>> = {
   FeeTable,
   FeeGuidelines,
   WarningCard,
+  InfoTiles,
+  StepsGuide,
+  HelpCards,
+  AppHelpBand,
+  PortalCta,
 }
