@@ -13,7 +13,6 @@ What the CMS does not do (yet), and the risks to keep in mind. Each item says wh
 | Only some shared facts are linked | Toppers, staff and notices are edited once and shown everywhere. Other repeated facts (for example "56+ years", "2.6K+ students") appear in several sections and are edited in each. | Move those figures to Site settings and read them from there. |
 | Linked content in the editor | A page that shows another page's content (for example the top five toppers) shows that page's latest saved draft when the editor opens; it does not update live while the other page is being edited. | Live subscription between editor sessions (not needed in practice). |
 | Original data files remain | `src/data/*.ts`, `src/content/*.ts` and each route's `legacy-page.tsx` still hold the original content. They are the fallback whenever a page is not published in the CMS, so editing them no longer changes a page that is published in the CMS. | After the CMS has run in production for a while, retire the legacy pages and data files deliberately. |
-| Image entries in the sitemap | The image entries in `/sitemap.xml` (gallery, toppers, batches) come from the original data files. Pages made in the CMS are listed, and `/notifications.rss` is built from the published notices. | Generate the image entries from the published CMS pages. |
 | Editing on a phone | The visual editor is designed for a computer or tablet. Pages can be previewed at phone width inside it. | — |
 
 ## Technical

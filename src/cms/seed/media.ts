@@ -4,7 +4,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import type { Payload } from 'payload'
 import { isRecord } from '../document/types'
-import { toSitePath } from '../render/media'
+import { PLACEHOLDER_ALT, toSitePath } from '../render/media'
 
 const PUBLIC = path.resolve(process.cwd(), 'public')
 
@@ -19,7 +19,7 @@ async function importFile(payload: Payload, src: string, alt: string, cache: Map
     doc = await payload.create({
       collection: 'media',
       // Images without a description get a neutral one; editors can refine it in the media library
-      data: { alt: alt || 'Photo from Sacred Heart Senior Secondary School', label, folder: 'Imported from the site' },
+      data: { alt: alt || PLACEHOLDER_ALT, label, folder: 'Imported from the site' },
       filePath: file,
       overrideAccess: true,
     })

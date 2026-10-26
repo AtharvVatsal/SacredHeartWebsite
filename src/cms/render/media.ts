@@ -28,3 +28,6 @@ export function mediaUrl(media: Pick<Media, 'url' | 'sizes'> | null | undefined,
   const url = sized || media.url || null
   return url ? toSitePath(url) : null
 }
+
+/** Description given to imported images that had none; editors can replace it in the media library */
+export const PLACEHOLDER_ALT = 'Photo from Sacred Heart Senior Secondary School'
