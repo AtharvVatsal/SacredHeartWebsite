@@ -300,3 +300,23 @@ Object.assign(pageFields, {
     footLinkHref: text('Link address at the bottom'),
   },
 } satisfies Record<string, Fields>)
+
+const largeHeading: Fields = { ...centredHeading }
+const tintChoice = choose('Icon background', [
+  { label: 'Amber', value: 'amber' },
+  { label: 'Pink', value: 'pink' },
+  { label: 'Blue', value: 'blue' },
+  { label: 'Purple', value: 'purple' },
+  { label: 'Emerald', value: 'emerald' },
+  { label: 'Cyan', value: 'cyan' },
+])
+
+Object.assign(pageFields, {
+  VisionTabs: { ...largeHeading, items: list('Topics', { title: text('Title'), content: paragraph('Text') }, (i) => str(i.title), 12) },
+  AimsGrid: {
+    ...largeHeading,
+    aims: list('Cards', { title: text('Title'), text: paragraph('Text'), icon: iconChoice(), color: gradientChoice('Icon colour'), tint: tintChoice }, (i) => str(i.title), 12),
+  },
+  ValuesGrid: { ...largeHeading, values: list('Values', { name: text('Name'), icon: iconChoice(), color: gradientChoice('Icon colour') }, (i) => str(i.name), 16) },
+  DualCta: { title: text('Title'), text: paragraph('Text'), primary: button('Green button'), secondary: button('Gold button') },
+} satisfies Record<string, Fields>)
