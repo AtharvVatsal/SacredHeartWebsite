@@ -29,6 +29,8 @@ function apply(value: unknown, found: Map<number, Media>): unknown {
       alt: value.alt || media.alt || '',
       width: media.width ?? undefined,
       height: media.height ?? undefined,
+      // The library's small copy (400 px wide), for thumbnail strips
+      thumb: mediaUrl(media, 'thumbnail') ?? undefined,
     }
   }
   return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, apply(v, found)]))

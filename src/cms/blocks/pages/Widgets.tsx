@@ -36,7 +36,8 @@ export function CalendarBoard({ badge, title, highlight, subtitle, events }: Blo
 export function GalleryBoard({ eyebrow, title, albums, videosTitle, videos }: BlockProps<typeof GalleryDef>) {
   const data = useMemo(() => {
     const list: Album[] = albums.map((a) => {
-      const photos = a.photos.filter((p) => p.photo.src).map((p) => ({ src: p.photo.src }))
+      // Photos from the media library carry their small copy for the viewer's thumbnail strip
+      const photos = a.photos.filter((p) => p.photo.src).map((p) => ({ src: p.photo.src, thumb: (p.photo as { thumb?: string }).thumb }))
       return {
         id: a.key,
         name: a.name,
