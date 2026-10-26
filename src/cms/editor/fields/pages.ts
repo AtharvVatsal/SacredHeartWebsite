@@ -561,3 +561,55 @@ Object.assign(pageFields, {
   },
   DreamCta: { title: text('Title'), text: paragraph('Text'), button: button('Button') },
 } satisfies Record<string, Fields>)
+
+const eyebrowTitle: Fields = { eyebrow: text('Small line above the title'), title: text('Title') }
+const toneChoice = (label: string, tones: [string, string][]) => choose(label, tones.map(([value, name]) => ({ label: name, value })))
+
+Object.assign(pageFields, {
+  ClassLevels: { ...eyebrowTitle, items: list('Cards', { name: text('Title'), text: paragraph('Text'), icon: iconChoice(), color: gradientChoice() }, (i) => str(i.name), 10) },
+  StreamTiles: {
+    ...eyebrowTitle,
+    streams: list(
+      'Streams',
+      {
+        name: text('Name'),
+        subjects: textList('Subjects', 12),
+        icon: iconChoice(),
+        color: gradientChoice('Icon colour'),
+        tint: toneChoice('Card tint', [['blue', 'Blue'], ['amber', 'Amber'], ['pink', 'Pink']]),
+      },
+      (i) => str(i.name),
+      6,
+    ),
+  },
+  SubjectOverview: {
+    ...eyebrowTitle,
+    subjects: list(
+      'Subjects',
+      { category: text('Name'), items: textList('Items', 12), tone: toneChoice('Icon colour', [['violet', 'Violet'], ['blue', 'Blue'], ['emerald', 'Emerald'], ['amber', 'Amber']]) },
+      (i) => str(i.category),
+      8,
+    ),
+  },
+  ResourceLinks: {
+    ...eyebrowTitle,
+    links: list(
+      'Links',
+      {
+        title: text('Title'),
+        text: text('Line under the title'),
+        href: text('Link address'),
+        icon: iconChoice(),
+        tone: toneChoice('Colour', [['green', 'Green'], ['purple', 'Purple'], ['gold', 'Gold']]),
+        newTab: yesNo('Open in a new tab (for documents)'),
+      },
+      (i) => str(i.title),
+      8,
+    ),
+  },
+  ActivitiesBand: {
+    ...eyebrowTitle,
+    intro: paragraph('Line under the title'),
+    items: list('Activities', { name: text('Name'), icon: iconChoice(), tone: toneChoice('Colour', [['pink', 'Pink'], ['purple', 'Purple'], ['green', 'Green'], ['blue', 'Blue']]) }, (i) => str(i.name), 12),
+  },
+} satisfies Record<string, Fields>)
