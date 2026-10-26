@@ -71,7 +71,9 @@ const afterChange: CollectionAfterChangeHook = async ({ doc, previousDoc, req })
   }
   // Pages that other pages read from (toppers, staff, notices) refresh every page, so those stay in step
   const shared = [doc.path, previousDoc?.path].some((p) => typeof p === 'string' && LINKED_SOURCE_PATHS.includes(p))
-  if (isPublished || wasPublished) revalidatePaths(req.payload, [doc.path, previousDoc?.path], { layout: shared })
+  // Pages made in the CMS are listed in the sitemap, so it is rebuilt when one is published, moved or withdrawn
+  const sitemap = doc.kind === 'custom' ? '/sitemap.xml' : null
+  if (isPublished || wasPublished) revalidatePaths(req.payload, [doc.path, previousDoc?.path, sitemap], { layout: shared })
   return doc
 }
 

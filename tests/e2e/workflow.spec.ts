@@ -219,6 +219,10 @@ test('a new page can be created, published, moved, and its old address redirects
   expect([301, 308]).toContain(old.status())
   expect(old.headers()['location']).toContain('/events/sports-day-2026')
   expect((await request.get('/events/never-existed', { maxRedirects: 0 })).status()).toBe(404)
+
+  // The sitemap lists the page at its new address only
+  await expectPublic(request, '/sitemap.xml', '/events/sports-day-2026</loc>')
+  await expectPublic(request, '/sitemap.xml', '/events/sports-day</loc>', false)
 })
 
 test('a file still used on a page cannot be deleted', async ({ request }) => {

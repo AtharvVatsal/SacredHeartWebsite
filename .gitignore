@@ -70,3 +70,6 @@ logs/
 /test-results/
 /playwright-report/
 /tests/e2e/.auth/
+
+# screenshot comparisons (scripts/visual-compare.mjs)
+/.visual/

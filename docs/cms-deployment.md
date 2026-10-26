@@ -137,3 +137,14 @@ npm run build
 ```
 
 The end-to-end setup (`tests/e2e/setup/prepare.mjs`) only ever resets a database whose name ends in `_test`; it refuses anything else.
+
+To check that pages still look exactly like before (for example after an upgrade), compare screenshots:
+
+```bash
+node scripts/visual-compare.mjs shoot http://localhost:3000 .visual/before          # as visitors see it now
+# ...upgrade, or publish pages...
+node scripts/visual-compare.mjs shoot http://localhost:3000 .visual/after
+node scripts/visual-compare.mjs diff .visual/before .visual/after .visual/diff     # lists anything over 0.1 %
+```
+
+`shoot ... --preview` (with `CMS_VISUAL_EMAIL` / `CMS_VISUAL_PASSWORD` set) captures the saved CMS drafts instead.
