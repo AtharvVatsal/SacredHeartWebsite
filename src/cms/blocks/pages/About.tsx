@@ -2,11 +2,13 @@
 
 // About page sections, moved verbatim from those pages
 import { m } from 'framer-motion'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ArrowRight, Award, ChevronDown, GraduationCap, Heart, Mail, Quote, Star } from 'lucide-react'
 import { FadeInItem, StaggerContainer } from '@/components/animations'
 import { useRevealAll } from '@/components/animations/RevealContext'
 import { useSiteSettings } from '@/components/providers/SiteSettingsProvider'
+import StaffDirectory from '@/components/about/StaffDirectory'
+import { useStaffCount } from '../shared/LinkedData'
 import type { BlockProps } from '../../document/definition'
 import { CmsImage } from '../shared/CmsImage'
 import { Icon } from '../shared/Icon'
@@ -22,6 +24,8 @@ import type {
   MilestoneTimeline as TimelineDef,
   MissionPanel as MissionDef,
   NumberedThemes as ThemesDef,
+  PrincipalSpotlight as SpotlightDef,
+  StaffList as StaffListDef,
   StatTiles as StatsDef,
   StoryCard as StoryDef,
   TINTS,
@@ -219,8 +223,27 @@ export function ValuesGrid({ values, ...heading }: BlockProps<typeof ValuesDef>)
   )
 }
 
-export function DualCta({ title, text, primary, secondary, arrows }: BlockProps<typeof DualDef>) {
-  const withArrow = (cls: string) => (arrows ? `${cls} inline-flex items-center gap-2` : cls)
+export function DualCta({ title, text, primary, secondary, arrows, primaryIcon, primaryIconAfter, secondaryIcon, secondaryIconAfter }: BlockProps<typeof DualDef>) {
+  const decorated = arrows || primaryIcon !== 'none' || secondaryIcon !== 'none'
+  const withArrow = (cls: string) => (decorated ? `${cls} inline-flex items-center gap-2` : cls)
+  const content = (label: string, icon: string, after: boolean) =>
+    icon !== 'none' ? (
+      after ? (
+        <>
+          {label} <Icon name={icon} className="w-5 h-5" />
+        </>
+      ) : (
+        <>
+          <Icon name={icon} className="w-5 h-5" />
+          {label}
+        </>
+      )
+    ) : (
+      <>
+        {label}
+        {arrows && <> <ArrowRight className="w-5 h-5" /></>}
+      </>
+    )
   const rise = useInView({ opacity: 0, y: 20 }, { opacity: 1, y: 0 })
   return (
     <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
@@ -232,16 +255,14 @@ export function DualCta({ title, text, primary, secondary, arrows }: BlockProps<
             {primary.label && primary.href && (
               <m.div whileHover={{ scale: 1.05 }} className="inline-flex">
                 <SmartLink href={primary.href} className={withArrow('active:scale-95 px-8 py-4 bg-primary-700 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all')}>
-                  {primary.label}
-                  {arrows && <> <ArrowRight className="w-5 h-5" /></>}
+                  {content(primary.label, primaryIcon, primaryIconAfter)}
                 </SmartLink>
               </m.div>
             )}
             {secondary.label && secondary.href && (
               <m.div whileHover={{ scale: 1.05 }} className="inline-flex">
                 <SmartLink href={secondary.href} className={withArrow('active:scale-95 px-8 py-4 bg-secondary-400 text-primary-900 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all')}>
-                  {secondary.label}
-                  {arrows && <> <ArrowRight className="w-5 h-5" /></>}
+                  {content(secondary.label, secondaryIcon, secondaryIconAfter)}
                 </SmartLink>
               </m.div>
             )}
@@ -650,22 +671,23 @@ export function NumberedThemes(p: BlockProps<typeof ThemesDef>) {
   )
 }
 
-function HighlightStat({ index, stat }: { index: number; stat: BlockProps<typeof BandDef>['stats'][number] }) {
+function HighlightStat({ index, stat, lift }: { index: number; stat: BlockProps<typeof BandDef>['stats'][number]; lift: number }) {
   const pop = useInView({ opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1 })
+  const staffCount = useStaffCount()
   return (
     <m.div {...pop} transition={{ delay: index * 0.1, type: 'spring' }}>
-      <m.div whileHover={{ y: -10, transition: { duration: 0.2, delay: 0 } }} className="text-center">
+      <m.div whileHover={{ y: lift, transition: { duration: 0.2, delay: 0 } }} className="text-center">
         <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
           <Icon name={stat.icon} className="w-8 h-8 text-secondary-400" />
         </div>
-        <div className="text-3xl md:text-4xl font-display font-bold text-white mb-1">{stat.value}</div>
+        <div className="text-3xl md:text-4xl font-display font-bold text-white mb-1">{stat.count === 'staff' ? String(staffCount) : stat.value}</div>
         <div className="text-primary-200 text-sm font-medium">{stat.label}</div>
       </m.div>
     </m.div>
   )
 }
 
-export function HighlightBand({ stats }: BlockProps<typeof BandDef>) {
+export function HighlightBand({ stats, lift }: BlockProps<typeof BandDef>) {
   const rise = useInView({ opacity: 0, y: 40 }, { opacity: 1, y: 0 })
   return (
     <section className="py-20 bg-gradient-to-br from-primary-800 via-primary-700 to-primary-900 relative overflow-hidden">
@@ -679,10 +701,83 @@ export function HighlightBand({ stats }: BlockProps<typeof BandDef>) {
       <div className="container mx-auto px-4 relative z-10">
         <m.div className="grid grid-cols-2 md:grid-cols-4 gap-8" {...rise}>
           {stats.map((stat, index) => (
-            <HighlightStat key={index} index={index} stat={stat} />
+            <HighlightStat key={index} index={index} stat={stat} lift={lift === 'small' ? -8 : -10} />
           ))}
         </m.div>
       </div>
     </section>
   )
+}
+
+function SpotlightStat({ index, value, label }: { index: number; value: string; label: string }) {
+  const pop = useInView({ opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1 })
+  return (
+    <m.div {...pop} transition={{ delay: index * 0.1 }} className="bg-white/10 backdrop-blur-md border border-white/10 px-5 py-4 rounded-2xl text-center">
+      <div className="text-2xl font-bold text-secondary-400">{value}</div>
+      <div className="text-xs text-primary-200 mt-1">{label}</div>
+    </m.div>
+  )
+}
+
+export function PrincipalSpotlight({ photo, pill, name, text, stats }: BlockProps<typeof SpotlightDef>) {
+  const { identity } = useSiteSettings()
+  const staffCount = useStaffCount()
+  const principal = name || identity.principal
+  const rise = useInView({ opacity: 0, y: 30 }, { opacity: 1, y: 0 })
+  const riseSmall = useInView({ opacity: 0, y: 10 }, { opacity: 1, y: 0 })
+  return (
+    <section className="py-20 bg-gradient-to-b from-primary-50 to-white relative overflow-hidden">
+      <div className="absolute top-20 right-0 w-96 h-96 bg-secondary-400/10 rounded-full blur-[150px] pointer-events-none" />
+      <div className="container mx-auto px-4 relative z-10">
+        <m.div {...rise} className="max-w-5xl mx-auto">
+          <div className="bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 rounded-[2rem] p-2">
+            <div className="bg-gradient-to-br from-primary-800 via-primary-700 to-primary-900 rounded-[2rem] p-8 md:p-12 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-80 h-80 bg-secondary-500/10 rounded-full blur-[100px]" />
+              <div className="absolute bottom-0 left-0 w-60 h-60 bg-primary-500/20 rounded-full blur-[80px]" />
+              <div className="relative z-10 flex flex-col lg:flex-row items-center gap-10">
+                <m.div className="relative" whileHover={{ scale: 1.02 }}>
+                  <div className="absolute inset-0 bg-gradient-to-br from-secondary-400 to-primary-500 rounded-[2rem] blur opacity-40" />
+                  <div className="relative w-52 h-64 md:w-64 md:h-80 rounded-[1.5rem] overflow-hidden shadow-2xl border-4 border-white/20">
+                    <CmsImage image={photo} alt={photo.alt || `Principal ${principal}`} fill className="object-cover" />
+                  </div>
+                </m.div>
+                <div className="flex-1 text-center lg:text-left">
+                  {pill && (
+                    <m.div {...riseSmall} className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-medium mb-4 border border-white/10">
+                      <Award className="w-4 h-4 text-secondary-400" />
+                      {pill}
+                    </m.div>
+                  )}
+                  <h2 className="text-4xl md:text-5xl font-display font-bold text-white mb-4">{principal}</h2>
+                  {text && <p className="text-primary-100 text-lg leading-relaxed max-w-2xl mb-8">{text}</p>}
+                  <div className="flex flex-wrap justify-center lg:justify-start gap-4">
+                    {stats.map((s, i) => (
+                      <SpotlightStat key={i} index={i} value={s.count === 'staff' ? String(staffCount) : s.value} label={s.label} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </m.div>
+      </div>
+    </section>
+  )
+}
+
+export function StaffList({ members }: BlockProps<typeof StaffListDef>) {
+  const staff = useMemo(
+    () =>
+      members.map((m, i) => ({
+        id: String(i),
+        name: m.name,
+        role: m.role,
+        department: m.department,
+        qualifications: m.qualifications,
+        // An empty photo shows the department icon, as on the original page
+        image: m.photo.src,
+      })),
+    [members],
+  )
+  return <StaffDirectory staff={staff} />
 }

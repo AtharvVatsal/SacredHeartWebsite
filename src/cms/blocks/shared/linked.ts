@@ -4,6 +4,8 @@ import type { TopperSession } from '@/data/toppers'
 export interface LinkedData {
   /** Topper sessions by the address of the toppers page that holds them */
   toppers: Record<string, TopperSession[]>
+  /** How many people the Staff page lists (for figures that count them) */
+  staffCount?: number
 }
 
 /** A CMS topper list in the shape the toppers components use */

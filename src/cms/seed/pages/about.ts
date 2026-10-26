@@ -1,5 +1,6 @@
 import { excellenceStory } from '@/content/about'
 import { schoolInfo } from '@/data/school'
+import { staffPageStats } from '@/content/staff'
 import { page } from '../builders'
 
 export const aimsPage = page('/about/aims', 'Our Aims', [
@@ -113,4 +114,36 @@ export const officeBearersPage = page('/about/office-bearers', 'Office Bearers',
     },
   ],
   ['OfficeBearersList'],
+])
+
+export const staffPage = page('/about/staff', 'Our Staff', [
+  [
+    'PageHero',
+    {
+      style: 'staff',
+      back: { label: 'Back to About', href: '/about' },
+      badge: 'Our Team',
+      badgeIcon: 'Sparkles',
+      title: 'Our Staff',
+      subtitle: 'Dedicated educators shaping futures with passion and excellence',
+      motif: 'Users',
+      motifSmall: 'GraduationCap',
+    },
+  ],
+  ['PrincipalSpotlight'],
+  ['StaffList'],
+  ['HighlightBand', { stats: staffPageStats, lift: 'small' }],
+  [
+    'DualCta',
+    {
+      title: 'Want to Learn More?',
+      text: 'Explore more about our school, our history, and our achievements.',
+      primary: { label: 'Back to About', href: '/about' },
+      secondary: { label: 'Contact Us', href: '/contact' },
+      primaryIcon: 'ArrowLeft',
+      primaryIconAfter: true,
+      secondaryIcon: 'Mail',
+      secondaryIconAfter: false,
+    },
+  ],
 ])

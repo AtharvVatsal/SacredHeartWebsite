@@ -23,8 +23,29 @@ function sourcesIn(document: PageDocument) {
   return sources
 }
 
+export const STAFF_PAGE = '/about/staff'
+
+async function loadSource(payload: Payload, path: string, user: TypedUser | null): Promise<PageDocument | null> {
+  const { docs } = await payload.find({ collection: 'pages', where: { path: { equals: path } }, limit: 1, depth: 0, draft: Boolean(user), overrideAccess: false, user: user ?? undefined })
+  const page = docs[0] as Page | undefined
+  if (!page || (!user && page._status !== 'published')) return null
+  const migrated = migrateDocument(page.content as unknown as PageDocument, page.schemaVersion)
+  return validateDocument(migrated, blockRegistry, 'repair').document
+}
+
 export async function loadLinkedData(payload: Payload, document: PageDocument, user: TypedUser | null): Promise<LinkedData> {
   const linked: LinkedData = { toppers: {} }
+  // Figures set to count the staff (a "count": "staff" choice anywhere on the page)
+  if (JSON.stringify(document.content).includes('"count":"staff"')) {
+    try {
+      const source = await loadSource(payload, STAFF_PAGE, user)
+      const list = source?.content.find((b) => b.type === 'StaffList' && !(b.props as { hidden?: boolean }).hidden)
+      const members = (list?.props as { members?: unknown[] } | undefined)?.members
+      if (Array.isArray(members)) linked.staffCount = members.length
+    } catch (error) {
+      console.warn(`[cms] Could not read ${STAFF_PAGE} for the staff count: ${(error as Error).message}`)
+    }
+  }
   for (const path of sourcesIn(document)) {
     try {
       const { docs } = await payload.find({ collection: 'pages', where: { path: { equals: path } }, limit: 1, depth: 0, draft: Boolean(user), overrideAccess: false, user: user ?? undefined })

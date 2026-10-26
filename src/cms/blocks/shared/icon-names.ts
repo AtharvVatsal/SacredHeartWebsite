@@ -3,6 +3,8 @@
 export const ICONS = {
   AlertCircle: 'Exclamation in a circle',
   AlertTriangle: 'Warning triangle',
+  ArrowLeft: 'Arrow pointing left',
+  ArrowRight: 'Arrow pointing right',
   Award: 'Award ribbon',
   Backpack: 'School bag',
   Banknote: 'Money',

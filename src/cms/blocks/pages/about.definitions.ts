@@ -4,6 +4,7 @@ import { defineBlock } from '../../document/definition'
 import { bool, choice, href, image, list, longText, text } from '../../document/fields'
 import { button, icon } from '../common'
 import { gradient } from '../shared/gradients'
+import { ICON_NAMES } from '../shared/icon-names'
 import {
   aims,
   coreValues,
@@ -19,6 +20,7 @@ import {
 } from '@/content/about'
 import { officeBearers, schoolInfo } from '@/data/school'
 import { leaderMessageCards } from '@/content/leader-messages'
+import { staffList, staffPageStats, spotlightStats } from '@/content/staff'
 import { PILL_TONES } from './academics.definitions'
 
 export const TINTS = ['amber', 'pink', 'blue', 'purple', 'emerald', 'cyan'] as const
@@ -71,6 +73,11 @@ export const DualCta = defineBlock({
     primary: button('Learn More About Us', '/about'),
     secondary: button('Apply for Admission', '/admission'),
     arrows: bool(true),
+    /** Icons that replace the arrows */
+    primaryIcon: z.enum(['none', ...ICON_NAMES]).default('none'),
+    primaryIconAfter: bool(true),
+    secondaryIcon: z.enum(['none', ...ICON_NAMES]).default('none'),
+    secondaryIconAfter: bool(true),
   }),
 })
 
@@ -162,7 +169,33 @@ export const HighlightBand = defineBlock({
   type: 'HighlightBand',
   label: 'Key figures on a green band',
   category: 'about',
-  schema: z.object({ stats: list(z.object({ icon: icon('Star'), label: text(80), value: text(30) }), 8, principalHighlights) }),
+  schema: z.object({
+    stats: list(z.object({ icon: icon('Star'), label: text(80), value: text(30), count: choice(['none', 'staff'] as const, 'none') }), 8, principalHighlights.map((s) => ({ ...s, count: 'none' as const }))),
+    lift: choice(['normal', 'small'] as const, 'normal'),
+  }),
+})
+
+export const PrincipalSpotlight = defineBlock({
+  type: 'PrincipalSpotlight',
+  label: 'Principal spotlight (dark card)',
+  category: 'about',
+  schema: z.object({
+    photo: image({ src: '/images/principal.webp', alt: `Principal ${schoolInfo.principal}` }),
+    pill: text(60, 'Principal'),
+    /** Empty: the principal's name from Site settings */
+    name: text(120, ''),
+    text: text(600, 'Leading Sacred Heart Senior Secondary School with dedication and vision. Committed to academic excellence and holistic development of every student.'),
+    stats: list(z.object({ value: text(20), label: text(60), count: choice(['none', 'staff'] as const, 'none') }), 4, spotlightStats),
+  }),
+})
+
+export const StaffList = defineBlock({
+  type: 'StaffList',
+  label: 'Staff directory (search and departments)',
+  category: 'about',
+  schema: z.object({
+    members: list(z.object({ name: text(120), role: text(80), department: text(60), qualifications: text(200), photo: image() }), 300, staffList),
+  }),
 })
 
 export const LeaderMessages = defineBlock({
@@ -225,4 +258,4 @@ export const OfficeBearersList = defineBlock({
   }),
 })
 
-export const aboutBlocks = [OfficeBearersList, LeaderMessages, VisionTabs, AimsGrid, ValuesGrid, DualCta, MilestoneTimeline, MissionPanel, StoryCard, StatTiles, LeaderProfile, NumberedThemes, HighlightBand]
+export const aboutBlocks = [PrincipalSpotlight, StaffList, OfficeBearersList, LeaderMessages, VisionTabs, AimsGrid, ValuesGrid, DualCta, MilestoneTimeline, MissionPanel, StoryCard, StatTiles, LeaderProfile, NumberedThemes, HighlightBand]

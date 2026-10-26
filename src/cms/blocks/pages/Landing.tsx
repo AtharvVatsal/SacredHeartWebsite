@@ -4,7 +4,7 @@
 import Link from 'next/link'
 import { m } from 'framer-motion'
 import { ArrowRight, Calendar, CheckCircle, GraduationCap, Heart, Mail, Phone, Scale, Users } from 'lucide-react'
-import { staffMembers } from '@/data/school'
+import { useStaffCount } from '../shared/LinkedData'
 import { useSiteSettings } from '@/components/providers/SiteSettingsProvider'
 import { telHref } from '@/lib/contact'
 import { FadeIn, FadeInItem, ParallaxSection, StaggerContainer } from '@/components/animations'
@@ -501,6 +501,7 @@ export function ApplyBand({ title, text, button, size }: BlockProps<typeof Apply
 }
 
 export function StatBoxes({ stats }: BlockProps<typeof StatBoxesDef>) {
+  const staffCount = useStaffCount()
   return (
     <section className="py-16 bg-gradient-to-b from-primary-50 to-white relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
@@ -515,7 +516,7 @@ export function StatBoxes({ stats }: BlockProps<typeof StatBoxesDef>) {
                 <div className="relative z-10 text-center">
                   <Icon name={stat.icon} className="w-8 h-8 mx-auto mb-3 opacity-90" />
                   {/* "Staff" counts the staff list, so it always matches the Staff page */}
-                  <p className="text-2xl min-[360px]:text-3xl font-bold mb-1">{stat.count === 'staff' ? String(staffMembers.length) : stat.value}</p>
+                  <p className="text-2xl min-[360px]:text-3xl font-bold mb-1">{stat.count === 'staff' ? String(staffCount) : stat.value}</p>
                   <p className="text-sm opacity-80">{stat.label}</p>
                 </div>
               </m.div>

@@ -18,7 +18,7 @@ import { feePage, rulesPage, uniformPage } from './pages/admission'
 import { homePage, homeSeo } from './pages/home'
 import { legalSeo, privacyPage, termsPage } from './pages/legal'
 import { onlineFeePage, onlineRegistrationPage } from './pages/online'
-import { aimsPage, historyPage, messagesPage, officeBearersPage, principalPage } from './pages/about'
+import { aimsPage, historyPage, messagesPage, officeBearersPage, principalPage, staffPage } from './pages/about'
 import { achievementsPage, otherAchievementsPage, toppers10Page, toppers12Page, toppersIndexPage } from './pages/achievements'
 import { aboutLandingPage, academicsLandingPage, admissionLandingPage } from './pages/landing'
 
@@ -36,6 +36,7 @@ const SEEDS: { seed: SeedPage; seo?: { title?: string; description?: string } }[
   { seed: principalPage },
   { seed: messagesPage },
   { seed: officeBearersPage },
+  { seed: staffPage },
   { seed: toppers10Page },
   { seed: toppers12Page },
   { seed: achievementsPage },

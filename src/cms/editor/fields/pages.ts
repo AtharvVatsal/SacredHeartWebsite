@@ -318,7 +318,17 @@ Object.assign(pageFields, {
     aims: list('Cards', { title: text('Title'), text: paragraph('Text'), icon: iconChoice(), color: gradientChoice('Icon colour'), tint: tintChoice }, (i) => str(i.title), 12),
   },
   ValuesGrid: { ...largeHeading, values: list('Values', { name: text('Name'), icon: iconChoice(), color: gradientChoice('Icon colour') }, (i) => str(i.name), 16) },
-  DualCta: { title: text('Title'), text: paragraph('Text'), primary: button('Green button'), secondary: button('Gold button'), arrows: yesNo('Arrows in the buttons') },
+  DualCta: {
+    title: text('Title'),
+    text: paragraph('Text'),
+    primary: button('Green button'),
+    secondary: button('Gold button'),
+    arrows: yesNo('Arrows in the buttons'),
+    primaryIcon: optionalIcon('Green button icon (instead of the arrow)'),
+    primaryIconAfter: yesNo('Green button icon after the text'),
+    secondaryIcon: optionalIcon('Gold button icon (instead of the arrow)'),
+    secondaryIconAfter: yesNo('Gold button icon after the text'),
+  },
 } satisfies Record<string, Fields>)
 
 Object.assign(pageFields, {
@@ -386,7 +396,26 @@ Object.assign(pageFields, {
     signName: text('Signed by (leave empty to use the principal named in Site settings)'),
     signRole: text('Role under the name (leave empty for "Principal, <school name>, Sidhpur")'),
   },
-  HighlightBand: { stats: list('Figures', { icon: iconChoice(), value: text('Figure (e.g. 2.6K+)'), label: text('Label') }, (i) => [str(i.value), str(i.label)].filter(Boolean).join(' '), 8) },
+  HighlightBand: {
+    stats: list(
+      'Figures',
+      {
+        icon: iconChoice(),
+        value: text('Figure (e.g. 2.6K+)'),
+        label: text('Label'),
+        count: choose('Work the figure out automatically', [
+          { label: 'No, show the figure above', value: 'none' },
+          { label: 'Yes: the number of staff on the Staff page', value: 'staff' },
+        ]),
+      },
+      (i) => [str(i.value), str(i.label)].filter(Boolean).join(' '),
+      8,
+    ),
+    lift: choose('Lift on hover', [
+      { label: 'Normal', value: 'normal' },
+      { label: 'A little less', value: 'small' },
+    ]),
+  },
 } satisfies Record<string, Fields>)
 
 Object.assign(pageFields, {
@@ -680,5 +709,35 @@ Object.assign(pageFields, {
     name: text('Name (leave empty to use the principal named in Site settings)'),
     excerpt: paragraph('Short extract (shown in quotes)'),
     button: button('Button'),
+  },
+} satisfies Record<string, Fields>)
+
+Object.assign(pageFields, {
+  PrincipalSpotlight: {
+    photo: imageField('Photo'),
+    pill: text('Small label'),
+    name: text('Name (leave empty to use the principal named in Site settings)'),
+    text: paragraph('Text'),
+    stats: list(
+      'Figures',
+      {
+        value: text('Figure'),
+        label: text('Label'),
+        count: choose('Work the figure out automatically', [
+          { label: 'No, show the figure above', value: 'none' },
+          { label: 'Yes: the number of staff listed on this page', value: 'staff' },
+        ]),
+      },
+      (i) => [str(i.value), str(i.label)].filter(Boolean).join(' '),
+      4,
+    ),
+  },
+  StaffList: {
+    members: list(
+      'Staff (filters are made from the departments)',
+      { name: text('Name'), role: text('Role'), department: text('Department'), qualifications: text('Qualifications'), photo: imageField('Photo (optional)') },
+      (i) => [str(i.name), str(i.department)].filter(Boolean).join(' · '),
+      300,
+    ),
   },
 } satisfies Record<string, Fields>)
