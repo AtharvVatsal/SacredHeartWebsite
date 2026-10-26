@@ -636,5 +636,49 @@ Object.assign(pageFields, {
     text: paragraph('Notice text (empty line between paragraphs; phone numbers and email come from Site settings)'),
     emailLabel: text('Email button text'),
   },
-  ApplyBand: { title: text('Title'), text: paragraph('Text'), button: button('Button') },
+  ApplyBand: {
+    title: text('Title'),
+    text: paragraph('Text'),
+    button: button('Button'),
+    size: toneChoice('Size', [['normal', 'Normal'], ['large', 'Larger']]),
+  },
+} satisfies Record<string, Fields>)
+
+Object.assign(pageFields, {
+  StatBoxes: {
+    stats: list(
+      'Figures',
+      {
+        value: text('Figure'),
+        label: text('Label'),
+        icon: iconChoice(),
+        color: gradientChoice(),
+        count: toneChoice('Work the figure out automatically', [['none', 'No, show the figure above'], ['staff', 'Yes: the number of staff on the Staff page']]),
+      },
+      (i) => [str(i.value), str(i.label)].filter(Boolean).join(' '),
+      8,
+    ),
+  },
+  ExploreLinks: { ...eyebrowTitle, items: list('Tiles', { label: text('Label'), href: text('Link address'), icon: iconChoice(), color: gradientChoice('Colour on hover') }, (i) => str(i.label), 12) },
+  WhoWeAre: { ...eyebrowTitle, body: paragraph('Text (empty line between paragraphs)', FORMAT_HINT), areas: list('Focus tiles', { label: text('Label'), icon: iconChoice() }, (i) => str(i.label), 12) },
+  JourneyTimeline: {
+    ...eyebrowTitle,
+    items: list(
+      'Years',
+      { year: text('Year'), title: text('Title'), text: paragraph('Text (computers)'), shortText: text('Shorter text (phones)') },
+      (i) => [str(i.year), str(i.title)].filter(Boolean).join(' · '),
+      8,
+    ),
+    endLabel: text('Closing label'),
+    button: button('Button'),
+  },
+  AnthemCard: { title: text('Title'), icon: iconChoice(), text: paragraph('Verses (one line per line; empty line between verses; the first line of each verse is highlighted)') },
+  PrincipalPreview: {
+    photo: imageField('Photo'),
+    pill: text('Small label'),
+    title: text('Title'),
+    name: text('Name (leave empty to use the principal named in Site settings)'),
+    excerpt: paragraph('Short extract (shown in quotes)'),
+    button: button('Button'),
+  },
 } satisfies Record<string, Fields>)

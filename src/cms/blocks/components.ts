@@ -39,6 +39,12 @@ import {
 import { LeaderMessages } from './pages/Leaders'
 import {
   ActivitiesBand,
+  AnthemCard,
+  ExploreLinks,
+  JourneyTimeline,
+  PrincipalPreview,
+  StatBoxes,
+  WhoWeAre,
   ApplyBand,
   ChecklistCard,
   ClassLevels,
@@ -156,4 +162,10 @@ export const blockComponents: Record<string, ComponentType<any>> = {
   GradientLinkCards,
   DatesNotice,
   ApplyBand,
+  StatBoxes,
+  ExploreLinks,
+  WhoWeAre,
+  JourneyTimeline,
+  AnthemCard,
+  PrincipalPreview,
 }

@@ -1,9 +1,11 @@
 // Sections of the section landing pages (Academics, Admission, About Us)
 import { z } from 'zod'
 import { defineBlock } from '../../document/definition'
-import { bool, choice, href, list, text } from '../../document/fields'
+import { bool, choice, href, image, list, longText, text } from '../../document/fields'
 import { button, icon } from '../common'
 import { gradient } from '../shared/gradients'
+import { aboutNav, aboutStats, growthAreas, journey, principalExcerpt, whoWeAre } from '@/content/about-landing'
+import { schoolAnthem, schoolInfo } from '@/data/school'
 import { activities, admissionDocuments, admissionLinks, admissionRules, admissionSteps, classLevels, resourceLinks, streamTiles, subjectOverview } from '@/content/academics-landing'
 
 const lines = (max: number) => list(z.object({ text: text(120) }), max)
@@ -144,7 +146,101 @@ export const ApplyBand = defineBlock({
     title: text(140, 'Ready to Begin Your Journey?'),
     text: text(400, "Take the first step towards your child's bright future at Sacred Heart Senior Secondary School"),
     button: button('Apply Now', '/admission/online-registration'),
+    size: choice(['normal', 'large'] as const, 'normal'),
   }),
 })
 
-export const landingBlocks = [ClassLevels, StreamTiles, SubjectOverview, ResourceLinks, ActivitiesBand, ProcessSteps, ChecklistCard, NumberedRules, GradientLinkCards, DatesNotice, ApplyBand]
+export const StatBoxes = defineBlock({
+  type: 'StatBoxes',
+  label: 'Figures in colourful boxes',
+  category: 'about',
+  schema: z.object({
+    stats: list(
+      z.object({ icon: icon('Star'), value: text(20), label: text(60), color: gradient('from-emerald-500 to-teal-600'), count: choice(['none', 'staff'] as const, 'none') }),
+      8,
+      aboutStats,
+    ),
+  }),
+})
+
+export const ExploreLinks = defineBlock({
+  type: 'ExploreLinks',
+  label: 'Small link tiles',
+  category: 'actions',
+  schema: z.object({
+    eyebrow: text(60, 'Explore'),
+    title: text(140, 'Discover More About Us'),
+    items: list(z.object({ label: text(60), href: href(''), icon: icon('Star'), color: gradient('from-amber-500 to-orange-600') }), 12, aboutNav),
+  }),
+})
+
+export const WhoWeAre = defineBlock({
+  type: 'WhoWeAre',
+  label: 'Introduction with focus tiles',
+  category: 'about',
+  schema: z.object({
+    eyebrow: text(60, 'Who We Are'),
+    title: text(200, "We don't only teach our students. We help them grow."),
+    body: longText(4000, whoWeAre),
+    areas: list(z.object({ label: text(60), icon: icon('Star') }), 12, growthAreas),
+  }),
+})
+
+export const JourneyTimeline = defineBlock({
+  type: 'JourneyTimeline',
+  label: 'Years in a row (short timeline)',
+  category: 'about',
+  schema: z.object({
+    eyebrow: text(60, 'Our Heritage'),
+    title: text(140, 'Our Journey Through Time'),
+    items: list(z.object({ year: text(12), title: text(80), text: text(200), shortText: text(120) }), 8, journey),
+    endLabel: text(60, 'Legacy Continues'),
+    button: button('Read Full History', '/about/history'),
+  }),
+})
+
+export const AnthemCard = defineBlock({
+  type: 'AnthemCard',
+  label: 'Anthem or poem (verses)',
+  category: 'about',
+  schema: z.object({
+    title: text(120, 'School Anthem'),
+    icon: icon('Music'),
+    text: longText(4000, schoolAnthem),
+  }),
+})
+
+export const PrincipalPreview = defineBlock({
+  type: 'PrincipalPreview',
+  label: "Principal's message preview",
+  category: 'about',
+  schema: z.object({
+    photo: image({ src: '/images/principal.webp', alt: schoolInfo.principal }),
+    pill: text(60, 'Leadership'),
+    title: text(120, "Principal's Message"),
+    /** Empty: the principal's name from Site settings */
+    name: text(120, ''),
+    excerpt: text(600, principalExcerpt),
+    button: button('Read Full Message', '/about/principal'),
+  }),
+})
+
+export const landingBlocks = [
+  ClassLevels,
+  StreamTiles,
+  SubjectOverview,
+  ResourceLinks,
+  ActivitiesBand,
+  ProcessSteps,
+  ChecklistCard,
+  NumberedRules,
+  GradientLinkCards,
+  DatesNotice,
+  ApplyBand,
+  StatBoxes,
+  ExploreLinks,
+  WhoWeAre,
+  JourneyTimeline,
+  AnthemCard,
+  PrincipalPreview,
+]

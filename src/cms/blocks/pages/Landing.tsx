@@ -3,16 +3,24 @@
 // Section landing page sections (Academics, Admission, About Us), moved verbatim from those pages
 import Link from 'next/link'
 import { m } from 'framer-motion'
-import { ArrowRight, Calendar, CheckCircle, Mail, Phone, Scale } from 'lucide-react'
+import { ArrowRight, Calendar, CheckCircle, GraduationCap, Heart, Mail, Phone, Scale, Users } from 'lucide-react'
+import { staffMembers } from '@/data/school'
 import { useSiteSettings } from '@/components/providers/SiteSettingsProvider'
 import { telHref } from '@/lib/contact'
 import { FadeIn, FadeInItem, ParallaxSection, StaggerContainer } from '@/components/animations'
 import type { BlockProps } from '../../document/definition'
+import { CmsImage } from '../shared/CmsImage'
 import { Icon } from '../shared/Icon'
-import { Inline } from '../shared/InlineText'
+import { Inline, Paragraphs } from '../shared/InlineText'
 import { useInView } from '../shared/reveal'
 import { SmartLink } from '../shared/SmartLink'
 import type {
+  AnthemCard as AnthemDef,
+  ExploreLinks as ExploreDef,
+  JourneyTimeline as JourneyDef,
+  PrincipalPreview as PreviewDef,
+  StatBoxes as StatBoxesDef,
+  WhoWeAre as WhoDef,
   ApplyBand as ApplyDef,
   ChecklistCard as ChecklistDef,
   DatesNotice as DatesDef,
@@ -457,7 +465,8 @@ export function DatesNotice({ eyebrow, title, heading, text, emailLabel }: Block
   )
 }
 
-export function ApplyBand({ title, text, button }: BlockProps<typeof ApplyDef>) {
+export function ApplyBand({ title, text, button, size }: BlockProps<typeof ApplyDef>) {
+  const large = size === 'large'
   const pop = useInView({ opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1 })
   return (
     <section className="py-20 bg-gradient-to-br from-primary-800 via-primary-700 to-primary-900 text-white relative overflow-hidden">
@@ -470,15 +479,15 @@ export function ApplyBand({ title, text, button }: BlockProps<typeof ApplyDef>) 
       </div>
       <div className="container mx-auto px-4 relative z-10 text-center">
         <FadeIn blur>
-          <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">{title}</h2>
-          {text && <p className="text-gray-200 mb-8 max-w-2xl mx-auto">{text}</p>}
+          <h2 className={large ? 'text-3xl md:text-5xl font-display font-bold mb-6' : 'text-3xl md:text-4xl font-display font-bold mb-4'}>{title}</h2>
+          {text && <p className={large ? 'text-gray-200 mb-10 max-w-2xl mx-auto text-lg' : 'text-gray-200 mb-8 max-w-2xl mx-auto'}>{text}</p>}
         </FadeIn>
         {button.label && button.href && (
           <m.div {...pop} transition={{ delay: 0.2 }}>
             <m.div whileHover={{ scale: 1.05, y: -2 }} className="inline-flex">
               <SmartLink
                 href={button.href}
-                className="active:scale-[0.98] inline-flex items-center gap-3 bg-secondary-400 text-primary-900 px-10 py-5 rounded-full font-semibold hover:bg-secondary-300 transition-all shadow-xl hover:shadow-2xl"
+                className={`active:scale-[0.98] inline-flex items-center gap-3 bg-secondary-400 text-primary-900 px-10 py-5 rounded-full ${large ? 'font-bold text-lg' : 'font-semibold'} hover:bg-secondary-300 transition-all shadow-xl hover:shadow-2xl`}
               >
                 {button.label}
                 <ArrowRight size={20} />
@@ -486,6 +495,281 @@ export function ApplyBand({ title, text, button }: BlockProps<typeof ApplyDef>) 
             </m.div>
           </m.div>
         )}
+      </div>
+    </section>
+  )
+}
+
+export function StatBoxes({ stats }: BlockProps<typeof StatBoxesDef>) {
+  return (
+    <section className="py-16 bg-gradient-to-b from-primary-50 to-white relative overflow-hidden">
+      <div className="container mx-auto px-4 relative z-10">
+        <StaggerContainer className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto" stagger={0.1}>
+          {stats.map((stat, index) => (
+            <FadeInItem key={index} direction="up" blur>
+              <m.div
+                whileHover={{ y: -5, scale: 1.02 }}
+                className={`bg-gradient-to-br ${stat.color} p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-white relative overflow-hidden group`}
+              >
+                <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
+                <div className="relative z-10 text-center">
+                  <Icon name={stat.icon} className="w-8 h-8 mx-auto mb-3 opacity-90" />
+                  {/* "Staff" counts the staff list, so it always matches the Staff page */}
+                  <p className="text-2xl min-[360px]:text-3xl font-bold mb-1">{stat.count === 'staff' ? String(staffMembers.length) : stat.value}</p>
+                  <p className="text-sm opacity-80">{stat.label}</p>
+                </div>
+              </m.div>
+            </FadeInItem>
+          ))}
+        </StaggerContainer>
+      </div>
+    </section>
+  )
+}
+
+export function ExploreLinks({ eyebrow, title, items }: BlockProps<typeof ExploreDef>) {
+  return (
+    <section className="py-16 bg-white relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-primary-50/50 to-transparent pointer-events-none" />
+      <div className="container mx-auto px-4 relative z-10">
+        <EyebrowHeading eyebrow={eyebrow} title={title} divider="none" size="medium" gap="mb-12" />
+        <StaggerContainer className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4" stagger={0.08}>
+          {items.map((item, index) => (
+            <FadeInItem key={index} direction="up" blur>
+              <SmartLink href={item.href}>
+                <m.div
+                  whileHover={{ y: -8, scale: 1.05 }}
+                  className="relative p-6 bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 group h-full flex flex-col items-center justify-center text-center"
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-br ${item.color} rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+                  <div className="relative z-10 w-14 h-14 bg-gradient-to-br from-primary-100 to-primary-200 group-hover:from-white group-hover:to-white rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm">
+                    <Icon name={item.icon} className="w-7 h-7 text-primary-900 group-hover:text-primary-700 transition-colors" />
+                  </div>
+                  <span className="font-medium text-gray-800 group-hover:text-white text-sm relative z-10 transition-colors">{item.label}</span>
+                </m.div>
+              </SmartLink>
+            </FadeInItem>
+          ))}
+        </StaggerContainer>
+      </div>
+    </section>
+  )
+}
+
+export function WhoWeAre({ eyebrow, title, body, areas }: BlockProps<typeof WhoDef>) {
+  return (
+    <section className="py-20 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+      <div className="absolute -top-24 -right-24 w-80 h-80 bg-secondary-400/10 rounded-full blur-[100px] pointer-events-none" />
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-5 gap-10 lg:gap-14 items-center">
+          <FadeIn blur className="lg:col-span-3">
+            {eyebrow && <span className="text-sm font-semibold text-secondary-800 tracking-wider uppercase">{eyebrow}</span>}
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-900 mt-3 mb-6 leading-tight">{title}</h2>
+            <div className="space-y-5 text-gray-700 text-lg leading-relaxed">
+              <Paragraphs text={body} />
+            </div>
+          </FadeIn>
+          <StaggerContainer className="lg:col-span-2 grid grid-cols-2 gap-3 sm:gap-4" stagger={0.06}>
+            {areas.map((area, i) => (
+              <FadeInItem key={i} direction="up">
+                <div className="h-full bg-white rounded-2xl p-4 sm:p-5 shadow-md border border-gray-100 hover:shadow-lg hover:border-primary-200 transition-all duration-300">
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary-100 to-primary-50 flex items-center justify-center mb-3">
+                    <Icon name={area.icon} className="w-5 h-5 text-primary-700" />
+                  </div>
+                  <p className="font-semibold text-primary-900 text-sm sm:text-base leading-snug">{area.label}</p>
+                </div>
+              </FadeInItem>
+            ))}
+          </StaggerContainer>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function JourneyStep({ item, index, mobile }: { item: BlockProps<typeof JourneyDef>['items'][number]; index: number; mobile?: boolean }) {
+  const desktopReveal = useInView({ opacity: 0, y: 20 }, { opacity: 1, y: 0 })
+  const mobileReveal = useInView({ opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1 })
+  if (mobile) {
+    return (
+      <m.div
+        {...mobileReveal}
+        transition={{ duration: 0.3, delay: index * 0.05 }}
+        className="bg-gradient-to-br from-primary-50 to-secondary-50 p-3 min-[360px]:p-5 rounded-xl text-center break-words hyphens-auto"
+      >
+        <div className="w-16 h-16 bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-xl flex items-center justify-center shadow mb-4 mx-auto">
+          <span className="text-white font-bold text-base">{item.year}</span>
+        </div>
+        <h3 className="font-bold text-primary-900 text-sm min-[360px]:text-base mb-2">{item.title}</h3>
+        <p className="text-gray-600 text-sm">{item.shortText || item.text}</p>
+      </m.div>
+    )
+  }
+  return (
+    <m.div {...desktopReveal} transition={{ duration: 0.4, delay: index * 0.1 }} className="flex-1 flex flex-col items-center text-center px-3">
+      <div className="w-20 h-20 bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-2xl flex flex-col items-center justify-center shadow-lg mb-5">
+        <span className="text-white font-bold text-lg">{item.year}</span>
+      </div>
+      <div className="bg-gradient-to-br from-primary-50 to-secondary-50 p-5 rounded-xl w-full">
+        <h3 className="font-bold text-primary-900 text-base mb-2">{item.title}</h3>
+        <p className="text-gray-600 text-sm leading-relaxed">{item.text}</p>
+      </div>
+    </m.div>
+  )
+}
+
+export function JourneyTimeline({ eyebrow, title, items, endLabel, button }: BlockProps<typeof JourneyDef>) {
+  const rise = useInView({ opacity: 0, y: 20 }, { opacity: 1, y: 0 })
+  return (
+    <section className="py-24 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
+      <div className="container mx-auto px-4">
+        <FadeIn blur>
+          <div className="text-center mb-16">
+            {eyebrow && <span className="text-sm font-semibold text-secondary-800 tracking-wider uppercase">{eyebrow}</span>}
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-primary-900 mt-3">{title}</h2>
+            <div className="w-16 h-1 bg-secondary-400 rounded-full mx-auto mt-6" />
+          </div>
+        </FadeIn>
+
+        <div className="max-w-6xl mx-auto mt-16">
+          <m.div {...rise} className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 md:p-12">
+            <div className="hidden md:block">
+              <div className="flex justify-between">
+                {items.map((item, index) => (
+                  <JourneyStep key={index} item={item} index={index} />
+                ))}
+              </div>
+            </div>
+            <div className="md:hidden">
+              <div className="grid grid-cols-2 gap-4">
+                {items.map((item, index) => (
+                  <JourneyStep key={index} item={item} index={index} mobile />
+                ))}
+              </div>
+            </div>
+            {endLabel && (
+              <div className="flex justify-center mt-12">
+                <div className="flex flex-col items-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center shadow-lg">
+                    <Heart className="w-8 h-8 text-white" />
+                  </div>
+                  <span className="mt-3 text-primary-700 font-semibold">{endLabel}</span>
+                </div>
+              </div>
+            )}
+          </m.div>
+        </div>
+
+        {button.label && button.href && (
+          <FadeIn blur>
+            <div className="mt-12 text-center">
+              <SmartLink href={button.href} className="inline-flex items-center gap-2 bg-primary-700 text-white px-8 py-4 rounded-full font-semibold hover:bg-primary-800 transition-all shadow-lg hover:shadow-xl">
+                {button.label} <ArrowRight size={18} />
+              </SmartLink>
+            </div>
+          </FadeIn>
+        )}
+      </div>
+    </section>
+  )
+}
+
+function Stanza({ stanza, index }: { stanza: string; index: number }) {
+  const rise = useInView({ opacity: 0, y: 20 }, { opacity: 1, y: 0 })
+  return (
+    <m.div {...rise} transition={{ delay: index * 0.2 }} className="text-center">
+      {stanza.split('\n').map((line, lineIndex) => (
+        <p key={lineIndex} className={`italic ${lineIndex === 0 ? 'font-medium text-lg text-secondary-300' : 'text-white/80'}`}>
+          {line}
+        </p>
+      ))}
+    </m.div>
+  )
+}
+
+export function AnthemCard({ title, icon, text }: BlockProps<typeof AnthemDef>) {
+  const rise = useInView({ opacity: 0, y: 30 }, { opacity: 1, y: 0 })
+  return (
+    <section className="py-20 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white relative overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden">
+        <m.div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-secondary-500/10 rounded-full blur-[100px]" animate={{ scale: [1, 1.1, 1], x: [0, 30, 0] }} transition={{ duration: 8, repeat: Infinity }} />
+        <m.div className="absolute -bottom-40 -left-40 w-[400px] h-[400px] bg-primary-400/10 rounded-full blur-[80px]" animate={{ scale: [1, 1.2, 1], x: [0, -20, 0] }} transition={{ duration: 6, repeat: Infinity }} />
+      </div>
+      <div className="container mx-auto px-4 relative z-10">
+        <FadeIn blur>
+          <div className="text-center mb-12">
+            <m.div className="inline-flex items-center justify-center w-20 h-20 bg-secondary-400 rounded-full mb-6 shadow-xl" whileHover={{ rotate: 360, scale: 1.1 }} transition={{ duration: 0.6 }}>
+              <Icon name={icon} className="w-10 h-10 text-primary-900" />
+            </m.div>
+            <h2 className="text-3xl md:text-5xl font-display font-bold mb-4">{title}</h2>
+            <div className="w-20 mx-auto">
+              <div className="h-1 bg-secondary-400 rounded-full mx-auto" />
+            </div>
+          </div>
+        </FadeIn>
+        <m.div className="max-w-3xl mx-auto bg-white/10 backdrop-blur-sm rounded-3xl p-10 md:p-14 border border-white/20" {...rise} transition={{ duration: 0.8 }}>
+          <div className="space-y-8">
+            {text.split('\n\n').map((stanza, index) => (
+              <Stanza key={index} stanza={stanza} index={index} />
+            ))}
+          </div>
+        </m.div>
+      </div>
+    </section>
+  )
+}
+
+export function PrincipalPreview({ photo, pill, title, name, excerpt, button }: BlockProps<typeof PreviewDef>) {
+  const { identity } = useSiteSettings()
+  const principal = name || identity.principal
+  return (
+    <section className="py-20 bg-gradient-to-b from-gray-50 via-white to-primary-50 relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-secondary-50/50 to-transparent pointer-events-none" />
+      <div className="container mx-auto px-4 relative z-10">
+        <FadeIn blur>
+          <div className="max-w-5xl mx-auto">
+            <div className="bg-gradient-to-br from-white to-primary-50 rounded-3xl shadow-2xl p-10 md:p-14 border border-primary-100 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-secondary-400/10 rounded-full blur-[80px]" />
+              <div className="relative z-10">
+                <div className="flex flex-col lg:flex-row gap-10 items-center">
+                  <m.div className="relative w-40 h-40 lg:w-48 lg:h-48 flex-shrink-0" whileHover={{ scale: 1.05, rotate: 3 }}>
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-primary-700 rounded-full shadow-xl" />
+                    <div className="absolute inset-2 bg-gradient-to-br from-primary-600 to-primary-800 rounded-full flex items-center justify-center overflow-hidden">
+                      <CmsImage image={photo} alt={photo.alt || principal} fill className="object-cover rounded-full" />
+                    </div>
+                    <div className="absolute -bottom-2 -right-2 w-12 h-12 bg-secondary-400 rounded-full flex items-center justify-center shadow-lg border-4 border-white">
+                      <GraduationCap className="w-6 h-6 text-primary-900" />
+                    </div>
+                  </m.div>
+                  <div className="flex-1 text-center lg:text-left">
+                    {pill && (
+                      <div className="inline-flex items-center gap-2 bg-primary-50 text-primary-700 px-4 py-1.5 rounded-full text-sm font-medium mb-4">
+                        <Users className="w-4 h-4" />
+                        {pill}
+                      </div>
+                    )}
+                    <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-900 mb-2">{title}</h2>
+                    <p className="text-xl text-secondary-800 font-medium mb-6">{principal}</p>
+                    {excerpt && <p className="text-gray-600 leading-relaxed mb-8 text-lg italic">&quot;{excerpt}&quot;</p>}
+                    {button.label && button.href && (
+                      <m.div whileHover={{ scale: 1.05 }} className="inline-flex">
+                        <SmartLink
+                          href={button.href}
+                          className="active:scale-[0.98] inline-flex items-center gap-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white px-8 py-4 rounded-full font-semibold hover:from-primary-500 hover:to-primary-600 transition-all shadow-lg hover:shadow-xl"
+                        >
+                          {button.label}
+                          <m.div animate={{ x: [0, 5, 0] }} transition={{ duration: 2, repeat: Infinity }}>
+                            <ArrowRight size={18} />
+                          </m.div>
+                        </SmartLink>
+                      </m.div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </FadeIn>
       </div>
     </section>
   )
