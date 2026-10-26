@@ -6,7 +6,7 @@ import type { Payload, TypedUser } from 'payload'
 import type { Page } from '@/payload-types'
 import { blockRegistry } from '../blocks/definitions'
 import { TOPPER_SOURCES } from '../blocks/pages/achievements.definitions'
-import { toTopperSessions, type LinkedData } from '../blocks/shared/linked'
+import { toNotifications, toTopperSessions, type LinkedData } from '../blocks/shared/linked'
 import { migrateDocument } from '../document/migrations'
 import { isRecord, type PageDocument } from '../document/types'
 import { validateDocument } from '../document/validate'
@@ -24,6 +24,7 @@ function sourcesIn(document: PageDocument) {
 }
 
 export const STAFF_PAGE = '/about/staff'
+export const NOTIFICATIONS_PAGE = '/notifications'
 
 async function loadSource(payload: Payload, path: string, user: TypedUser | null): Promise<PageDocument | null> {
   const { docs } = await payload.find({ collection: 'pages', where: { path: { equals: path } }, limit: 1, depth: 0, draft: Boolean(user), overrideAccess: false, user: user ?? undefined })
@@ -35,6 +36,17 @@ async function loadSource(payload: Payload, path: string, user: TypedUser | null
 
 export async function loadLinkedData(payload: Payload, document: PageDocument, user: TypedUser | null): Promise<LinkedData> {
   const linked: LinkedData = { toppers: {} }
+  // Notice lists set to show the Notifications page's notices
+  if (document.content.some((b) => b.type === 'NoticesList' && (b.props as { source?: string }).source !== 'own')) {
+    try {
+      const source = await loadSource(payload, NOTIFICATIONS_PAGE, user)
+      const board = source?.content.find((b) => b.type === 'NotificationsBoard' && !(b.props as { hidden?: boolean }).hidden)
+      const notices = (board?.props as { notices?: Parameters<typeof toNotifications>[0] } | undefined)?.notices
+      if (Array.isArray(notices)) linked.notifications = toNotifications(notices)
+    } catch (error) {
+      console.warn(`[cms] Could not read ${NOTIFICATIONS_PAGE} for the notices: ${(error as Error).message}`)
+    }
+  }
   // Figures set to count the staff (a "count": "staff" choice anywhere on the page)
   if (JSON.stringify(document.content).includes('"count":"staff"')) {
     try {

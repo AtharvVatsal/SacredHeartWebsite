@@ -741,3 +741,23 @@ Object.assign(pageFields, {
     ),
   },
 } satisfies Record<string, Fields>)
+
+const noticeFields: Fields = {
+  title: text('Title'),
+  date: text('Date (e.g. 2025-05)'),
+  text: paragraph('Text'),
+  important: yesNo('Mark as important'),
+  attachment: text('Attached PDF (upload it under Media, then paste its address here)'),
+}
+
+Object.assign(pageFields, {
+  NotificationsBoard: {
+    badge: text('Small badge in the banner'),
+    title: text('Title'),
+    subtitle: text('Line under the title'),
+    notices: list('Notices (newest first)', noticeFields, (i) => [str(i.date), str(i.title)].filter(Boolean).join(' · '), 100),
+    ctaTitle: text('Closing band title'),
+    ctaText: paragraph('Closing band text'),
+    ctaButton: button('Closing band button'),
+  },
+} satisfies Record<string, Fields>)

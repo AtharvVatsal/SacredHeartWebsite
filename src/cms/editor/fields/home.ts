@@ -105,6 +105,10 @@ export const homeFields: Record<string, Fields> = {
       12,
     ),
     more: button('Button under the list'),
+    source: choose('Notices shown', [
+      { label: 'The notices on the Notifications page (edit them there)', value: 'page' },
+      { label: 'The list above', value: 'own' },
+    ]),
   },
   HighlightStory: {
     badge: text('Badge text'),

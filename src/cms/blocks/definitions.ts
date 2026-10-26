@@ -12,6 +12,7 @@ import { onlineBlocks } from './pages/online.definitions'
 import { aboutBlocks } from './pages/about.definitions'
 import { achievementsBlocks } from './pages/achievements.definitions'
 import { landingBlocks } from './pages/landing.definitions'
+import { widgetBlocks } from './pages/widgets.definitions'
 import { legalBlocks } from './pages/legal.definitions'
 
 /** Options every section has: hide it completely, or hide it on one kind of screen */
@@ -24,7 +25,7 @@ function withCommon(def: BlockDefinition): BlockDefinition {
   return { ...def, schema: def.schema.extend(commonShape) as z.ZodObject }
 }
 
-export const blockDefinitions: BlockDefinition[] = [...generalBlocks, ...homeBlocks, ...legalBlocks, ...admissionBlocks, ...onlineBlocks, ...academicsBlocks, ...aboutBlocks, ...achievementsBlocks, ...landingBlocks].map(withCommon)
+export const blockDefinitions: BlockDefinition[] = [...generalBlocks, ...homeBlocks, ...legalBlocks, ...admissionBlocks, ...onlineBlocks, ...academicsBlocks, ...aboutBlocks, ...achievementsBlocks, ...landingBlocks, ...widgetBlocks].map(withCommon)
 
 export const blockRegistry: Record<string, BlockDefinition> = Object.fromEntries(blockDefinitions.map((d) => [d.type, d]))
 

@@ -6,10 +6,17 @@ import Section from '@/components/ui/Section'
 import { FadeIn, MagneticButton } from '@/components/animations'
 import { isSafeHref } from '../../document/fields'
 import type { BlockProps } from '../../document/definition'
+import { useLinkedData } from '../shared/LinkedData'
 import { SmartLink } from '../shared/SmartLink'
 import type { NoticesList as Def } from './definitions'
 
-export default function NoticesList({ eyebrow, title, items, more }: BlockProps<typeof Def>) {
+export default function NoticesList({ eyebrow, title, items: ownItems, more, source }: BlockProps<typeof Def>) {
+  const linked = useLinkedData().notifications
+  // The Notifications page's notices, so they are edited in one place (the list above until that page is in the CMS)
+  const items =
+    source !== 'own' && linked
+      ? linked.map((n) => ({ date: n.date, title: n.title, text: n.description, important: n.important, attachment: n.attachment ?? '' }))
+      : ownItems
   return (
     <Section className="bg-white py-24 relative overflow-hidden">
       <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[400px] bg-gradient-to-r from-primary-50/50 via-transparent to-primary-50/50 skew-y-3 pointer-events-none" />

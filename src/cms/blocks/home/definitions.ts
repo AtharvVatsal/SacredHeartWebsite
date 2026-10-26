@@ -2,7 +2,7 @@
 // library starts out looking exactly like the original.
 import { z } from 'zod'
 import { defineBlock } from '../../document/definition'
-import { bool, href, image, int, list, longText, text } from '../../document/fields'
+import { bool, choice, href, image, int, list, longText, text } from '../../document/fields'
 import { achievements, facilities, heroImages, heroSection, notifications, quickLinks, schoolInfo, statistics, studentLeaders } from '@/data/school'
 import { button, heading, icon } from '../common'
 import type { IconName } from '../shared/icon-names'
@@ -152,6 +152,8 @@ export const NoticesList = defineBlock({
       notifications.map((n) => ({ date: n.date, title: n.title, text: n.description, important: n.important, attachment: n.attachment ?? '' })),
     ),
     more: button('View All Notifications', '/notifications'),
+    /** page: the notices on the Notifications page; own: the list above */
+    source: choice(['page', 'own'] as const, 'page'),
   }),
 })
 
