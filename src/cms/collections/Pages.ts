@@ -6,7 +6,7 @@ import { CURRENT_SCHEMA_VERSION } from '../document/migrations'
 import { isRecord } from '../document/types'
 import { MAX_DOCUMENT_BYTES, validateDocument } from '../document/validate'
 import { checkPath, normalizePath } from '../paths'
-import { LINKED_SOURCE_PATHS } from '../blocks/shared/linked'
+import { LINKED_SOURCE_PATHS, NOTIFICATIONS_PAGE } from '../blocks/shared/linked'
 import { revalidatePaths } from '../revalidate'
 
 export const describeIssues = (issues: { label: string; message: string }[]) =>
@@ -73,7 +73,9 @@ const afterChange: CollectionAfterChangeHook = async ({ doc, previousDoc, req })
   const shared = [doc.path, previousDoc?.path].some((p) => typeof p === 'string' && LINKED_SOURCE_PATHS.includes(p))
   // Pages made in the CMS are listed in the sitemap, so it is rebuilt when one is published, moved or withdrawn
   const sitemap = doc.kind === 'custom' ? '/sitemap.xml' : null
-  if (isPublished || wasPublished) revalidatePaths(req.payload, [doc.path, previousDoc?.path, sitemap], { layout: shared })
+  // The notifications feed is built from the Notifications page
+  const feed = doc.path === NOTIFICATIONS_PAGE ? '/notifications.rss' : null
+  if (isPublished || wasPublished) revalidatePaths(req.payload, [doc.path, previousDoc?.path, sitemap, feed], { layout: shared })
   return doc
 }
 

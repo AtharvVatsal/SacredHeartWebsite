@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+// The notifications feed as published before the CMS. /notifications.rss serves it unchanged until the
+// Notifications page is published in the CMS; after that the feed is built from the published notices.
+export const legacyNotificationsFeed = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0"
      xmlns:atom="http://www.w3.org/2005/Atom"
      xmlns:content="http://purl.org/rss/1.0/modules/content/">
@@ -35,3 +37,4 @@
     </item>
   </channel>
 </rss>
+`

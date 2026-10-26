@@ -40,6 +40,8 @@ test('home notices follow the Notifications page', async ({ request }) => {
   ;(board.props.notices as unknown[]).unshift({ title: 'E2E linked notice', text: 'Shown on the home page too', date: '2026-10', important: false, attachment: '' })
   await publish(request, headers, notices)
   await expectPublic(request, '/notifications', 'E2E linked notice')
+  // The news feed is rebuilt from the published notices
+  await expectPublic(request, '/notifications.rss', '<title>E2E linked notice</title>')
 
   // The home page is only previewed here (its published state belongs to the workflow tests)
   await expect
