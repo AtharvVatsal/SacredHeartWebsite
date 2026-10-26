@@ -318,5 +318,48 @@ Object.assign(pageFields, {
     aims: list('Cards', { title: text('Title'), text: paragraph('Text'), icon: iconChoice(), color: gradientChoice('Icon colour'), tint: tintChoice }, (i) => str(i.title), 12),
   },
   ValuesGrid: { ...largeHeading, values: list('Values', { name: text('Name'), icon: iconChoice(), color: gradientChoice('Icon colour') }, (i) => str(i.name), 16) },
-  DualCta: { title: text('Title'), text: paragraph('Text'), primary: button('Green button'), secondary: button('Gold button') },
+  DualCta: { title: text('Title'), text: paragraph('Text'), primary: button('Green button'), secondary: button('Gold button'), arrows: yesNo('Arrows in the buttons') },
+} satisfies Record<string, Fields>)
+
+Object.assign(pageFields, {
+  MilestoneTimeline: {
+    ...largeHeading,
+    milestones: list(
+      'Milestones',
+      { year: text('Year'), title: text('Title'), subtitle: text('Line under the title'), content: paragraph('Text shown when opened'), icon: text('Emoji (e.g. 🏫)') },
+      (i) => [str(i.year), str(i.title)].filter(Boolean).join(' · '),
+      30,
+    ),
+    endIcon: iconChoice('Closing icon'),
+    endTitle: text('Closing title (leave empty to hide)'),
+    endText: text('Closing line'),
+  },
+  MissionPanel: { icon: iconChoice(), title: text('Title'), subtitle: text('Line under the title'), text: paragraph('Text') },
+  StoryCard: {
+    pill: text('Small label above the title (optional)'),
+    pillIcon: iconChoice('Label icon'),
+    pillTone: centredHeading.pillTone,
+    title: text('Title'),
+    body: paragraph('Text (empty line between paragraphs)', FORMAT_HINT),
+    look: choose('Card look', [
+      { label: 'White card', value: 'light' },
+      { label: 'Dark green card', value: 'dark' },
+    ]),
+  },
+  StatTiles: {
+    tiles: list(
+      'Numbers',
+      {
+        icon: iconChoice(),
+        value: text('Number (e.g. 1969, 56+)'),
+        label: text('Label'),
+        look: choose('Look', [
+          { label: 'Light green', value: 'light' },
+          { label: 'Gold', value: 'gold' },
+        ]),
+      },
+      (i) => [str(i.value), str(i.label)].filter(Boolean).join(' '),
+      6,
+    ),
+  },
 } satisfies Record<string, Fields>)

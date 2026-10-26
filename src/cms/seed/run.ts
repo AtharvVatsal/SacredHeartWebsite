@@ -18,7 +18,7 @@ import { feePage, rulesPage, uniformPage } from './pages/admission'
 import { homePage, homeSeo } from './pages/home'
 import { legalSeo, privacyPage, termsPage } from './pages/legal'
 import { onlineFeePage, onlineRegistrationPage } from './pages/online'
-import { aimsPage } from './pages/about'
+import { aimsPage, historyPage } from './pages/about'
 
 const SEEDS: { seed: SeedPage; seo?: { title?: string; description?: string } }[] = [
   { seed: homePage, seo: homeSeo },
@@ -30,6 +30,7 @@ const SEEDS: { seed: SeedPage; seo?: { title?: string; description?: string } }[
   { seed: onlineFeePage },
   { seed: onlineRegistrationPage },
   { seed: aimsPage },
+  { seed: historyPage },
   { seed: leavePage },
   { seed: syllabusPage },
 ]
