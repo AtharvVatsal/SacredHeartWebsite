@@ -74,7 +74,7 @@ Anything else is shown as plain text. Pasted HTML or scripts are never run.
 - Accepted files: JPEG, PNG, WebP, AVIF, GIF and PDF. The website makes smaller copies automatically.
 - To **replace** a photo everywhere it is used, open it under **Photos and files** and upload a new file there.
 - A photo or document that is still used on a page or in the school details **cannot be deleted**. The message lists where it is used.
-- **PDF notices:** upload the PDF under **Photos and files**, copy its address, and paste it into the notice's *Attached PDF* box.
+- **PDF notices:** in a notice's *Attached PDF* box, click **Upload a PDF** (or **Choose a PDF** to reuse one already in the library). You can also type the address of a document.
 
 ## 5. Save draft, preview, publish
 

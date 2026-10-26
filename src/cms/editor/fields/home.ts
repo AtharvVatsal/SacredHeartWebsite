@@ -1,7 +1,7 @@
 'use client'
 
 import type { Fields } from '@puckeditor/core'
-import { button, choose, FORMAT_HINT, heading, iconChoice, imageField, link, list, number, paragraph, text, yesNo } from './helpers'
+import { button, choose, documentField, FORMAT_HINT, heading, iconChoice, imageField, link, list, number, paragraph, text, yesNo } from './helpers'
 
 const str = (v: unknown) => (typeof v === 'string' ? v : '')
 
@@ -100,7 +100,7 @@ export const homeFields: Record<string, Fields> = {
     title: text('Title'),
     items: list(
       'Notices',
-      { date: text('Date (e.g. 2025-05)'), title: text('Title'), text: paragraph('Text'), important: yesNo('Mark as important'), attachment: link('PDF or document link (optional)') },
+      { date: text('Date (e.g. 2025-05)'), title: text('Title'), text: paragraph('Text'), important: yesNo('Mark as important'), attachment: documentField('PDF or document (optional)') },
       (i) => str(i.title),
       12,
     ),

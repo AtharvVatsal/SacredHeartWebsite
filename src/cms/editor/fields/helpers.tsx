@@ -4,7 +4,7 @@
 // again on the server when a page is published (src/cms/document/fields.ts).
 import type { Field, Fields } from '@puckeditor/core'
 import { ICONS } from '../../blocks/shared/icon-names'
-import { ImagePickerField } from './ImagePicker'
+import { DocumentLinkField, ImagePickerField } from './ImagePicker'
 
 export const text = (label: string, placeholder?: string): Field => ({ type: 'text', label, placeholder })
 
@@ -38,6 +38,13 @@ export const optionalIcon = (label: string): Field => ({
 })
 
 export const imageField = (label = 'Image'): Field => ({ type: 'custom', label, render: ImagePickerField })
+
+/** A link to a document: an address, or a PDF chosen from (or uploaded to) the media library */
+export const documentField = (label: string): Field => ({
+  type: 'custom',
+  label,
+  render: ({ value, onChange, readOnly, id }) => <DocumentLinkField value={value as string | undefined} onChange={onChange} readOnly={readOnly} id={id} label={label} />,
+})
 
 export const button = (label: string): Field => ({
   type: 'object',

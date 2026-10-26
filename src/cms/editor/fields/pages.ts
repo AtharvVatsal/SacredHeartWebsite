@@ -3,7 +3,7 @@
 // Editor fields for the page-specific sections (see src/cms/blocks/pages)
 import type { Field, Fields } from '@puckeditor/core'
 import { GRADIENTS } from '../../blocks/shared/gradients'
-import { button, choose, FORMAT_HINT, iconChoice, imageField, list, optionalIcon, paragraph, text, yesNo } from './helpers'
+import { button, choose, documentField, FORMAT_HINT, iconChoice, imageField, list, optionalIcon, paragraph, text, yesNo } from './helpers'
 
 const str = (v: unknown) => (typeof v === 'string' ? v : '')
 
@@ -747,7 +747,7 @@ const noticeFields: Fields = {
   date: text('Date (e.g. 2025-05)'),
   text: paragraph('Text'),
   important: yesNo('Mark as important'),
-  attachment: text('Attached PDF (upload it under Media, then paste its address here)'),
+  attachment: documentField('Attached PDF (optional)'),
 }
 
 Object.assign(pageFields, {

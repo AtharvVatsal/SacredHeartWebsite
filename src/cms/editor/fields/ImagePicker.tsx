@@ -57,8 +57,10 @@ function toValue(doc: MediaDoc, current: ImageValue): ImageValue {
   return { mediaId: doc.id, src: sitePath(doc.url), alt: doc.alt ?? '', position: current.position ?? 'center', width: doc.width ?? undefined, height: doc.height ?? undefined }
 }
 
-/** Media library browser shown in a dialog */
-function Library({ onPick, onClose }: { onPick: (doc: MediaDoc) => void; onClose: () => void }) {
+type Kind = 'image' | 'pdf'
+
+/** Media library browser shown in a dialog: images, or PDF documents */
+function Library({ onPick, onClose, kind = 'image' }: { onPick: (doc: MediaDoc) => void; onClose: () => void; kind?: Kind }) {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const [query, setQuery] = useState('')
   const [docs, setDocs] = useState<MediaDoc[]>([])
@@ -74,7 +76,7 @@ function Library({ onPick, onClose }: { onPick: (doc: MediaDoc) => void; onClose
   const load = useCallback(async (q: string, p: number) => {
     setState('loading')
     const params = new URLSearchParams({ limit: '24', page: String(p), sort: '-createdAt', depth: '0' })
-    params.set('where[mimeType][contains]', 'image')
+    params.set('where[mimeType][contains]', kind === 'pdf' ? 'pdf' : 'image')
     if (q) {
       params.set('where[or][0][alt][like]', q)
       params.set('where[or][1][label][like]', q)
@@ -93,7 +95,7 @@ function Library({ onPick, onClose }: { onPick: (doc: MediaDoc) => void; onClose
       setError((e as Error).message)
       setState('error')
     }
-  }, [])
+  }, [kind])
 
   useEffect(() => {
     const t = setTimeout(() => load(query, 1), query ? 300 : 0)
@@ -104,19 +106,19 @@ function Library({ onPick, onClose }: { onPick: (doc: MediaDoc) => void; onClose
     <dialog
       ref={dialogRef}
       onClose={onClose}
-      aria-label="Choose an image"
+      aria-label={kind === 'pdf' ? 'Choose a document' : 'Choose an image'}
       style={{ width: 'min(860px, 92vw)', maxHeight: '86vh', border: 'none', borderRadius: 12, padding: 0, boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}
     >
       <div style={{ padding: 16, borderBottom: '1px solid #e5e7eb', display: 'flex', gap: 10, alignItems: 'center' }}>
-        <strong style={{ flex: 1, fontSize: 16 }}>Choose an image from the media library</strong>
+        <strong style={{ flex: 1, fontSize: 16 }}>{kind === 'pdf' ? 'Choose a PDF from the media library' : 'Choose an image from the media library'}</strong>
         <button type="button" style={s.btn} onClick={() => dialogRef.current?.close()}>
           Close
         </button>
       </div>
       <div style={{ padding: 16 }}>
-        <input style={s.input} type="search" placeholder="Search by description, name or folder" value={query} onChange={(e) => setQuery(e.target.value)} aria-label="Search images" />
+        <input style={s.input} type="search" placeholder="Search by description, name or folder" value={query} onChange={(e) => setQuery(e.target.value)} aria-label={kind === 'pdf' ? 'Search documents' : 'Search images'} />
         {state === 'error' && <p style={{ color: '#b91c1c', fontSize: 14 }}>The library could not be loaded: {error}</p>}
-        {state !== 'error' && docs.length === 0 && state === 'ready' && <p style={{ color: '#4b5563', fontSize: 14 }}>No images found. Upload one with “Upload new image”.</p>}
+        {state !== 'error' && docs.length === 0 && state === 'ready' && <p style={{ color: '#4b5563', fontSize: 14 }}>{kind === 'pdf' ? 'No PDFs found. Upload one with “Upload a PDF”.' : 'No images found. Upload one with “Upload new image”.'}</p>}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 10, marginTop: 12, maxHeight: '58vh', overflowY: 'auto' }}>
           {docs.map((d) => (
             <button
@@ -129,7 +131,11 @@ function Library({ onPick, onClose }: { onPick: (doc: MediaDoc) => void; onClose
               style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: 4, background: '#fff', cursor: 'pointer', textAlign: 'left' }}
               title={d.alt || d.filename || ''}
             >
-              <img src={d.sizes?.thumbnail?.url || d.url || ''} alt="" style={{ width: '100%', aspectRatio: '4 / 3', objectFit: 'cover', borderRadius: 6, display: 'block' }} />
+              {kind === 'pdf' ? (
+                <span style={{ display: 'grid', placeItems: 'center', aspectRatio: '4 / 3', borderRadius: 6, background: '#fef2f2', color: '#b91c1c', fontWeight: 700, fontSize: 18 }}>PDF</span>
+              ) : (
+                <img src={d.sizes?.thumbnail?.url || d.url || ''} alt="" style={{ width: '100%', aspectRatio: '4 / 3', objectFit: 'cover', borderRadius: 6, display: 'block' }} />
+              )}
               <span style={{ display: 'block', fontSize: 12, marginTop: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.label || d.alt || d.filename}</span>
             </button>
           ))}
@@ -224,6 +230,68 @@ export function ImagePickerField({ value, onChange, readOnly, id }: { value: Ima
         </>
       )}
       {libraryOpen && <Library onPick={(doc) => onChange(toValue(doc, current))} onClose={() => setLibraryOpen(false)} />}
+    </div>
+  )
+}
+
+/**
+ * A link to a document: type or paste any allowed address, or pick a PDF from the media library, or upload
+ * one. The value is the address (site files are stored as site paths).
+ */
+export function DocumentLinkField({ value, onChange, readOnly, id, label }: { value: string | undefined; onChange: (v: string) => void; readOnly?: boolean; id: string; label?: string }) {
+  const [libraryOpen, setLibraryOpen] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [message, setMessage] = useState<{ tone: 'error' | 'ok'; text: string } | null>(null)
+  const fileRef = useRef<HTMLInputElement>(null)
+
+  const upload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    setUploading(true)
+    setMessage(null)
+    try {
+      const form = new FormData()
+      form.append('file', file)
+      form.append('_payload', JSON.stringify({ label: file.name.replace(/\.[^.]+$/, '') }))
+      const res = await fetch('/api/media', { method: 'POST', body: form, credentials: 'same-origin' })
+      if (!res.ok) throw new Error(await readError(res))
+      const body = await res.json()
+      onChange(sitePath((body.doc as MediaDoc).url))
+      setMessage({ tone: 'ok', text: 'Uploaded and added to the media library.' })
+    } catch (err) {
+      setMessage({ tone: 'error', text: `Upload failed: ${(err as Error).message}` })
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  return (
+    <div style={s.box}>
+      {label && (
+        <label htmlFor={id} style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
+          {label}
+        </label>
+      )}
+      <input id={id} name={id} style={s.input} value={value ?? ''} readOnly={readOnly} onChange={(e) => onChange(e.target.value)} placeholder="/documents/notice.pdf or https://…" />
+      {!readOnly && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
+          <button type="button" style={s.primary} onClick={() => setLibraryOpen(true)}>
+            Choose a PDF
+          </button>
+          <button type="button" style={s.btn} onClick={() => fileRef.current?.click()} disabled={uploading}>
+            {uploading ? 'Uploading…' : 'Upload a PDF'}
+          </button>
+          {value && (
+            <button type="button" style={s.btn} onClick={() => onChange('')}>
+              Remove
+            </button>
+          )}
+          <input ref={fileRef} type="file" accept="application/pdf" hidden onChange={upload} />
+        </div>
+      )}
+      {message && <p style={{ fontSize: 12, marginTop: 6, color: message.tone === 'error' ? '#b91c1c' : '#15803d' }}>{message.text}</p>}
+      {libraryOpen && <Library kind="pdf" onPick={(doc) => onChange(sitePath(doc.url))} onClose={() => setLibraryOpen(false)} />}
     </div>
   )
 }
