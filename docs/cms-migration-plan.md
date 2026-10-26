@@ -5,7 +5,7 @@ How the existing hard-coded site moves into the CMS without breaking it. The arc
 ## 1. Principles
 
 1. **Nothing switches over in one step.** Each route keeps its existing implementation (`legacy-page.tsx`) as the fallback. It renders CMS content only when an explicitly mapped page exists in the CMS, is **published**, and passes validation.
-2. **Same markup, not look-alikes.** Each block is the existing section's JSX moved into `src/cms/blocks/<Name>/Component.tsx`, with its hard-coded strings, links and images turned into props. The current values become the defaults. Shared visual pieces (`HeroDecor`, `FadeIn`, `Section`, `MagneticButton`, and so on) are imported, not copied.
+2. **Same markup, not look-alikes.** Each block is the existing section's JSX moved into `src/cms/blocks/` (or, for large interactive page bodies, into a component under `src/components/` that the original page renders too), with its hard-coded strings, links and images turned into props. The current values become the defaults. Shared visual pieces (`HeroDecor`, `FadeIn`, `Section`, `MagneticButton`, and so on) are imported, not copied.
 3. **Seeded, not retyped.** `src/cms/seed/pages/*.ts` builds each page document from the same constants and data files the legacy page uses. Running the seed twice is safe: it updates by path, and it never overwrites a page that an editor has changed since the seed, unless `--force` is passed.
 4. **A page counts as migrated only after verification.** That means a CMS-rendered screenshot compared with the legacy screenshot at phone and desktop width, a route and metadata check, and a check of interactions and links.
 
@@ -19,7 +19,7 @@ How the existing hard-coded site moves into the CMS without breaking it. The arc
 | 4 | Block library, renderer, validation and versioning, and the Puck editor with image, link and colour fields | Blocks render identically in the editor canvas and on the page; invalid data is skipped safely |
 | 5 | Drafts, preview, publish, revalidation, restore, redirects | End-to-end tests pass (§5) |
 | 6 | Page-by-page migration, in the order of §4 | Each row's verification boxes are ticked |
-| 7 | Structured collections for widget data (notices, staff, toppers, fees, gallery, pass-out batches, office bearers) | Each widget reads its collection, with the data file as fallback |
+| 7 | Widget data editable (notices, staff, toppers, fees, gallery, pass-out batches, office bearers, calendar) | Each widget reads its data from the CMS, with the data file as fallback (see the decision below) |
 | 8 | Hardening, tests, documentation | Every check in §5 passes; limitations are documented |
 
 ## 3. Block mapping strategy
@@ -41,37 +41,48 @@ Legend:
 - ◐ blocks exist and the seed exists, but not yet verified
 - ☑ migrated and verified (screenshot comparison at phone and desktop width, route and metadata check, interactions)
 
-| Order | Route | Main blocks | Data dependencies | Status |
+| Order | Route | Main blocks | Where its data is edited | Status |
 |---|---|---|---|---|
-| 1 | `/` | Home hero, Quick actions bar, Statistics, Quick links, About preview, Principal quote, Facilities, Student leaders, Achievements, Notices list, Highlight story, CTA band | `school.ts`: stats, links, facilities, leaders, achievements, notices | ☐ |
-| 2 | `/about` | Page hero, stat cards, card grids, anthem, text | `school.ts` | ☐ |
-| 3 | `/about/principal` | Page hero, principal message sections | `school.ts` | ☐ |
-| 4 | `/about/history` | Page hero, timeline, text | — | ☐ |
-| 5 | `/about/aims` | Page hero, vision carousel, aims grid, values grid | — | ☐ |
-| 6 | `/academics` | Page hero, card grids, CTA | — | ☐ |
-| 7 | `/academics/syllabus-homework` | Page hero, text and card sections | — | ☐ |
-| 8 | `/academics/leave-absence` | Page hero, rules, steps | — | ☐ |
-| 9 | `/admission` | Page hero, steps, card grids, CTA | — | ☐ |
-| 10 | `/admission/rules` | Page hero, rule lists | — | ☐ |
-| 11 | `/admission/uniform` | Page hero, uniform sections | — | ☐ |
-| 12 | `/admission/online-fee` | Page hero, step guide, notices | `school.ts` (portal link) | ☐ |
-| 13 | `/admission/online-registration` | Page hero, step guide | `school.ts` | ☐ |
-| 14 | `/admission/fee-structure` | Page hero, **Fee table** widget, notes | `fees.ts` | ☐ |
-| 15 | `/admission/register` | Page hero, **Admission enquiry form** widget | — | ☐ |
-| 16 | `/contact` | Page hero, contact cards, **Contact form** widget, careers | `school.ts` | ☐ |
-| 17 | `/notifications` | Page hero, **Notices list** widget | notices | ☐ |
-| 18 | `/achievements` | Page hero, toppers summary, achievements | `school.ts`, `toppers.ts` | ☐ |
-| 19 | `/achievements/other` | Page hero, **Achievements** widget | `school.ts` | ☐ |
-| 20 | `/achievements/toppers` | Page hero, toppers overview | `toppers.ts` | ☐ |
-| 21 | `/achievements/toppers/10th`, `/12th` | **Toppers** widget | `toppers.ts` | ☐ |
-| 22 | `/about/staff` | Page hero, principal card, **Staff directory** widget | staff | ☐ |
-| 23 | `/about/office-bearers` | Page hero, **Office bearers** widget | `school.ts` | ☐ |
-| 24 | `/about/office-bearers/messages` | Page hero, leader messages | `school.ts` | ☐ |
-| 25 | `/about/pass-out-batches` | Page hero, **Pass-out batches** widget | `school.ts` | ☐ |
-| 26 | `/academics/calendar` | Page hero, **Calendar** widget | inline | ☐ |
-| 27 | `/gallery` | Page hero, **Gallery** widget, videos | `gallery.ts` | ☐ |
-| 28 | `/privacy`, `/terms` | Page hero, text sections | `school.ts` | ☐ |
-| — | Header, footer, structured data | SiteSettings global | `school.ts` | ☐ |
+| 1 | `/` | Home hero, quick actions, statistics, quick links, about preview, principal quote, facilities, student leaders, achievements, notices, highlight story, CTA band | on the page; notices can follow the Notifications page | ☑ |
+| 2 | `/about` | Banner, figure boxes, explore tiles, who we are, journey timeline, anthem, principal preview, join band | on the page; staff count follows the Staff page | ☑ |
+| 3 | `/about/principal` | Banner, leader profile, numbered themes, key figures, two-button close | on the page; name from Site settings | ☑ |
+| 4 | `/about/history` | Banner, milestone timeline, mission panel, story cards, stat tiles, two-button close | on the page | ☑ |
+| 5 | `/about/aims` | Banner, vision topics, aims grid, core values, two-button close | on the page | ☑ |
+| 6 | `/academics` | Banner, class levels, streams, subjects, quick links, activities | on the page | ☑ |
+| 7 | `/academics/syllabus-homework` | Banner, curriculum card, subject groups, streams, homework card, study tips, join CTA | on the page | ☑ |
+| 8 | `/academics/leave-absence` | Banner, notice strip, guidelines card, call band | on the page; phone from Site settings | ☑ |
+| 9 | `/admission` | Banner, process steps, checklist, numbered rules, link cards, dates notice, apply band | on the page; phone and email from Site settings | ☑ |
+| 10 | `/admission/rules` | Banner, rule cards | on the page | ☑ |
+| 11 | `/admission/uniform` | Banner, gold info card, dress code cards | on the page | ☑ |
+| 12 | `/admission/online-fee` | Banner with portal buttons, info tiles, step guide, help cards, app and help band | on the page; portal, app links and phones from Site settings | ☑ |
+| 13 | `/admission/online-registration` | Banner with portal buttons, step guide, help cards, portal band | on the page; portal and phones from Site settings | ☑ |
+| 14 | `/admission/fee-structure` | Banner, **fee table** (classes, categories, quarters, fee heads; totals computed), guidelines, warning card, CTA | on the page | ☑ |
+| 15 | `/admission/register` | **Enquiry form** (the page's own component) | wording on the page; email from Site settings | ☑ |
+| 16 | `/contact` | **Contact page** (the page's own component) | office hours on the page; address, phones, emails, map from Site settings | ☑ |
+| 17 | `/notifications` | **Notifications board** (the page's own component) | notices on the page | ☑ |
+| 18 | `/achievements` | Banner, notable achievements, top five per class | top five follow the toppers pages | ☑ |
+| 19 | `/achievements/other` | Banner, featured achiever with photo viewer, counting figures, note, achiever cards, CTA (the page's own components) | on the page | ☑ |
+| 20 | `/achievements/toppers` | Banner, class chooser with live counts, CTA | counts follow the toppers pages | ☑ |
+| 21 | `/achievements/toppers/10th`, `/12th` | Toppers banner, **toppers by session**, CTA | on each page | ☑ |
+| 22 | `/about/staff` | Banner, principal spotlight, **staff directory** (search, departments), key figures, close | on the page | ☑ |
+| 23 | `/about/office-bearers` | Banner, **office bearers by session** | on the page | ☑ |
+| 24 | `/about/office-bearers/messages` | Banner, message cards | on the page | ☑ |
+| 25 | `/about/pass-out-batches` | **Pass out batches** (the page's own component) | on the page | ☑ |
+| 26 | `/academics/calendar` | **Academic calendar** (the page's own component) | dates on the page | ☑ |
+| 27 | `/gallery` | Banner, **gallery** (albums, viewer, videos) | on the page; built-in albums keep their photo folders | ☑ |
+| 28 | `/privacy`, `/terms` | Banner, policy intro, policy sections, simple CTA | on the page | ☑ |
+| — | Header, footer, structured data | Site settings global | Site settings | ☑ |
+
+### How each page was verified
+
+- **Preview vs original:** every page's CMS draft was screenshotted in preview and compared with the original route at 390 px and 1440 px. All are within 0.1 % of the original pixels (most are identical). Interactive states were compared too: tabs (Our Aims), the timeline (Our History), session and class pickers (Office Bearers, toppers, fee table), filters (Staff, Gallery, Pass Out Batches), the photo viewers (Other Achievements, Gallery), the calendar's published-session view, and the forms' validation messages.
+- **Published routes:** all 30 drafts were published in a local database through the normal publish path (strict validation included), and every route was screenshotted again as an anonymous visitor at both widths: 60 of 60 screenshots matched the pre-publish originals, with identical page titles, H1s and status codes, and no console errors.
+- **Editor:** every page opens in the visual editor with all its sections rendered in the canvas, and every section's settings panel opens without errors.
+- **Shared components:** where a page's interactive body was moved into a component shared by the original page and the CMS block (Office Bearers, Staff, Notifications, Calendar, Gallery, Pass Out Batches, Contact, enquiry form, Other Achievements, toppers), the original page was screenshotted before and after the move and compared.
+
+### Decision on stage 7 (widget data)
+
+Stage 7 planned separate collections for widget data. It was implemented differently: each widget's data lives in the **section on its own page** (the fee table on School Fee, the staff list on Our Staff, and so on), edited in the same visual editor as everything else. Where other pages show the same data (the top five toppers, staff counts, home notices), the server reads it from the source page at render time (`src/cms/render/linked-data.ts`). Publishing a source page refreshes the whole site. Reasons: one editing experience for staff, drafts, preview and history for this data too, and no database schema change. The original data files (`src/data/*.ts`) stay as the seed source and as the fallback while a page is not yet in the CMS.
 
 ## 5. Testing strategy
 

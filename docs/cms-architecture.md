@@ -12,7 +12,7 @@ Status: **adopted**, 21 October 2026. The facts this rests on are in `cms-audit.
 | Visual page builder | Puck (`@puckeditor/core`) | 0.23.0 (pinned) | MIT | free, runs in our own app |
 | Database | PostgreSQL via `@payloadcms/db-postgres` | adapter 3.91.0 | MIT (PostgreSQL licence for the server) | free locally. A host is needed in production. |
 | Media storage | Local disk in development. In production, S3-compatible object storage via `@payloadcms/storage-s3`, or local disk only on a host with a persistent volume. | 3.91.0 | MIT | free tiers exist; see `cms-deployment.md` |
-| Validation | `zod` | 3.x (pinned) | MIT | free |
+| Validation | `zod` | 4.6.x (pinned) | MIT | free |
 | Tests | Vitest (unit) and Playwright (end-to-end, using the installed Chrome) | pinned | MIT / Apache-2.0 | free |
 
 No paid service, account or proprietary page-builder is required to develop or run the CMS.
@@ -55,21 +55,31 @@ No paid service, account or proprietary page-builder is required to develop or r
 
 Each layer has its own root layout through route groups. The public site's root layout (header, footer, fonts) moves unchanged from `app/layout.tsx` to `app/(site)/layout.tsx`. Route groups do not change URLs.
 
-**Source layout for the CMS:**
+**Source layout for the CMS** (as built):
 
 ```
-src/payload.config.ts          Payload config (collections, globals, db, storage, auth, csrf)
-src/cms/collections/*          Users, Media, Pages, Redirects (+ structured content collections)
-src/cms/globals/*              SiteSettings
-src/cms/access.ts              role checks used by every collection (server-side)
-src/cms/hooks/*                publish metadata, revalidation, redirects on path change, media reference check
-src/cms/blocks/<Name>/         one folder per block: schema.ts (zod + defaults), Component.tsx (render), fields.ts (editor fields)
-src/cms/blocks/registry.ts     render-only map type → { schema, Component } (no editor code)
-src/cms/editor/*               Puck config, custom fields (image picker, link, colour), editor shell (client only)
-src/cms/document/*             page-document types, validation, version migrations
-src/cms/render/*               server-side page loading, media resolution, PageRenderer
-src/cms/seed/*                 repeatable migration scripts from the existing data files and pages
+src/payload.config.ts               Payload config (collections, globals, db, storage, auth, csrf)
+src/cms/collections/*               Users, Media, Pages, Redirects (hooks inside each file)
+src/cms/globals/SiteSettings.ts     school details, contact, online services, menu, header, footer, announcement
+src/cms/access.ts                   role checks used by every collection (server-side)
+src/cms/blocks/definitions.ts       registry of every block: type, label, category, zod schema (server-safe)
+src/cms/blocks/components.ts        type → React component (shared by the public renderer and the editor canvas)
+src/cms/blocks/general/*            general-purpose blocks (page banner, text, columns, cards, FAQ, gallery...)
+src/cms/blocks/general/hero-recipes.ts  the banner styles of the original pages, chosen by name
+src/cms/blocks/home/*               the home page sections
+src/cms/blocks/pages/*              page-specific sections: <family>.definitions.ts (schemas) + <Family>.tsx (render)
+src/cms/blocks/shared/*             icons, inline text, links, images, gradients, linked-content context
+src/cms/editor/*                    Puck config, editor shell, actions, field definitions (client only)
+src/cms/document/*                  page-document types, field builders, validation, version migrations
+src/cms/render/*                    server-side page loading, media and linked-content resolution, renderers
+src/cms/seed/*                      repeatable seed: builds each page's draft from the original content
+src/content/*                       the original pages' text and lists, shared by seed defaults
+src/components/<area>/*View.tsx     interactive page bodies shared by the original page and its CMS block
 ```
+
+**How blocks reproduce the original pages.** Most blocks are the original section's JSX with its strings, lists, links and images turned into props, and the original values as defaults. Where a page's body is interactive and large (staff directory, office bearers, gallery, calendar, notifications, pass-out batches, contact, enquiry form, other achievements, toppers), the body was moved unchanged into a component under `src/components/`, which both the original `legacy-page.tsx` and the CMS block render with data props; the move itself was verified by before/after screenshots. The page banners of the inner pages differ in small ways (entrance timing, glows, back-link style), so `hero-recipes.ts` describes each original banner as a named style ("As on Our Aims"), with a "Custom" style for new pages.
+
+**Content shown on more than one page.** The toppers lists (Class 10 and 12 pages), the staff list (Our Staff) and the notices (Notifications) are edited on their own page. Other pages that show them (top five on Achievements, counts, home notices) receive them through `src/cms/render/linked-data.ts`, which reads the published source page (or the draft, in preview and the editor) on the server and passes it down a React context. Publishing one of those source pages revalidates the whole site, so cached pages stay consistent.
 
 ## 4. Data model
 

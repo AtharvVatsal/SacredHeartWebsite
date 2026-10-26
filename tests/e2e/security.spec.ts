@@ -11,11 +11,27 @@ test.describe('anonymous visitor', () => {
     await expect(page).toHaveURL(/\/admin\/login/)
   })
 
-  test('cannot read drafts through the API', async ({ request }) => {
-    // The seeded home page exists only as a draft
-    for (const url of ['/api/pages', '/api/pages?draft=true', '/api/pages?where[_status][equals]=draft']) {
-      const body = await (await request.get(url)).json()
-      expect(body.docs, url).toEqual([])
+  test('cannot read drafts through the API', async ({ request, playwright }) => {
+    // Save an unpublished change to a page that may be published, as an administrator
+    const admin = await playwright.request.newContext({ baseURL: creds().base })
+    const headers = await apiAs(admin, 'admin')
+    const home = await homePageId(admin, headers)
+    const draft = (await (await admin.get(`/api/pages/${home}?draft=true&depth=0`, { headers })).json()) as { content: { content: { props: Record<string, unknown> }[] } }
+    draft.content.content[0].props.subtitle = 'E2E DRAFT-ONLY MARKER'
+    expect((await admin.patch(`/api/pages/${home}?draft=true`, { data: { content: draft.content }, headers })).ok()).toBeTruthy()
+    // The marker really is in the saved draft (so the checks below are meaningful)
+    expect(await (await admin.get(`/api/pages/${home}?draft=true&depth=0`, { headers })).text()).toContain('E2E DRAFT-ONLY MARKER')
+    await admin.dispose()
+
+    // Visitors only ever get published pages, never draft content
+    for (const url of ['/api/pages', '/api/pages?draft=true', '/api/pages?where[_status][equals]=draft', `/api/pages/${home}?draft=true`]) {
+      const res = await request.get(url)
+      const text = await res.text()
+      expect(text, url).not.toContain('E2E DRAFT-ONLY MARKER')
+      if (res.ok()) {
+        const body = JSON.parse(text)
+        for (const doc of body.docs ?? [body]) expect(doc._status, url).toBe('published')
+      }
     }
     expect((await request.get('/api/pages/versions')).status()).toBe(403)
   })
