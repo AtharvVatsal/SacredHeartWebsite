@@ -71,7 +71,7 @@ export function PassOutBoard({ batches }: BlockProps<typeof PassOutDef>) {
   return <PassOutView batches={data} alumniHref={onlineServices.alumniRegistration} />
 }
 
-export function ContactBoard({ officeHours }: BlockProps<typeof ContactDef>) {
+export function ContactBoard({ officeHours, stats }: BlockProps<typeof ContactDef>) {
   const { contact } = useSiteSettings()
   const a = contact.address
   const details = {
@@ -80,7 +80,7 @@ export function ContactBoard({ officeHours }: BlockProps<typeof ContactDef>) {
     emails: contact.emails,
     plusCode: contact.mapPlusCode,
   }
-  return <ContactView details={details} officeHours={officeHours} />
+  return <ContactView details={details} officeHours={officeHours} stats={stats} />
 }
 
 export function EnquiryForm({ ctaTitle, ctaText, ctaButton }: BlockProps<typeof EnquiryDef>) {

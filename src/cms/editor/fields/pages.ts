@@ -832,6 +832,9 @@ Object.assign(pageFields, {
 } satisfies Record<string, Fields>)
 
 Object.assign(pageFields, {
-  ContactBoard: { officeHours: paragraph('Office hours (address, phone numbers and emails come from Site settings)') },
+  ContactBoard: {
+    stats: list('Figures under the banner', { value: text('Figure (e.g. 2.6K+)'), label: text('Label') }, (i) => [str(i.value), str(i.label)].filter(Boolean).join(' '), 8),
+    officeHours: paragraph('Office hours (address, phone numbers and emails come from Site settings)'),
+  },
   EnquiryForm: { ctaTitle: text('Band title under the form'), ctaText: paragraph('Band text'), ctaButton: button('Band button') },
 } satisfies Record<string, Fields>)

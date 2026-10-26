@@ -80,9 +80,12 @@ const defaultDetails: ContactDetails = {
 
 export default function ContactView({
   details = defaultDetails,
+  stats = statistics.map((s) => ({ label: s.label, value: formatStat(s) })),
   officeHours = 'Monday – Saturday: 8:00 AM – 2:30 PM\nSunday: Holiday\nThe office is closed on non-working days, including national and state holidays.',
 }: {
   details?: ContactDetails
+  /** The figures under the banner, e.g. { label: 'Glorious Years', value: '56+' } */
+  stats?: { label: string; value: string }[]
   officeHours?: string
 }) {
   // Scroll reveals; the CMS editor canvas shows everything at once
@@ -306,7 +309,7 @@ export default function ContactView({
               initial={revealAll ? false : "hidden"}
               animate={statsInView || revealAll ? "visible" : "hidden"}
             >
-              {statistics.map((stat, i) => {
+              {stats.map((stat, i) => {
                 const Icon = statIcons[i % statIcons.length]
                 return (
                   <m.div
@@ -316,7 +319,7 @@ export default function ContactView({
                     whileHover={{ y: -5, boxShadow: "0 10px 30px -10px rgba(0,0,0,0.1)" }}
                   >
                     <Icon aria-hidden className="w-6 h-6 text-primary-700 mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-primary-900">{formatStat(stat)}</p>
+                    <p className="text-2xl font-bold text-primary-900">{stat.value}</p>
                     <p className="text-xs text-gray-600">{stat.label}</p>
                   </m.div>
                 )

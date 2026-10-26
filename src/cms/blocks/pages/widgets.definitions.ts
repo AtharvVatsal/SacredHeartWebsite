@@ -4,7 +4,8 @@ import { z } from 'zod'
 import { defineBlock } from '../../document/definition'
 import { bool, choice, href, image, int, list, text } from '../../document/fields'
 import { button } from '../common'
-import { batchPhotos, notifications } from '@/data/school'
+import { batchPhotos, notifications, statistics } from '@/data/school'
+import { formatStat } from '@/lib/stats'
 import { calendarEvents } from '@/content/calendar'
 import { galleryAlbums, galleryVideos } from '@/content/gallery'
 import { icon } from '../common'
@@ -104,6 +105,7 @@ export const ContactBoard = defineBlock({
   category: 'features',
   locked: true,
   schema: z.object({
+    stats: list(z.object({ label: text(60), value: text(20) }), 8, statistics.map((s) => ({ label: s.label, value: formatStat(s) }))),
     officeHours: text(600, 'Monday – Saturday: 8:00 AM – 2:30 PM\nSunday: Holiday\nThe office is closed on non-working days, including national and state holidays.'),
   }),
 })

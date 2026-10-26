@@ -143,7 +143,7 @@ Changes show elsewhere once the page you edited is **published**.
 - **Gallery**: albums with a name, description, category and cover. The school's existing albums keep their photos on the server. For a **new album**, add its photos one by one under *Photos*. YouTube videos need only the video's id: in `https://www.youtube.com/watch?v=jwEzWZsKNdE` that is `jwEzWZsKNdE`.
 - **Pass out batches**: a year and its photos.
 - **Office bearers**: one entry per session (newest first). The first session is shown when the page opens, and only that one shows the *Read Message* buttons.
-- **Contact page** and **admission enquiry form**: the forms themselves are fixed. Their wording around the form is editable, and phone numbers, emails and the address come from **Site settings**.
+- **Contact page** and **admission enquiry form**: the forms themselves are fixed. The office hours, the figures under the Contact banner and the wording around the enquiry form are editable; phone numbers, emails and the address come from **Site settings**.
 
 ## 11. What is not edited here
 
