@@ -9,12 +9,20 @@ import { FadeIn } from '@/components/animations'
 import Section from '@/components/ui/Section'
 import { useSiteSettings } from '@/components/providers/SiteSettingsProvider'
 import { ToppersCta, ToppersHero, ToppersSessions } from '@/components/achievements/ToppersPage'
+import * as Other from '@/components/achievements/OtherAchievementsSections'
 import { class10Sessions, class12Sessions, rankToppers, type TopperSession } from '@/data/toppers'
 import type { BlockProps } from '../../document/definition'
-import { Icon } from '../shared/Icon'
+import { Icon, ICON_COMPONENTS } from '../shared/Icon'
+import type { IconName } from '../shared/icon-names'
+import { Inline } from '../shared/InlineText'
 import { toTopperSessions } from '../shared/linked'
 import { useLinkedData } from '../shared/LinkedData'
 import type {
+  AchieverCards as AchieversDef,
+  DreamCta as DreamDef,
+  FeaturedAlumnus as FeaturedDef,
+  HighlightNote as NoteDef,
+  StatCounters as CountersDef,
   ClassChooser as ChooserDef,
   NotableAchievements as NotableDef,
   TopperCta as CtaDef,
@@ -190,4 +198,56 @@ export function ClassChooser({ title, intro, cards, showCounts }: BlockProps<typ
       </div>
     </Section>
   )
+}
+
+const iconOf = (name: string) => ICON_COMPONENTS[name as IconName]
+
+export function FeaturedAlumnus(p: BlockProps<typeof FeaturedDef>) {
+  const story = p.story
+    .split(/\n\s*\n/)
+    .map((s) => s.trim())
+    .filter(Boolean)
+  return (
+    <Other.FeaturedAlumnus
+      pill={p.pill}
+      pillIcon={iconOf(p.pillIcon)}
+      title={p.title}
+      intro={p.intro}
+      kicker={p.kicker}
+      name={p.name}
+      role={p.role}
+      badgeIcon={iconOf(p.badgeIcon)}
+      story={story}
+      renderText={(text) => <Inline text={text} highlightClassName="font-semibold text-primary-900" />}
+      quote={p.quote}
+      quoteBy={p.quoteBy}
+      tags={p.tags.map((t) => ({ icon: iconOf(t.icon), label: t.label }))}
+      galleryTitle={p.galleryTitle}
+      photos={p.photos.filter((x) => x.photo.src).map((x) => ({ src: x.photo.src, alt: x.photo.alt }))}
+    />
+  )
+}
+
+export function StatCounters({ stats }: BlockProps<typeof CountersDef>) {
+  return <Other.StatCounters stats={stats} />
+}
+
+export function HighlightNote({ icon, title, subtitle, text }: BlockProps<typeof NoteDef>) {
+  return <Other.HighlightNote icon={iconOf(icon)} title={title} subtitle={subtitle} text={text} />
+}
+
+export function AchieverCards({ pill, pillIcon, title, intro, items }: BlockProps<typeof AchieversDef>) {
+  return (
+    <Other.AchieverCards
+      pill={pill}
+      pillIcon={iconOf(pillIcon)}
+      title={title}
+      intro={intro}
+      items={items.map((a, i) => ({ id: String(i), title: a.title, student: a.student, class: a.className, description: a.text, year: a.year, category: a.category, image: a.photo.src || undefined }))}
+    />
+  )
+}
+
+export function DreamCta({ title, text, button }: BlockProps<typeof DreamDef>) {
+  return <Other.DreamCta title={title} text={text} button={button} />
 }

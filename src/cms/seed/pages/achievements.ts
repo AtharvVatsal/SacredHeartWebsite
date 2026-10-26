@@ -49,3 +49,25 @@ export const toppersIndexPage = page('/achievements/toppers', 'Board Exam Topper
   ['ClassChooser'],
   ['TopperCta', { level: 'h3' }],
 ])
+
+export const otherAchievementsPage = page('/achievements/other', 'Other Achievements', [
+  [
+    'PageHero',
+    {
+      style: 'otherAchievements',
+      back: { label: 'Back to Achievements', href: '/achievements' },
+      badge: 'Our Achievers',
+      badgeIcon: 'Award',
+      title: 'Other',
+      highlight: 'Achievements',
+      subtitle: 'Celebrating excellence in academics, sports, and beyond',
+      motif: 'Trophy',
+      motifSmall: 'Award',
+    },
+  ],
+  ['FeaturedAlumnus'],
+  ['StatCounters'],
+  ['HighlightNote'],
+  ['AchieverCards'],
+  ['DreamCta'],
+])

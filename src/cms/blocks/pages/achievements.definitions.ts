@@ -1,9 +1,10 @@
 // Sections of the Achievements pages
 import { z } from 'zod'
 import { defineBlock } from '../../document/definition'
-import { bool, choice, href, image, list, text } from '../../document/fields'
+import { bool, choice, href, image, list, longText, text } from '../../document/fields'
 import { button, icon } from '../common'
-import { achievements } from '@/data/school'
+import { achievements, statistics } from '@/data/school'
+import { chandrayaanPhotos, otherAchievements } from '@/content/other-achievements'
 import { class10Sessions } from '@/data/toppers'
 
 export const NotableAchievements = defineBlock({
@@ -113,6 +114,92 @@ export const ClassChooser = defineBlock({
   }),
 })
 
+export const FeaturedAlumnus = defineBlock({
+  type: 'FeaturedAlumnus',
+  label: 'Featured achiever (story, quote, photos)',
+  category: 'cards',
+  schema: z.object({
+    pill: text(60, 'Our Pride'),
+    pillIcon: icon('Satellite'),
+    title: text(140, 'Chandrayaan-3 Mission'),
+    intro: text(300, 'Making India proud on the global stage'),
+    kicker: text(80, 'ISRO Mission • 2023'),
+    name: text(120, 'Rajat Awasthi'),
+    role: text(160, 'Batch of 2004 • ISRO Scientist'),
+    badgeIcon: icon('Rocket'),
+    story: longText(
+      4000,
+      "A proud alumnus of ==Sacred Heart Senior Secondary School, Sidhpur==, Batch of 2004, who reached for the stars and became part of India's historic Chandrayaan-3 mission.\n\nWith great pride and enthusiasm, he was welcomed back to his alma mater. In an inspiring address to the students, he shared his incredible journey and motivated young minds to dream big.",
+    ),
+    quote: text(400, "'Dreams have no boundaries when you have the courage to pursue them.'"),
+    quoteBy: text(120, 'Rajat Awasthi'),
+    tags: list(z.object({ icon: icon('Star'), label: text(60) }), 8, [
+      { icon: 'Globe', label: 'Space Technology' },
+      { icon: 'Star', label: 'National Pride' },
+      { icon: 'Users', label: 'ISRO Scientist' },
+    ]),
+    galleryTitle: text(80, 'Mission Gallery'),
+    photos: list(z.object({ photo: image() }), 24, chandrayaanPhotos.map((p) => ({ photo: { mediaId: null, src: encodeURI(p.src), alt: p.alt, position: 'center' as const } }))),
+  }),
+})
+
+export const StatCounters = defineBlock({
+  type: 'StatCounters',
+  label: 'Counting figures',
+  category: 'cards',
+  schema: z.object({
+    stats: list(z.object({ label: text(60), value: text(20) }), 8, statistics.map((s) => ({ label: s.label, value: `${s.value}${s.suffix ?? ''}` }))),
+  }),
+})
+
+export const HighlightNote = defineBlock({
+  type: 'HighlightNote',
+  label: 'Highlighted note with a gold icon',
+  category: 'cards',
+  schema: z.object({
+    icon: icon('BookOpen'),
+    title: text(140, 'Rendezvous with Excellence'),
+    subtitle: text(160, 'Interaction with distinguished alumni'),
+    text: text(2000, 'Expressed his gratitude for his alma mater and addressed the students, sharing insights about his journey from Sacred Heart to ISRO. The interactive session motivated students to dream big and work towards achieving their goals.'),
+  }),
+})
+
+export const AchieverCards = defineBlock({
+  type: 'AchieverCards',
+  label: 'Achiever cards (photo and story)',
+  category: 'cards',
+  schema: z.object({
+    pill: text(60, 'More Achievements'),
+    pillIcon: icon('Trophy'),
+    title: text(140, 'Other Notable Achievements'),
+    intro: text(300, 'Celebrating excellence in academics, sports, and cultural activities'),
+    items: list(
+      z.object({ title: text(160), student: text(120), className: text(40), text: text(1000), year: text(12), category: text(40), photo: image() }),
+      40,
+      otherAchievements.map((a) => ({
+        title: a.title,
+        student: a.student,
+        className: a.class ?? '',
+        text: a.description,
+        year: String(a.year),
+        category: a.category,
+        photo: { mediaId: null, src: a.image ? encodeURI(a.image) : '', alt: a.student, position: 'center' as const },
+      })),
+    ),
+  }),
+})
+
+export const DreamCta = defineBlock({
+  type: 'DreamCta',
+  label: 'Closing invitation (glowing icon)',
+  category: 'actions',
+  schema: z.object({
+    title: text(120, 'Achieve Your Dreams!'),
+    text: text(300, 'Join Sacred Heart Senior Secondary School and make your mark in the world'),
+    button: button('Apply for Admission', '/admission'),
+  }),
+})
+
 export { topperSessions }
 
-export const achievementsBlocks = [NotableAchievements, TopperHighlights, TopperHero, ToppersList, TopperCta, ClassChooser]
+export const achievementsBlocks = [NotableAchievements, TopperHighlights, TopperHero, ToppersList, TopperCta, ClassChooser, FeaturedAlumnus, StatCounters, HighlightNote, AchieverCards, DreamCta]

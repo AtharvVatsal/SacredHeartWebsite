@@ -519,3 +519,45 @@ Object.assign(pageFields, {
     showCounts: yesNo('Show the counts (worked out from the toppers pages)'),
   },
 } satisfies Record<string, Fields>)
+
+Object.assign(pageFields, {
+  FeaturedAlumnus: {
+    pill: text('Small label above the title'),
+    pillIcon: iconChoice('Label icon'),
+    title: text('Title'),
+    intro: text('Line under the title'),
+    name: text('Name'),
+    kicker: text('Line above the name'),
+    role: text('Line under the name'),
+    badgeIcon: iconChoice('Icon beside the name'),
+    story: paragraph('Story (empty line between paragraphs)', FORMAT_HINT),
+    quote: paragraph('Quote'),
+    quoteBy: text('Quote by'),
+    tags: list('Tags', { icon: iconChoice(), label: text('Tag') }, (i) => str(i.label), 8),
+    galleryTitle: text('Photo gallery title'),
+    photos: list('Photos', { photo: imageField('Photo') }, (_i, n) => `Photo ${(n ?? 0) + 1}`, 24),
+  },
+  StatCounters: { stats: list('Figures', { value: text('Figure (e.g. 2.6K+)'), label: text('Label') }, (i) => [str(i.value), str(i.label)].filter(Boolean).join(' '), 8) },
+  HighlightNote: { icon: iconChoice(), title: text('Title'), subtitle: text('Line under the title'), text: paragraph('Text') },
+  AchieverCards: {
+    pill: text('Small label above the title'),
+    pillIcon: iconChoice('Label icon'),
+    title: text('Title'),
+    intro: text('Line under the title'),
+    items: list(
+      'Achievers',
+      {
+        title: text('Achievement'),
+        student: text('Student'),
+        className: text('Class (e.g. VII-C)'),
+        year: text('Year'),
+        category: text('Kind (e.g. Academic)'),
+        text: paragraph('Text'),
+        photo: imageField('Photo (optional)'),
+      },
+      (i) => str(i.title),
+      40,
+    ),
+  },
+  DreamCta: { title: text('Title'), text: paragraph('Text'), button: button('Button') },
+} satisfies Record<string, Fields>)
