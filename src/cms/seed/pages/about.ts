@@ -80,3 +80,20 @@ export const principalPage = page('/about/principal', "Principal's Message", [
     },
   ],
 ])
+
+export const messagesPage = page('/about/office-bearers/messages', 'Head Boy & Head Girl', [
+  [
+    'PageHero',
+    {
+      style: 'messages',
+      back: { label: 'Back to Office Bearers', href: '/about/office-bearers' },
+      badge: 'Student Leadership',
+      badgeIcon: 'Sparkles',
+      title: 'Head Boy & Head Girl',
+      subtitle: 'Messages from our student leaders',
+      motif: 'MessageSquareQuote',
+      motifSmall: 'Heart',
+    },
+  ],
+  ['LeaderMessages'],
+])

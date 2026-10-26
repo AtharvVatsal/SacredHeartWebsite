@@ -36,6 +36,7 @@ import {
   ValuesGrid,
   VisionTabs,
 } from './pages/About'
+import { LeaderMessages } from './pages/Leaders'
 import { DressCard, GoldInfoCard } from './pages/Uniform'
 import { PolicyIntro, PolicySections, SimpleCta } from './pages/Legal'
 import { CurriculumCard, HomeworkCard, JoinCta, StreamCards, SubjectGroups, TipsGrid } from './pages/Syllabus'
@@ -104,4 +105,5 @@ export const blockComponents: Record<string, ComponentType<any>> = {
   LeaderProfile,
   NumberedThemes,
   HighlightBand,
+  LeaderMessages,
 }

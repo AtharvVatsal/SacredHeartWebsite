@@ -388,3 +388,25 @@ Object.assign(pageFields, {
   },
   HighlightBand: { stats: list('Figures', { icon: iconChoice(), value: text('Figure (e.g. 2.6K+)'), label: text('Label') }, (i) => [str(i.value), str(i.label)].filter(Boolean).join(' '), 8) },
 } satisfies Record<string, Fields>)
+
+Object.assign(pageFields, {
+  LeaderMessages: {
+    cards: list(
+      'Cards',
+      {
+        name: text('Name'),
+        role: text('Role (e.g. Head Boy)'),
+        subtitle: text('Line under the name (e.g. Academic Year 2026-27)'),
+        photo: imageField('Photo'),
+        heading: text('Message heading'),
+        message: paragraph('Message (empty line between paragraphs; the last paragraph is the sign-off)'),
+        look: choose('Header colour', [
+          { label: 'Green', value: 'green' },
+          { label: 'Gold', value: 'gold' },
+        ]),
+      },
+      (i) => [str(i.role), str(i.name)].filter(Boolean).join(': '),
+      6,
+    ),
+  },
+} satisfies Record<string, Fields>)

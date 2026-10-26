@@ -18,6 +18,7 @@ import {
   scjmVision,
 } from '@/content/about'
 import { schoolInfo } from '@/data/school'
+import { leaderMessageCards } from '@/content/leader-messages'
 import { PILL_TONES } from './academics.definitions'
 
 export const TINTS = ['amber', 'pink', 'blue', 'purple', 'emerald', 'cyan'] as const
@@ -164,4 +165,25 @@ export const HighlightBand = defineBlock({
   schema: z.object({ stats: list(z.object({ icon: icon('Star'), label: text(80), value: text(30) }), 8, principalHighlights) }),
 })
 
-export const aboutBlocks = [VisionTabs, AimsGrid, ValuesGrid, DualCta, MilestoneTimeline, MissionPanel, StoryCard, StatTiles, LeaderProfile, NumberedThemes, HighlightBand]
+export const LeaderMessages = defineBlock({
+  type: 'LeaderMessages',
+  label: 'Message cards with a photo',
+  category: 'about',
+  schema: z.object({
+    cards: list(
+      z.object({
+        look: choice(['green', 'gold'] as const, 'green'),
+        photo: image(),
+        role: text(60),
+        name: text(120),
+        subtitle: text(120),
+        heading: text(160),
+        message: longText(8000),
+      }),
+      6,
+      leaderMessageCards.map((c) => ({ ...c, photo: { mediaId: null, position: 'center' as const, ...c.photo } })),
+    ),
+  }),
+})
+
+export const aboutBlocks = [LeaderMessages, VisionTabs, AimsGrid, ValuesGrid, DualCta, MilestoneTimeline, MissionPanel, StoryCard, StatTiles, LeaderProfile, NumberedThemes, HighlightBand]
