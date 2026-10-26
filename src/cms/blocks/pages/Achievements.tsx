@@ -4,13 +4,18 @@
 // components fed with the lists edited in the CMS.
 import Link from 'next/link'
 import { useMemo } from 'react'
-import { ArrowRight, Trophy } from 'lucide-react'
+import { ArrowRight, Award, BookOpen, GraduationCap, Trophy } from 'lucide-react'
+import { FadeIn } from '@/components/animations'
+import Section from '@/components/ui/Section'
+import { useSiteSettings } from '@/components/providers/SiteSettingsProvider'
 import { ToppersCta, ToppersHero, ToppersSessions } from '@/components/achievements/ToppersPage'
 import { class10Sessions, class12Sessions, rankToppers, type TopperSession } from '@/data/toppers'
 import type { BlockProps } from '../../document/definition'
+import { Icon } from '../shared/Icon'
 import { toTopperSessions } from '../shared/linked'
 import { useLinkedData } from '../shared/LinkedData'
 import type {
+  ClassChooser as ChooserDef,
   NotableAchievements as NotableDef,
   TopperCta as CtaDef,
   TopperHero as HeroDef,
@@ -109,6 +114,80 @@ export function ToppersList({ classLabel, title, intro, sessions }: BlockProps<t
   return <ToppersSessions classLabel={classLabel} sessions={data} title={title} intro={intro} />
 }
 
-export function TopperCta({ title, text, button }: BlockProps<typeof CtaDef>) {
-  return <ToppersCta title={title} text={text} button={button.label && button.href ? button : null} />
+export function TopperCta({ title, text, button, level }: BlockProps<typeof CtaDef>) {
+  return <ToppersCta title={title} text={text} button={button.label && button.href ? button : null} as={level} />
+}
+
+const CHOOSER_LOOKS = {
+  green: { corner: 'bg-primary-50', tile: 'bg-gradient-to-br from-primary-500 to-primary-700', icon: 'w-10 h-10 text-white', bar: 'bg-gradient-to-r from-primary-500 to-secondary-400' },
+  gold: { corner: 'bg-secondary-50', tile: 'bg-gradient-to-br from-secondary-400 to-secondary-600', icon: 'w-10 h-10 text-primary-900', bar: 'bg-gradient-to-r from-secondary-400 to-primary-500' },
+} as const
+
+export function ClassChooser({ title, intro, cards, showCounts }: BlockProps<typeof ChooserDef>) {
+  const { toppers } = useLinkedData()
+  const { identity } = useSiteSettings()
+  const class10 = toppers['/achievements/toppers/10th'] ?? class10Sessions
+  const class12 = toppers['/achievements/toppers/12th'] ?? class12Sessions
+  // Counted from the topper lists, so the numbers always match what is shown
+  const stats = [
+    { icon: Trophy, value: String(class10.length + class12.length), label: 'Sessions Listed' },
+    { icon: Award, value: String(class10.reduce((n, s) => n + s.toppers.length, 0)), label: 'Class 10 Toppers' },
+    { icon: BookOpen, value: String(class12.reduce((n, s) => n + s.toppers.length, 0)), label: 'Class 12 Toppers' },
+    { icon: GraduationCap, value: String(identity.established), label: 'Established' },
+  ]
+  return (
+    <Section className="bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-primary-50/50 to-transparent pointer-events-none" />
+      <div className="absolute -left-32 top-32 w-96 h-96 bg-secondary-100 rounded-full blur-[120px] pointer-events-none opacity-50" />
+
+      <div className="container mx-auto px-4 relative z-10">
+        <FadeIn blur>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-900 mb-4">{title}</h2>
+            {intro && <p className="text-gray-600 max-w-2xl mx-auto">{intro}</p>}
+          </div>
+        </FadeIn>
+
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          {cards.map((card, i) => {
+            const look = CHOOSER_LOOKS[card.look]
+            return (
+              <FadeIn key={i} delay={0.1 * (i + 1)} direction="up" blur>
+                <Link href={card.href || '#'}>
+                  <div className="group relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 p-8 border border-gray-100 hover:border-primary-200">
+                    <div className={`absolute top-0 right-0 w-32 h-32 ${look.corner} rounded-bl-full -mr-16 -mt-16 transition-transform group-hover:scale-150 duration-500`} />
+                    <div className="relative z-10">
+                      <div className={`w-20 h-20 ${look.tile} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                        <Icon name={card.icon} className={look.icon} />
+                      </div>
+                      <h3 className="text-2xl font-display font-bold text-primary-900 mb-2 group-hover:text-primary-700 transition-colors">{card.title}</h3>
+                      <p className="text-gray-600 mb-6">{card.text}</p>
+                      <div className="flex items-center gap-2 text-primary-700 font-semibold group-hover:gap-3 transition-all">
+                        View Toppers <ArrowRight size={18} className="group-hover:translate-x-1" />
+                      </div>
+                    </div>
+                    <div className={`absolute bottom-0 left-0 right-0 h-1 ${look.bar} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300`} />
+                  </div>
+                </Link>
+              </FadeIn>
+            )
+          })}
+        </div>
+
+        {showCounts && (
+          <FadeIn delay={0.3} blur>
+            <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
+              {stats.map((stat, index) => (
+                <div key={index} className="text-center p-6 bg-white rounded-2xl shadow-md border border-gray-100">
+                  <stat.icon aria-hidden className="w-8 h-8 text-primary-700 mx-auto mb-3" />
+                  <div className="text-3xl font-display font-bold text-primary-900">{stat.value}</div>
+                  <div className="text-gray-600 text-sm">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+          </FadeIn>
+        )}
+      </div>
+    </Section>
+  )
 }

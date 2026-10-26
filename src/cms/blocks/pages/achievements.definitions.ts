@@ -1,8 +1,8 @@
 // Sections of the Achievements pages
 import { z } from 'zod'
 import { defineBlock } from '../../document/definition'
-import { choice, href, image, list, text } from '../../document/fields'
-import { button } from '../common'
+import { bool, choice, href, image, list, text } from '../../document/fields'
+import { button, icon } from '../common'
 import { achievements } from '@/data/school'
 import { class10Sessions } from '@/data/toppers'
 
@@ -90,9 +90,29 @@ export const TopperCta = defineBlock({
     title: text(120, 'Be the Next Topper!'),
     text: text(300, 'Join Sacred Heart Senior Secondary School and excel academically'),
     button: button('Apply for Admission', '/admission'),
+    level: choice(['h2', 'h3'] as const, 'h2'),
+  }),
+})
+
+export const ClassChooser = defineBlock({
+  type: 'ClassChooser',
+  label: 'Choose a class (toppers)',
+  category: 'cards',
+  schema: z.object({
+    title: text(140, 'Select Class'),
+    intro: text(300, 'Choose your class to view the list of board exam toppers'),
+    cards: list(
+      z.object({ title: text(60), text: text(300), href: href(''), look: choice(['green', 'gold'] as const, 'green'), icon: icon('BookOpen') }),
+      4,
+      [
+        { title: 'Class 10', text: 'View toppers from Secondary School Examination (Class 10)', href: '/achievements/toppers/10th', look: 'green', icon: 'BookOpen' },
+        { title: 'Class 12', text: 'View toppers from Senior School Certificate Examination (Class 12)', href: '/achievements/toppers/12th', look: 'gold', icon: 'GraduationCap' },
+      ],
+    ),
+    showCounts: bool(true),
   }),
 })
 
 export { topperSessions }
 
-export const achievementsBlocks = [NotableAchievements, TopperHighlights, TopperHero, ToppersList, TopperCta]
+export const achievementsBlocks = [NotableAchievements, TopperHighlights, TopperHero, ToppersList, TopperCta, ClassChooser]

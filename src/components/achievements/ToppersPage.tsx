@@ -180,12 +180,12 @@ export function ToppersSessions({ classLabel, sessions, title = 'Board Examinati
 }
 
 /** Closing invitation under the toppers */
-export function ToppersCta({ title = 'Be the Next Topper!', text = 'Join Sacred Heart Senior Secondary School and excel academically', button = { label: 'Apply for Admission', href: '/admission' } }: { title?: string; text?: string; button?: Link_ | null }) {
+export function ToppersCta({ title = 'Be the Next Topper!', text = 'Join Sacred Heart Senior Secondary School and excel academically', button = { label: 'Apply for Admission', href: '/admission' }, as: Heading = 'h2' }: { title?: string; text?: string; button?: Link_ | null; as?: 'h2' | 'h3' }) {
   return (
       <div className="bg-primary-800 py-12">
         <div className="container mx-auto px-4 text-center">
           <FadeIn blur>
-            <h2 className="text-2xl font-display font-bold text-white mb-4">{title}</h2>
+            <Heading className="text-2xl font-display font-bold text-white mb-4">{title}</Heading>
             {text && <p className="text-primary-200 mb-6 max-w-xl mx-auto">{text}</p>}
             {button && (
               <Link href={button.href} className="inline-flex items-center gap-2 bg-secondary-400 text-primary-900 px-8 py-3 rounded-full font-bold hover:bg-secondary-300 transition-all shadow-glow-secondary">

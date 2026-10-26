@@ -5,6 +5,7 @@ import 'server-only'
 import type { Payload, TypedUser } from 'payload'
 import type { Page } from '@/payload-types'
 import { blockRegistry } from '../blocks/definitions'
+import { TOPPER_SOURCES } from '../blocks/pages/achievements.definitions'
 import { toTopperSessions, type LinkedData } from '../blocks/shared/linked'
 import { migrateDocument } from '../document/migrations'
 import { isRecord, type PageDocument } from '../document/types'
@@ -14,6 +15,7 @@ import { resolveMedia } from './resolve-media'
 function sourcesIn(document: PageDocument) {
   const sources = new Set<string>()
   for (const block of document.content) {
+    if (block.type === 'ClassChooser') TOPPER_SOURCES.forEach((s) => sources.add(s))
     if (block.type !== 'TopperHighlights') continue
     const columns = (block.props as { columns?: unknown }).columns
     if (Array.isArray(columns)) for (const c of columns) if (isRecord(c) && typeof c.source === 'string') sources.add(c.source)

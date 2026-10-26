@@ -30,3 +30,22 @@ export const toppers12Page = page('/achievements/toppers/12th', 'Class 12 Topper
   ['ToppersList', { classLabel: 'Class 12', intro: 'Celebrating academic excellence of our Class 12 students', sessions: topperSessions(class12Sessions) }],
   ['TopperCta'],
 ])
+
+export const toppersIndexPage = page('/achievements/toppers', 'Board Exam Toppers', [
+  [
+    'PageHero',
+    {
+      style: 'toppers',
+      back: { label: 'Back to Achievements', href: '/achievements' },
+      badge: 'Academic Excellence',
+      badgeIcon: 'Award',
+      title: 'Board Exam',
+      highlight: 'Toppers',
+      subtitle: 'Celebrating the outstanding achievements of our students',
+      motif: 'Trophy',
+      motifSmall: 'Star',
+    },
+  ],
+  ['ClassChooser'],
+  ['TopperCta', { level: 'h3' }],
+])

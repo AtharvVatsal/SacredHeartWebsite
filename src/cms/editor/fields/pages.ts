@@ -498,4 +498,24 @@ Object.assign(pageFields, {
     ),
   },
   TopperCta: { title: text('Title'), text: paragraph('Text'), button: button('Button') },
+  ClassChooser: {
+    title: text('Title'),
+    intro: text('Line under the title'),
+    cards: list(
+      'Cards',
+      {
+        title: text('Title'),
+        text: paragraph('Text'),
+        href: text('Link address'),
+        icon: iconChoice(),
+        look: choose('Colour', [
+          { label: 'Green', value: 'green' },
+          { label: 'Gold', value: 'gold' },
+        ]),
+      },
+      (i) => str(i.title),
+      4,
+    ),
+    showCounts: yesNo('Show the counts (worked out from the toppers pages)'),
+  },
 } satisfies Record<string, Fields>)
