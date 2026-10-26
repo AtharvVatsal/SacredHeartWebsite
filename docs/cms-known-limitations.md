@@ -22,7 +22,7 @@ What the CMS does not do (yet), and the risks to keep in mind. Each item says wh
 | Rendering cost | Published pages are generated statically and rebuilt on publish. Publishing a page that other pages read from (toppers, staff, notifications) refreshes every page, which is cheap for a 30-page site but would need narrowing on a much larger one. |
 | Dependency advisories | See `cms-deployment.md` §8: dompurify and undici are pinned to fixed versions; the remaining esbuild (development server) and happy-dom (unused rich-text field) advisories have no compatible fix yet. |
 | Payload version | Pinned to 3.91.0, with Next.js 16.4.2. Upgrading needs the full test suite; see `cms-deployment.md`. |
-| Visual checks are a script, not CI | `scripts/visual-compare.mjs` repeats the screenshot comparison used during the migration, but it is run by hand; it is not part of `npm test`. |
+| Visual checks are a script, not CI | `scripts/visual-compare.mjs` repeats the screenshot comparison used during the migration, but it is run by hand; it is not part of `npm test`. Compare its screenshots only with its own: in phone screenshots, styles meant for touch screens (such as the captions under pass-out photos) are missing, because Playwright briefly treats the phone as a mouse screen while capturing a full page. Visitors see them. |
 | No email sending | Password resets are done by an administrator (no email adapter is configured, so Payload's "forgot password" email is only logged). |
 
 ## What was verified, for context

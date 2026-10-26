@@ -742,6 +742,12 @@ Object.assign(pageFields, {
   },
 } satisfies Record<string, Fields>)
 
+const bannerFields: Field = {
+  type: 'object',
+  label: 'Green banner',
+  objectFields: { badge: text('Small badge'), title: text('Title'), subtitle: paragraph('Line under the title') },
+}
+
 const noticeFields: Fields = {
   title: text('Title'),
   date: text('Date (e.g. 2025-05)'),
@@ -819,6 +825,7 @@ Object.assign(pageFields, {
 
 Object.assign(pageFields, {
   PassOutBoard: {
+    banner: bannerFields,
     batches: list(
       'Batches',
       {
@@ -833,8 +840,9 @@ Object.assign(pageFields, {
 
 Object.assign(pageFields, {
   ContactBoard: {
+    banner: bannerFields,
     stats: list('Figures under the banner', { value: text('Figure (e.g. 2.6K+)'), label: text('Label') }, (i) => [str(i.value), str(i.label)].filter(Boolean).join(' '), 8),
     officeHours: paragraph('Office hours (address, phone numbers and emails come from Site settings)'),
   },
-  EnquiryForm: { ctaTitle: text('Band title under the form'), ctaText: paragraph('Band text'), ctaButton: button('Band button') },
+  EnquiryForm: { banner: bannerFields, ctaTitle: text('Band title under the form'), ctaText: paragraph('Band text'), ctaButton: button('Band button') },
 } satisfies Record<string, Fields>)

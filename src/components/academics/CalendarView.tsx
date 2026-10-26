@@ -43,12 +43,15 @@ export default function CalendarView({
   title = 'Academic',
   highlight = 'Calendar',
   subtitle = 'Important dates, holidays, and events throughout the year',
+  phone = schoolPhones[0],
 }: {
   events: CalendarEvent[]
   badge?: string
   title?: string
   highlight?: string
   subtitle?: string
+  /** The number the "call" button rings */
+  phone?: string
 }) {
   const sortedDates = events.map(e => e.date).sort()
   const firstEventDate = sortedDates[0] ?? ''
@@ -201,11 +204,11 @@ export default function CalendarView({
                     View the {sessionLabel} calendar
                   </button>
                   <a
-                    href={telHref(schoolPhones[0])}
+                    href={telHref(phone)}
                     className="inline-flex items-center gap-2 rounded-full border border-primary-200 bg-white px-5 py-2.5 text-sm font-semibold text-primary-800 hover:bg-primary-50 transition-colors"
                   >
                     <Phone aria-hidden size={16} />
-                    Call {schoolPhones[0]}
+                    Call {phone}
                   </a>
                 </div>
               </div>

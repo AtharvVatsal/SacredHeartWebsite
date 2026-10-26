@@ -143,13 +143,14 @@ Changes show elsewhere once the page you edited is **published**.
 - **Gallery**: albums with a name, description, category and cover. The school's existing albums keep their photos on the server. For a **new album**, add its photos one by one under *Photos*. YouTube videos need only the video's id: in `https://www.youtube.com/watch?v=jwEzWZsKNdE` that is `jwEzWZsKNdE`.
 - **Pass out batches**: a year and its photos.
 - **Office bearers**: one entry per session (newest first). The first session is shown when the page opens, and only that one shows the *Read Message* buttons.
-- **Contact page** and **admission enquiry form**: the forms themselves are fixed. The office hours, the figures under the Contact banner and the wording around the enquiry form are editable; phone numbers, emails and the address come from **Site settings**.
+- **Contact page** and **admission enquiry form**: the forms themselves are fixed. The green banner, the office hours, the figures under the Contact banner and the wording around the enquiry form are editable; phone numbers, emails and the address come from **Site settings**.
+- **Pass out batches** and **academic calendar** banners are editable the same way. The calendar's *Call* button uses the first phone number in **Site settings**.
 
 ## 11. What is not edited here
 
 - The design itself (new colours, fonts or layouts). Ask a developer.
 - The questions on the contact and enquiry forms, and where they send messages.
-- The news feed file `/notifications.rss` and the photo entries in the search engine sitemap. They still come from the original site files until a developer updates them.
+- The news feed `/notifications.rss` and the search engine sitemap are not edited directly. They are rebuilt from the published pages: the feed from the **Notifications** page, the sitemap's photo entries from the photos on each page (with each photo's description as its title).
 
 ## 12. If something goes wrong
 

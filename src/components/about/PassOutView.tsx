@@ -350,9 +350,12 @@ function BatchCard({ batch, allPhotos, onPhotoClick }: {
 export default function PassOutView({
   batches,
   alumniHref = onlineServices.alumniRegistration,
+  banner = { badge: 'Alumni Gallery', title: 'Pass Out Batches', subtitle: 'Preserving memories through the years - Click any photo to view & download' },
 }: {
   batches: BatchYear[]
   alumniHref?: string
+  /** Badge, title and line in the green banner */
+  banner?: { badge: string; title: string; subtitle: string }
 }) {
   const [selectedYear, setSelectedYear] = useState<number | 'All'>('All')
   const [searchQuery, setSearchQuery] = useState('')
@@ -481,7 +484,7 @@ export default function PassOutView({
               transition={{ delay: 0.2 }}
             >
               <Sparkles className="w-4 h-4 text-secondary-400" />
-              Alumni Gallery
+              {banner.badge}
             </m.span>
             
             <m.h1 
@@ -490,7 +493,7 @@ export default function PassOutView({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              Pass Out Batches
+              {banner.title}
             </m.h1>
             
             <m.p 
@@ -499,7 +502,7 @@ export default function PassOutView({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
             >
-              Preserving memories through the years - Click any photo to view & download
+              {banner.subtitle}
             </m.p>
 
             {/* Stats */}

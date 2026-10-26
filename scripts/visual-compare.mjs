@@ -9,6 +9,9 @@
 //
 // Typical use: shoot the site as visitors see it, shoot it again in --preview (or after publishing), diff.
 // Uses the system Chrome through Playwright, and sharp; both are already project dependencies.
+// Compare only screenshots taken by this script: during a full-page capture Playwright briefly reports the phone
+// as a mouse screen, so styles meant for touch screens (e.g. photo captions shown without hovering) are missing
+// from phone screenshots, though visitors see them.
 import fs from 'node:fs'
 import path from 'node:path'
 import { chromium } from '@playwright/test'
@@ -46,15 +49,29 @@ async function shoot(base, out, preview, routes) {
       page.on('pageerror', (e) => errors.push(e.message.slice(0, 200)))
       const url = preview ? `${base}/cms/preview?path=${encodeURIComponent(route)}` : base + route
       const res = await page.goto(url, { waitUntil: 'networkidle', timeout: 120_000 }).catch(() => null)
-      // Walk down the page so scroll-triggered sections appear, then return to the top and freeze motion
-      await page.evaluate(async () => {
-        const step = window.innerHeight / 2
-        for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
-          window.scrollTo(0, y)
-          await new Promise((r) => setTimeout(r, 120))
-        }
-        window.scrollTo(0, 0)
-      })
+      // Scroll down in steps, as a visitor would, so scroll-triggered sections appear (jumping the scroll
+      // position directly can skip them), then return to the top and freeze motion
+      // Give the page time to finish hydrating first; sections passed before their reveal is armed stay hidden
+      await page.waitForTimeout(3000)
+      const viewport = page.viewportSize()
+      // Desktop scrolls with the mouse wheel; phone scrolls like a swipe (no mouse on a touch screen)
+      if (!options.hasTouch) await page.mouse.move(viewport.width / 2, viewport.height / 2)
+      for (let i = 0; i < 400; i++) {
+        const done = await page.evaluate(() => window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2)
+        if (done) break
+        if (options.hasTouch) await page.evaluate((dy) => window.scrollBy(0, dy), viewport.height / 2)
+        else await page.mouse.wheel(0, viewport.height / 2)
+        await page.waitForTimeout(120)
+      }
+      await page.evaluate(() => window.scrollTo(0, 0))
+      // Let entrance animations finish (long pages stagger dozens of cards); endless decorative ones are ignored
+      await page
+        .waitForFunction(
+          () => document.getAnimations().filter((a) => a.playState === 'running' && a.effect?.getTiming().iterations !== Infinity).length === 0,
+          undefined,
+          { timeout: 30_000, polling: 250 },
+        )
+        .catch(() => {})
       await page.addStyleTag({ content: '*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important} [data-cms-preview-banner]{display:none!important}' })
       await page.waitForTimeout(1500)
       await page.screenshot({ path: path.join(out, nameOf(route, device)), fullPage: true })

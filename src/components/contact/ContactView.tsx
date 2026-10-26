@@ -80,10 +80,13 @@ const defaultDetails: ContactDetails = {
 
 export default function ContactView({
   details = defaultDetails,
+  banner = { badge: 'Get in Touch', title: 'Contact Us', subtitle: "We'd love to hear from you. Reach out anytime!" },
   stats = statistics.map((s) => ({ label: s.label, value: formatStat(s) })),
   officeHours = 'Monday – Saturday: 8:00 AM – 2:30 PM\nSunday: Holiday\nThe office is closed on non-working days, including national and state holidays.',
 }: {
   details?: ContactDetails
+  /** Badge, title and line in the green banner */
+  banner?: { badge: string; title: string; subtitle: string }
   /** The figures under the banner, e.g. { label: 'Glorious Years', value: '56+' } */
   stats?: { label: string; value: string }[]
   officeHours?: string
@@ -256,7 +259,7 @@ export default function ContactView({
                 >
                   <MessageCircle className="w-4 h-4 text-secondary-400" />
                 </m.div>
-                <span>Get in Touch</span>
+                <span>{banner.badge}</span>
               </div>
             </m.div>
 
@@ -264,14 +267,14 @@ export default function ContactView({
               className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-4"
               variants={itemVariants}
             >
-              Contact Us
+              {banner.title}
             </m.h1>
 
             <m.p
               className="text-xl md:text-2xl text-gray-300 mb-8"
               variants={itemVariants}
             >
-              We&apos;d love to hear from you. Reach out anytime!
+              {banner.subtitle}
             </m.p>
 
             <m.div

@@ -10,6 +10,10 @@ import { calendarEvents } from '@/content/calendar'
 import { galleryAlbums, galleryVideos } from '@/content/gallery'
 import { icon } from '../common'
 
+/** Badge, title and line of a page's green banner */
+const banner = (badge: string, title: string, subtitle: string) =>
+  z.object({ badge: text(60, badge), title: text(120, title), subtitle: text(300, subtitle) }).default({ badge, title, subtitle })
+
 export const noticeItem = z.object({ title: text(200), text: text(1000), date: text(20), important: bool(false), attachment: href('') })
 export const noticeItems = notifications.map((n) => ({ title: n.title, text: n.description, date: n.date, important: n.important, attachment: n.attachment ?? '' }))
 
@@ -85,6 +89,7 @@ export const PassOutBoard = defineBlock({
   label: 'Pass out batches (years and photos)',
   category: 'features',
   schema: z.object({
+    banner: banner('Alumni Gallery', 'Pass Out Batches', 'Preserving memories through the years - Click any photo to view & download'),
     batches: list(
       z.object({
         year: int(1900, 2200, 2025),
@@ -105,6 +110,7 @@ export const ContactBoard = defineBlock({
   category: 'features',
   locked: true,
   schema: z.object({
+    banner: banner('Get in Touch', 'Contact Us', "We'd love to hear from you. Reach out anytime!"),
     stats: list(z.object({ label: text(60), value: text(20) }), 8, statistics.map((s) => ({ label: s.label, value: formatStat(s) }))),
     officeHours: text(600, 'Monday – Saturday: 8:00 AM – 2:30 PM\nSunday: Holiday\nThe office is closed on non-working days, including national and state holidays.'),
   }),
@@ -116,6 +122,7 @@ export const EnquiryForm = defineBlock({
   category: 'features',
   locked: true,
   schema: z.object({
+    banner: banner('Admissions', 'Register Interest', "Take the first step towards your child's bright future"),
     ctaTitle: text(120, 'Need Immediate Assistance?'),
     ctaText: text(300, 'Call or email the school office for help with admissions'),
     ctaButton: button('Contact Us', '/contact'),

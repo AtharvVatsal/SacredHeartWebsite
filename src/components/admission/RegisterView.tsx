@@ -118,12 +118,15 @@ const inputClass = (error?: string, extra = '') =>
 
 export default function RegisterView({
   email = schoolEmail,
+  banner = { badge: 'Admissions', title: 'Register Interest', subtitle: "Take the first step towards your child's bright future" },
   ctaTitle = 'Need Immediate Assistance?',
   ctaText = 'Call or email the school office for help with admissions',
   ctaButton = { label: 'Contact Us', href: '/contact' },
 }: {
   /** Where the prepared email goes */
   email?: string
+  /** Badge, title and line in the green banner */
+  banner?: { badge: string; title: string; subtitle: string }
   ctaTitle?: string
   ctaText?: string
   ctaButton?: { label: string; href: string }
@@ -240,7 +243,7 @@ export default function RegisterView({
                 transition={{ delay: 0.3 }}
               >
                 <GraduationCap className="w-4 h-4 text-secondary-400" />
-                Admissions
+                {banner.badge}
               </m.div>
             </div>
             <m.h1
@@ -249,7 +252,7 @@ export default function RegisterView({
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              Register Interest
+              {banner.title}
             </m.h1>
             <m.p
               className="text-xl text-gray-200"
@@ -257,7 +260,7 @@ export default function RegisterView({
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              Take the first step towards your child&apos;s bright future
+              {banner.subtitle}
             </m.p>
           </div>
         </m.div>

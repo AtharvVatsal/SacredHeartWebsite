@@ -29,8 +29,9 @@ export function NotificationsBoard({ badge, title, subtitle, notices, ctaTitle, 
 }
 
 export function CalendarBoard({ badge, title, highlight, subtitle, events }: BlockProps<typeof CalendarDef>) {
+  const { contact } = useSiteSettings()
   const list = useMemo(() => events.map((e, i) => ({ id: String(i), title: e.title, date: e.date, type: e.type, ...(e.description ? { description: e.description } : {}) })), [events])
-  return <CalendarView events={list} badge={badge} title={title} highlight={highlight} subtitle={subtitle} />
+  return <CalendarView events={list} badge={badge} title={title} highlight={highlight} subtitle={subtitle} phone={contact.phones[0]} />
 }
 
 export function GalleryBoard({ eyebrow, title, albums, videosTitle, videos }: BlockProps<typeof GalleryDef>) {
@@ -56,7 +57,7 @@ export function GalleryBoard({ eyebrow, title, albums, videosTitle, videos }: Bl
   return <GalleryView albums={data.list} videos={videoList} icons={data.icons} eyebrow={eyebrow} title={title} videosTitle={videosTitle} />
 }
 
-export function PassOutBoard({ batches }: BlockProps<typeof PassOutDef>) {
+export function PassOutBoard({ banner, batches }: BlockProps<typeof PassOutDef>) {
   const { onlineServices } = useSiteSettings()
   const data = useMemo(
     () =>
@@ -68,10 +69,10 @@ export function PassOutBoard({ batches }: BlockProps<typeof PassOutDef>) {
       })),
     [batches],
   )
-  return <PassOutView batches={data} alumniHref={onlineServices.alumniRegistration} />
+  return <PassOutView batches={data} alumniHref={onlineServices.alumniRegistration} banner={banner} />
 }
 
-export function ContactBoard({ officeHours, stats }: BlockProps<typeof ContactDef>) {
+export function ContactBoard({ banner, officeHours, stats }: BlockProps<typeof ContactDef>) {
   const { contact } = useSiteSettings()
   const a = contact.address
   const details = {
@@ -80,10 +81,10 @@ export function ContactBoard({ officeHours, stats }: BlockProps<typeof ContactDe
     emails: contact.emails,
     plusCode: contact.mapPlusCode,
   }
-  return <ContactView details={details} officeHours={officeHours} stats={stats} />
+  return <ContactView details={details} officeHours={officeHours} stats={stats} banner={banner} />
 }
 
-export function EnquiryForm({ ctaTitle, ctaText, ctaButton }: BlockProps<typeof EnquiryDef>) {
+export function EnquiryForm({ banner, ctaTitle, ctaText, ctaButton }: BlockProps<typeof EnquiryDef>) {
   const { contact } = useSiteSettings()
-  return <RegisterView email={contact.emails[0]} ctaTitle={ctaTitle} ctaText={ctaText} ctaButton={ctaButton} />
+  return <RegisterView email={contact.emails[0]} ctaTitle={ctaTitle} ctaText={ctaText} ctaButton={ctaButton} banner={banner} />
 }
