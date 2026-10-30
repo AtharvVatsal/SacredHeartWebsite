@@ -5,6 +5,8 @@ import type { PageDocument } from '@/cms/document/types'
 import { MAX_DEPTH, validateDocument } from '@/cms/document/validate'
 import { homePage } from '@/cms/seed/pages/home'
 import { toSiteSettings } from '@/cms/render/settings-map'
+import { folderAlbums, folderPhotos } from '@/cms/seed/gallery-photos'
+import { albums as builtInAlbums } from '@/data/gallery'
 import { defaultSiteSettings } from '@/lib/site-settings'
 import type { SiteSetting } from '@/payload-types'
 
@@ -178,5 +180,31 @@ describe('shared figures', () => {
     expect(s.figures.years).toBe('57+')
     expect(s.figures.students).toBe(defaultSiteSettings.figures.students)
     expect(s.figures.libraryBooks).toBe('24K+')
+  })
+})
+
+describe('gallery albums moved into the media library', () => {
+  const galleryDoc = () => doc([block('GalleryBoard')]) as PageDocument
+
+  it('finds every built-in album that reads its photos from a folder, or only the ones asked for', () => {
+    const all = folderAlbums(galleryDoc())
+    expect(all.map((a) => a.key)).toEqual(builtInAlbums.filter((a) => !a.single).map((a) => a.id))
+    expect(folderAlbums(galleryDoc(), ['diwali', 'voting']).map((a) => a.key)).toEqual(['diwali', 'voting'])
+  })
+
+  it('lists the same photos the album showed, in order, described as in the sitemap', () => {
+    const diwali = builtInAlbums.find((a) => a.id === 'diwali')!
+    const photos = folderPhotos({ key: 'diwali', name: 'Diwali', folderCount: diwali.count })
+    expect(photos).toHaveLength(diwali.count)
+    expect(photos[0].photo).toMatchObject({ src: '/images/Gallery/diwali/01.webp', alt: 'Diwali, photo 1', mediaId: null })
+    expect(photos[9].photo.src).toBe('/images/Gallery/diwali/10.webp')
+  })
+
+  it('skips albums that already have a photo list', () => {
+    const d = galleryDoc()
+    const [first] = folderAlbums(d)
+    first.photos = folderPhotos(first)
+    first.folderCount = 0
+    expect(folderAlbums(d).some((a) => a.key === first.key)).toBe(false)
   })
 })

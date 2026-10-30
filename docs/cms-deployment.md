@@ -54,6 +54,7 @@ npm run cms:migrate:status               # shows which migrations are pending
 npm run cms:migrate                      # creates the tables (first time) or applies new migrations
 npm run cms:create-admin -- admin@example-school.in "Office Admin"   # prompts for a password (hidden)
 npm run cms:seed                         # copies the 30 original pages into the CMS as DRAFTS and imports their images
+npm run cms:import-gallery               # optional: moves the ~413 photos of the built-in gallery albums into the media library
 npm run build
 npm start                                # or your host's start command; serves on port 3000 by default
 ```
@@ -62,6 +63,7 @@ Notes:
 
 - **The seed never publishes.** Visitors keep seeing the original pages until an administrator reviews each draft and publishes it in the editor. Running the seed again skips pages that already exist; `npm run cms:seed -- force` replaces drafts (it is meant for empty or test databases).
 - The seed imports about 400 images from `/public` into the media library, one at a time. Expect it to take several minutes.
+- `cms:import-gallery` lets editors change the photos inside the school's existing gallery albums (without it, those albums keep reading their numbered files from `/public/images/Gallery/`, and only their names, covers and order are editable). It imports about 413 more photos, files them in the media library under *Gallery: <album>*, and changes only the Gallery page's **draft**: preview it, then publish. It skips albums that already have a photo list, so it is safe to run again, and `-- diwali voting` limits it to those albums. The photos take about 80 MB of media storage with their smaller copies.
 - The schema is **never** changed automatically (`push` is off). Only `cms:migrate` changes the database.
 - `cms:create-admin` reads `CMS_ADMIN_EMAIL`, `CMS_ADMIN_NAME` and `CMS_ADMIN_PASSWORD` instead of prompting, if they are set (useful in CI; do not leave them set).
 - The build reads published pages from the database. If the database cannot be reached during the build, pages are built from the original implementation and pick up CMS content when they are next revalidated.

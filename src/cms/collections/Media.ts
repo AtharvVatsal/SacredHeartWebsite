@@ -55,6 +55,12 @@ export const Media: CollectionConfig = {
     staticDir: path.resolve(process.cwd(), process.env.CMS_MEDIA_DIR || 'media'),
     mimeTypes: ACCEPTED_MIME_TYPES,
     adminThumbnail: 'thumbnail',
+    // Browsers keep a file for an hour instead of downloading it again on every visit; a replaced photo
+    // reaches returning visitors within the hour
+    modifyResponseHeaders: ({ headers }) => {
+      headers.set('Cache-Control', 'public, max-age=3600')
+      return headers
+    },
     focalPoint: true,
     crop: false,
     imageSizes: [

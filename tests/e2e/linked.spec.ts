@@ -79,3 +79,18 @@ test('figures set in Site settings show on every page that uses them', async ({ 
   }
   await expectPublic(request, '/contact', '>56+</p>')
 })
+
+test('gallery photos moved into the media library are served from it once published', async ({ request }) => {
+  const headers = await apiAs(request, 'admin')
+  const gallery = await pageAt(request, headers, '/gallery')
+  const board = gallery.content.content.find((b) => b.type === 'GalleryBoard')!
+  const album = (board.props.albums as { key: string; folderCount: number; photos: { photo: { src: string } }[] }[]).find((a) => a.key === 'notice-board')!
+  expect(album.folderCount).toBe(0)
+  expect(album.photos.map((p) => p.photo.src)).toEqual([1, 2, 3, 4].map((n) => `/api/media/file/notice-board-0${n}.webp`))
+
+  await publish(request, headers, gallery)
+  await expectPublic(request, '/gallery', '/api/media/file/notice-board-01.webp')
+  const photo = await request.get('/api/media/file/notice-board-01.webp')
+  expect(photo.status()).toBe(200)
+  expect(photo.headers()['cache-control']).toBe('public, max-age=3600')
+})

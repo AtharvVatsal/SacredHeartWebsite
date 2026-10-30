@@ -46,6 +46,8 @@ fs.mkdirSync(path.join(ROOT, 'tests/e2e/.auth'), { recursive: true })
 fs.writeFileSync(path.join(ROOT, 'tests/e2e/.auth/creds.json'), JSON.stringify(creds, null, 2))
 execSync('npx payload run tests/e2e/setup/users.ts', { cwd: ROOT, env: { ...env, E2E_CREDS: JSON.stringify(creds) }, stdio: 'inherit' })
 run('npx payload run src/cms/seed/run.ts')
+// One small built-in album's photos moved into the media library (the full import takes minutes)
+run('npx payload run src/cms/seed/import-gallery.ts notice-board')
 
 // 3. Production build and server (Playwright waits for the port)
 if (process.env.E2E_SKIP_BUILD !== 'true') run('npx next build')

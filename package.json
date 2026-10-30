@@ -18,6 +18,7 @@
     "cms:generate": "payload generate:importmap && payload generate:types",
     "cms:create-admin": "payload run scripts/cms-create-admin.ts",
     "cms:seed": "payload run src/cms/seed/run.ts",
+    "cms:import-gallery": "payload run src/cms/seed/import-gallery.ts",
     "test": "vitest run",
     "test:e2e": "playwright test"
   },
